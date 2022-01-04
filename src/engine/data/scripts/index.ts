@@ -13,6 +13,8 @@ import { slotEffect } from './slot-effect'
 import { slotGlowEffect } from './slot-glow-effect'
 import { stage } from './stage'
 import { tapNote } from './tap-note'
+import { fuzzyNote } from './fuzzy-note'
+import { fuzzyFlick } from './fuzzy-flick'
 
 export const scripts = defineScripts({
     initialization,
@@ -36,6 +38,9 @@ export const scripts = defineScripts({
     criticalSlideConnector: () => slideConnector(true),
 
     slideHiddenTick: () => slideTick(false, false),
+
+    fuzzyNote: () => fuzzyNote(),
+    fuzzyFlick: () => fuzzyFlick(),
 
     autoSFX,
     simLine,

@@ -72,4 +72,13 @@ export const archetypes = defineArchetypes({
         script: scripts.slideHiddenTickIndex,
         input: true,
     },
+
+    fuzzyNote: {
+        script: scripts.fuzzyNoteIndex,
+        input: true,
+    },
+    fuzzyFlick: {
+        script: scripts.fuzzyFlickIndex,
+        input: true,
+    },
 })
