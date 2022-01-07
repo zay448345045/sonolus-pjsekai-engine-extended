@@ -255,8 +255,8 @@ export function fromSus(
                                     ? archetypes.criticalSlideEndIndex
                                     : archetypes.criticalSlideEndFlickIndex
                                 : flickMod === undefined
-                                    ? archetypes.slideEndIndex
-                                    : archetypes.slideEndFlickIndex,
+                                ? archetypes.slideEndIndex
+                                : archetypes.slideEndFlickIndex,
                             data: {
                                 index: 0,
                                 values: [
@@ -337,8 +337,8 @@ export function fromSus(
             const easeType = easeInMods.has(head.key)
                 ? 0
                 : easeOutMods.has(head.key)
-                    ? 1
-                    : -1
+                ? 1
+                : -1
 
             const h = head
             connectedNotes.forEach((info) => {
