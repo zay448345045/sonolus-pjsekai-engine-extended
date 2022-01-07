@@ -56,7 +56,7 @@ export function playTapJudgmentSFX() {
     )
 }
 
-// export function playFizzyJudgmentSFX() {
+// export function playTraceJudgmentSFX() {
 //     return And(
 //         options.isSFXEnabled,
 //         Play(Add(EffectClip.Miss, InputJudgment), minSFXDistance)

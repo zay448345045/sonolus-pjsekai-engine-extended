@@ -48,16 +48,16 @@ import {
 import {
     calculateNoteLayout,
     getNoteLayout,
-    noteFizzySprite,
+    noteTraceSprite,
 } from './common/note-sprite'
 import { playTapJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
 
-export function fuzzyNote(): Script {
-    const bucket = buckets.fuzzyNoteIndex
+export function traceNote(): Script {
+    const bucket = buckets.traceNoteIndex
     const window = windows.tapNote.normal
-    const noteSprite = noteFizzySprite
+    const noteSprite = noteTraceSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
 

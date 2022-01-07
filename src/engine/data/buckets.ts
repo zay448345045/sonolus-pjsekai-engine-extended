@@ -202,7 +202,7 @@ export const buckets = defineBuckets({
             },
         ],
     },
-    fuzzyNote: {
+    traceNote: {
         sprites: [
             {
                 id: SkinSprite.NoteHeadCyan,
@@ -214,7 +214,7 @@ export const buckets = defineBuckets({
             },
         ],
     },
-    fuzzyFlick: {
+    traceFlick: {
         sprites: [
             {
                 id: SkinSprite.NoteHeadCyan,

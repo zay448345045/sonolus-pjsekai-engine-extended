@@ -56,7 +56,7 @@ import {
 import {
     calculateNoteLayout,
     getNoteLayout,
-    noteFizzySprite,
+    noteTraceSprite,
 } from './common/note-sprite'
 import { playFlickJudgmentSFX } from './common/sfx'
 import {
@@ -65,10 +65,10 @@ import {
     checkTouchYInHitbox,
 } from './common/touch'
 
-export function fuzzyFlick(): Script {
-    const bucket = buckets.fuzzyFlickIndex
+export function traceFlick(): Script {
+    const bucket = buckets.traceFlickIndex
     const window = windows.slideEndFlick.normal
-    const noteSprite = noteFizzySprite
+    const noteSprite = noteTraceSprite
     const arrowSprite = arrowRedSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
