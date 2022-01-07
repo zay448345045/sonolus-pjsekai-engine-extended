@@ -50,7 +50,7 @@ import {
     getNoteLayout,
     noteTraceSprite,
 } from './common/note-sprite'
-import { playTapJudgmentSFX } from './common/sfx'
+import { playTraceJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
 
@@ -151,7 +151,7 @@ export function traceNote(): Script {
                 [InputJudgment.set(1), InputAccuracy.set(0)]
             ),
             playVisualEffects(),
-            playTapJudgmentSFX(),
+            playTraceJudgmentSFX(),
         ]
     }
 
@@ -159,12 +159,12 @@ export function traceNote(): Script {
         return [
             playNoteLaneEffect(),
             playNoteEffect(
-                ParticleEffect.NoteCircularTapCyan,
-                ParticleEffect.NoteLinearTapCyan,
+                ParticleEffect.NoteCircularAlternativeGreen,
+                ParticleEffect.NoteLinearTapGreen,
                 0,
                 'normal'
             ),
-            playSlotEffect(6),
+            playSlotEffect(2),
         ]
     }
 }

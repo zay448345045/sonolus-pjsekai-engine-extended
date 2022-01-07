@@ -56,12 +56,12 @@ export function playTapJudgmentSFX() {
     )
 }
 
-// export function playTraceJudgmentSFX() {
-//     return And(
-//         options.isSFXEnabled,
-//         Play(Add(EffectClip.Miss, InputJudgment), minSFXDistance)
-//     )
-// }
+export function playTraceJudgmentSFX() {
+    return And(
+        options.isSFXEnabled,
+        Play(getTickClip(InputJudgment), minSFXDistance)
+    )
+}
 
 export function playCriticalTapJudgmentSFX() {
     return And(
