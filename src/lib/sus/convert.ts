@@ -43,6 +43,9 @@ export function fromSus(
         criticalSlideConnectorIndex: number
 
         slideHiddenTickIndex: number
+
+        traceNoteIndex: number
+        traceFlickIndex: number
     }
 ): LevelData {
     const score = analyze(sus, ticksPerBeat)
@@ -50,6 +53,7 @@ export function fromSus(
     const flickMods = new Map<string, -1 | 0 | 1>()
     const criticalMods = new Set<string>()
     const tickRemoveMods = new Set<string>()
+    const usedTickRemoveMods = new Set<string>()
     const easeInMods = new Set<string>()
     const easeOutMods = new Set<string>()
 
@@ -251,8 +255,8 @@ export function fromSus(
                                     ? archetypes.criticalSlideEndIndex
                                     : archetypes.criticalSlideEndFlickIndex
                                 : flickMod === undefined
-                                ? archetypes.slideEndIndex
-                                : archetypes.slideEndFlickIndex,
+                                    ? archetypes.slideEndIndex
+                                    : archetypes.slideEndFlickIndex,
                             data: {
                                 index: 0,
                                 values: [
@@ -281,6 +285,7 @@ export function fromSus(
                             time,
                             isCritical,
                         })
+                        usedTickRemoveMods.add(key)
                         break
                     }
 
@@ -332,8 +337,8 @@ export function fromSus(
             const easeType = easeInMods.has(head.key)
                 ? 0
                 : easeOutMods.has(head.key)
-                ? 1
-                : -1
+                    ? 1
+                    : -1
 
             const h = head
             connectedNotes.forEach((info) => {
@@ -411,6 +416,32 @@ export function fromSus(
 
             head = newHead
             connectedNotes.length = 0
+        })
+    })
+    score.tapNotes.forEach((note) => {
+        const key = getKey(note)
+        if (!tickRemoveMods.has(key) || usedTickRemoveMods.has(key)) return
+        const time = toTime(note.tick)
+        const flickMod = flickMods.get(key)
+
+        wrappers.push({
+            group: 0,
+            time,
+            entity: {
+                archetype:
+                    flickMod === undefined
+                        ? archetypes.traceNoteIndex
+                        : archetypes.traceFlickIndex,
+                data: {
+                    index: 0,
+                    values: [
+                        time,
+                        note.lane - 8 + note.width / 2,
+                        note.width / 2,
+                        flickMod || 0,
+                    ],
+                },
+            },
         })
     })
 
