@@ -46,6 +46,8 @@ export function fromSus(
 
         traceNoteIndex: number
         traceFlickIndex: number
+        criticalTraceNoteIndex: number
+        criticalTraceFlickIndex: number
     }
 ): LevelData {
     const score = analyze(sus, ticksPerBeat)
@@ -166,6 +168,7 @@ export function fromSus(
                 }
                 case 2: {
                     if (taps.has(key)) break
+                    if (tickRemoveMods.has(key)) break
                     taps.add(key)
 
                     const flickMod = flickMods.get(key)
@@ -428,10 +431,13 @@ export function fromSus(
             group: 0,
             time,
             entity: {
-                archetype:
-                    flickMod === undefined
-                        ? archetypes.traceNoteIndex
-                        : archetypes.traceFlickIndex,
+                archetype: criticalMods.has(key)
+                    ? flickMod === undefined
+                        ? archetypes.criticalTraceNoteIndex
+                        : archetypes.criticalTraceFlickIndex
+                    : flickMod === undefined
+                    ? archetypes.traceNoteIndex
+                    : archetypes.traceFlickIndex,
                 data: {
                     index: 0,
                     values: [

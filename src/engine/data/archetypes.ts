@@ -81,4 +81,12 @@ export const archetypes = defineArchetypes({
         script: scripts.traceFlickIndex,
         input: true,
     },
+    criticalTraceNote: {
+        script: scripts.criticalTraceNoteIndex,
+        input: true,
+    },
+    criticalTraceFlick: {
+        script: scripts.criticalTraceFlickIndex,
+        input: true,
+    },
 })

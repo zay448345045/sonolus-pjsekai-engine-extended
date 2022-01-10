@@ -39,8 +39,11 @@ export const scripts = defineScripts({
 
     slideHiddenTick: () => slideTick(false, false),
 
-    traceNote: () => traceNote(),
-    traceFlick: () => traceFlick(),
+    traceNote: () => traceNote(false),
+    traceFlick: () => traceFlick(false),
+
+    criticalTraceNote: () => traceNote(true),
+    criticalTraceFlick: () => traceFlick(true),
 
     autoSFX,
     simLine,

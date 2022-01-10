@@ -242,4 +242,44 @@ export const buckets = defineBuckets({
             },
         ],
     },
+    criticalTraceNote: {
+        sprites: [
+            {
+                id: SkinSprite.NoteHeadCyan,
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+        ],
+    },
+    criticalTraceFlick: {
+        sprites: [
+            {
+                id: SkinSprite.NoteHeadCyan,
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+            {
+                id: SkinSprite.NoteHeadRed,
+                x: 2,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+            {
+                id: SkinSprite.DirectionalMarkerRed,
+                x: 2,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+        ],
+    },
 })
