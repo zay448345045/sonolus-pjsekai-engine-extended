@@ -40,6 +40,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
+import { setJudgeVariable } from './common/judge-renderer'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
@@ -187,6 +188,7 @@ export function flickNote(isCritical: boolean): Script {
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
+            setJudgeVariable(),
             isCritical
                 ? playCriticalFlickJudgmentSFX()
                 : playFlickJudgmentSFX(),

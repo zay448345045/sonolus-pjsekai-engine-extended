@@ -63,6 +63,7 @@ import {
 } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
+import { setAutoJudge, setJudgeVariable } from './common/judge-renderer'
 
 export function traceNote(isCritical: boolean): Script {
     const bucket = isCritical
@@ -119,7 +120,10 @@ export function traceNote(isCritical: boolean): Script {
         ]
     )
 
-    const terminate = And(options.isAutoplay, playVisualEffects())
+    const terminate = And(options.isAutoplay, [
+        playVisualEffects(),
+        setAutoJudge(),
+    ])
 
     return {
         preprocess: {
@@ -168,6 +172,7 @@ export function traceNote(isCritical: boolean): Script {
                 ],
                 [InputJudgment.set(1), InputAccuracy.set(0)]
             ),
+            setJudgeVariable(),
             playVisualEffects(),
             isCritical
                 ? playCriticalTraceJudgmentSFX()

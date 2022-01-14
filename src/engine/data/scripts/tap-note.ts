@@ -50,6 +50,7 @@ import {
     noteCyanSprite,
     noteYellowSprite,
 } from './common/note-sprite'
+import { setAutoJudge, setJudgeVariable } from './common/judge-renderer'
 import { playCriticalTapJudgmentSFX, playTapJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
@@ -102,7 +103,10 @@ export function tapNote(isCritical: boolean): Script {
         ]
     )
 
-    const terminate = And(options.isAutoplay, playVisualEffects())
+    const terminate = [
+        And(options.isAutoplay, [playVisualEffects(), setAutoJudge()]),
+        // setJudgeVariable(),
+    ]
 
     return {
         preprocess: {
@@ -143,6 +147,7 @@ export function tapNote(isCritical: boolean): Script {
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
+            setJudgeVariable(),
             isCritical ? playCriticalTapJudgmentSFX() : playTapJudgmentSFX(),
         ]
     }

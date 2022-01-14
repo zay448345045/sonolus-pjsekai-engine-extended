@@ -41,6 +41,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
+import { setJudgeVariable } from './common/judge-renderer'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
@@ -200,6 +201,7 @@ export function traceFlick(isCritical: boolean): Script {
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
+            setJudgeVariable(),
 
             playFlickJudgmentSFX(),
         ]

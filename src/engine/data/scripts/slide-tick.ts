@@ -15,6 +15,7 @@ import {
 import { options } from '../../configuration/options'
 import { Layer } from './common/constants'
 import { playNoteEffect } from './common/effect'
+import { setJudgeVariable } from './common/judge-renderer'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
@@ -103,7 +104,12 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
     }
 
     function onComplete() {
-        return [InputJudgment.set(1), InputAccuracy.set(0), playVisualEffects()]
+        return [
+            InputJudgment.set(1),
+            InputAccuracy.set(0),
+            setJudgeVariable(),
+            playVisualEffects(),
+        ]
     }
 
     function playVisualEffects() {

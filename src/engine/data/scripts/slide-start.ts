@@ -30,6 +30,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
+import { setJudgeVariable } from './common/judge-renderer'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
@@ -146,6 +147,7 @@ export function slideStart(isCritical: boolean): Script {
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
+            setJudgeVariable(),
             playTapJudgmentSFX(),
         ]
     }

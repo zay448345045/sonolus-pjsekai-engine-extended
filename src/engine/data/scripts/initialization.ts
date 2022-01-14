@@ -163,7 +163,7 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.0875),
                 0,
-                UIJudgmentConfiguration.alpha,
+                0,
                 HorizontalAlign.Center,
                 false
             ),
