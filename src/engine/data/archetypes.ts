@@ -11,9 +11,7 @@ export const archetypes = defineArchetypes({
     input: {
         script: scripts.inputIndex,
     },
-    judgeRenderer: {
-        script: scripts.judgeRendererIndex,
-    },
+
     tapNote: {
         script: scripts.tapNoteIndex,
         input: true,
@@ -90,5 +88,9 @@ export const archetypes = defineArchetypes({
     criticalTraceFlick: {
         script: scripts.criticalTraceFlickIndex,
         input: true,
+    },
+
+    judgeRenderer: {
+        script: scripts.judgeRendererIndex,
     },
 })
