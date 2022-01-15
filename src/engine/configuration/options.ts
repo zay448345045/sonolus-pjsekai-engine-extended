@@ -111,7 +111,7 @@ export const options = defineOptions({
         def: 1,
     },
     isBetterJudgmentEnabled: {
-        name: 'Use better judgment effect' as OptionName,
+        name: 'Use better judgment text' as OptionName,
         scope: 'Sekai',
         type: 'toggle',
         def: 1,
