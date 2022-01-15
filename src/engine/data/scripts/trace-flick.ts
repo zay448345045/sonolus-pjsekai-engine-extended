@@ -209,12 +209,18 @@ export function traceFlick(isCritical: boolean): Script {
         return [
             playNoteLaneEffect(),
             playNoteEffect(
-                ParticleEffect.NoteCircularTapRed,
-                ParticleEffect.NoteLinearTapRed,
-                ParticleEffect.NoteLinearAlternativeRed,
+                isCritical
+                    ? ParticleEffect.NoteCircularTapYellow
+                    : ParticleEffect.NoteCircularTapRed,
+                isCritical
+                    ? ParticleEffect.NoteLinearTapYellow
+                    : ParticleEffect.NoteLinearTapRed,
+                isCritical
+                    ? ParticleEffect.NoteLinearAlternativeYellow
+                    : ParticleEffect.NoteLinearAlternativeRed,
                 'flick'
             ),
-            playSlotEffect(1),
+            playSlotEffect(isCritical ? 4 : 1),
         ]
     }
 }
