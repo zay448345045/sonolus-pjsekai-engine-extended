@@ -65,6 +65,9 @@ export function stage(): Script {
     const updateParallel = [drawStageCover(), drawStage()]
 
     return {
+        initialize: {
+            code: [Spawn(scripts.judgeRendererIndex, [])],
+        },
         spawnOrder: {
             code: spawnOrder,
         },

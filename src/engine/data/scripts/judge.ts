@@ -85,30 +85,14 @@ export function judge(): Script {
     }
     const spawnOrder = -999
 
-    const shouldSpawn = Equal(EntityInfo.of(0).state, State.Despawned)
-
     const updateParallel = [drawJudgment()]
 
     return {
         spawnOrder: {
             code: spawnOrder,
         },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
         updateParallel: {
             code: updateParallel,
-        },
-    }
-}
-
-export function missJudge(): Script {
-    return {
-        spawnOrder: {
-            code: -999,
-        },
-        preprocess: {
-            code: [DebugLog(Time), currentJudge.set(1), judgeTime.set(Time)],
         },
     }
 }

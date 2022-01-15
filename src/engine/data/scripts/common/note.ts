@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Add,
     And,
@@ -29,7 +30,6 @@ import { scripts } from '..'
 import { options } from '../../../configuration/options'
 import { archetypes } from '../../archetypes'
 import { baseNote, lane, noteOnScreenDuration, origin } from './constants'
-import { setMissJudge } from './judge'
 import { checkTouchXInHitbox } from './touch'
 
 export enum InputState {

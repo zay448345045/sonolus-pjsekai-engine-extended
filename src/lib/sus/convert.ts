@@ -25,7 +25,6 @@ export function fromSus(
         initializationIndex: number
         stageIndex: number
         inputIndex: number
-        judgeRendererIndex: number
 
         tapNoteIndex: number
         flickNoteIndex: number
@@ -128,13 +127,6 @@ export function fromSus(
             time: -998,
             entity: {
                 archetype: archetypes.inputIndex,
-            },
-        },
-        {
-            group: -1,
-            time: -998,
-            entity: {
-                archetype: archetypes.judgeRendererIndex,
             },
         },
     ]

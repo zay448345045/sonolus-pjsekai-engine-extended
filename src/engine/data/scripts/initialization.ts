@@ -15,7 +15,6 @@ import {
     UIComboText,
     UIComboValue,
     UIJudgment,
-    UIJudgmentConfiguration,
     UIMenu,
     UIMenuConfiguration,
     UIPrimaryMetricBar,
