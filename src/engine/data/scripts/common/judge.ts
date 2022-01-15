@@ -1,5 +1,5 @@
-import { Add, InputJudgment, LevelMemory, Time } from 'sonolus.js'
-// import { options } from '../../../configuration/options'
+import { Add, If, InputJudgment, LevelMemory, Time } from 'sonolus.js'
+import { options } from '../../../configuration/options'
 // import { minSFXDistance } from './constants'
 
 export const currentJudge = LevelMemory.to<number>(50)
@@ -13,5 +13,10 @@ export function setAutoJudge() {
 }
 export const onMiss = [setMissJudge()]
 export function setMissJudge() {
-    return [currentJudge.set(1), judgeTime.set(Time)]
+    return [
+        currentJudge.set(
+            If(options.isAutoplay, If(options.isAutoJudgmentEnabled, 5, 2), 1)
+        ),
+        judgeTime.set(Time),
+    ]
 }

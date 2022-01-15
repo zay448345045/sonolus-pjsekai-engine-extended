@@ -126,9 +126,12 @@ export function traceNote(isCritical: boolean): Script {
     const updateSequential = [
         // DebugLog(window.good.late),
         If(
-            GreaterOr(
-                Subtract(Time, NoteData.time, InputOffset),
-                window.good.late
+            Or(
+                GreaterOr(
+                    Subtract(Time, NoteData.time, InputOffset),
+                    window.good.late
+                ),
+                And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
             [onMiss],
             []

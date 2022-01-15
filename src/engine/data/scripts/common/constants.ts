@@ -65,7 +65,7 @@ export const tickClip = customEffectClip(engineId, 4)
 export enum Layer {
     Cover = 1000,
     SlotGlowEffect = 200,
-    Judgement = 300,
+    Judgement = 1100,
     NoteArrow = 102,
     NoteTick = 101,
     NoteBody = 100,

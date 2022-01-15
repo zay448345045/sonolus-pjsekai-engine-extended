@@ -64,9 +64,16 @@ export function stage(): Script {
 
     const updateParallel = [drawStageCover(), drawStage()]
 
+    const initialize = [
+        And(
+            options.isBetterJudgmentEnabled,
+            Spawn(scripts.judgeRendererIndex, [])
+        ),
+    ]
+
     return {
         initialize: {
-            code: [Spawn(scripts.judgeRendererIndex, [])],
+            code: initialize,
         },
         spawnOrder: {
             code: spawnOrder,

@@ -6,6 +6,7 @@ import {
     GoodMultiplier,
     GreatMultiplier,
     HorizontalAlign,
+    If,
     Multiply,
     PerfectMultiplier,
     Script,
@@ -15,6 +16,7 @@ import {
     UIComboText,
     UIComboValue,
     UIJudgment,
+    UIJudgmentConfiguration,
     UIMenu,
     UIMenuConfiguration,
     UIPrimaryMetricBar,
@@ -162,7 +164,11 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.0875),
                 0,
-                0,
+                If(
+                    options.isBetterJudgmentEnabled,
+                    0,
+                    UIJudgmentConfiguration.alpha
+                ),
                 HorizontalAlign.Center,
                 false
             ),

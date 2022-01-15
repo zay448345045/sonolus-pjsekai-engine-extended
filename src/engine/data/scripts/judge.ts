@@ -2,17 +2,13 @@ import {
     Add,
     And,
     Clamp,
-    DebugLog,
     Divide,
     Draw,
-    EntityInfo,
-    Equal,
     Greater,
     If,
     Less,
     Multiply,
     Script,
-    State,
     Subtract,
     Time,
 } from 'sonolus.js'
@@ -26,14 +22,21 @@ export function judge(): Script {
         const judgeWidth = Multiply(sekaiStage.h, 0.0875, 250 / 76)
         const judgeHeight = Divide(Multiply(sekaiStage.h, 0.0875), 2)
         const animateDuration = 0.05
+        const startSize = 0.7
         const scale = Multiply(
-            Divide(
-                Clamp(
-                    Subtract(Time, judgeTime.get()),
-                    animateDuration / 3,
-                    animateDuration
-                ),
-                animateDuration
+            Add(
+                startSize,
+                Multiply(
+                    Divide(
+                        Clamp(
+                            Subtract(Time, judgeTime.get()),
+                            0,
+                            animateDuration
+                        ),
+                        animateDuration
+                    ),
+                    1 - startSize
+                )
             ),
             0.9
         )
@@ -48,11 +51,11 @@ export function judge(): Script {
             Multiply(Divide(judgeWidth, 2), scale)
         )
         const bottom = Add(
-            Multiply(sekaiStage.h, -0.15),
+            Multiply(sekaiStage.h, -0.145),
             Subtract(judgeHeight, Multiply(judgeHeight, scale))
         )
         const top = Add(
-            Multiply(sekaiStage.h, -0.15),
+            Multiply(sekaiStage.h, -0.145),
             Multiply(sekaiStage.h, 0.0875),
             Multiply(judgeHeight, Subtract(1, scale), -1)
         )
@@ -69,7 +72,7 @@ export function judge(): Script {
             If(
                 And(
                     Greater(currentJudge.get(), 0),
-                    Less(Subtract(Time, judgeTime.get()), 0.5)
+                    Less(Subtract(Time, judgeTime.get()), 0.3)
                 ),
                 [
                     Draw(
