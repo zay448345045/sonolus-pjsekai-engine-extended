@@ -2,7 +2,6 @@ import {
     And,
     EntityMemory,
     GreaterOr,
-    If,
     InputAccuracy,
     InputJudgment,
     InputOffset,
@@ -16,7 +15,6 @@ import {
 import { options } from '../../configuration/options'
 import { Layer } from './common/constants'
 import { playNoteEffect } from './common/effect'
-import { onMiss, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
@@ -83,10 +81,6 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
-    const updateSequential = [
-        // DebugLog(window.good.late),
-        If(GreaterOr(Time, NoteData.time), [onMiss], []),
-    ]
     return {
         preprocess: {
             code: preprocess,
@@ -100,9 +94,6 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
         touch: {
             code: touch,
         },
-        updateSequential: {
-            code: updateSequential,
-        },
         updateParallel: {
             code: updateParallel,
         },
@@ -112,12 +103,7 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
     }
 
     function onComplete() {
-        return [
-            InputJudgment.set(1),
-            InputAccuracy.set(0),
-            setJudgeVariable(),
-            playVisualEffects(),
-        ]
+        return [InputJudgment.set(1), InputAccuracy.set(0), playVisualEffects()]
     }
 
     function playVisualEffects() {
