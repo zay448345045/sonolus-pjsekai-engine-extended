@@ -15,6 +15,7 @@ import { stage } from './stage'
 import { tapNote } from './tap-note'
 import { traceNote } from './trace-note'
 import { traceFlick } from './trace-flick'
+import { judge } from './judge'
 
 export const scripts = defineScripts({
     initialization,
@@ -50,4 +51,5 @@ export const scripts = defineScripts({
 
     slotEffect,
     slotGlowEffect,
+    judgeRenderer: judge,
 })

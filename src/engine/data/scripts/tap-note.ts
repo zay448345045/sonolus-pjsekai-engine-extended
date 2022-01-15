@@ -5,6 +5,7 @@ import {
     Equal,
     Greater,
     GreaterOr,
+    If,
     InputAccuracy,
     InputBucket,
     InputBucketValue,
@@ -50,7 +51,7 @@ import {
     noteCyanSprite,
     noteYellowSprite,
 } from './common/note-sprite'
-import { setAutoJudge, setJudgeVariable } from './common/judge-renderer'
+import { setAutoJudge, setJudgeVariable, onMiss } from './common/judge'
 import { playCriticalTapJudgmentSFX, playTapJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
@@ -104,8 +105,21 @@ export function tapNote(isCritical: boolean): Script {
     )
 
     const terminate = [
+        // DebugLog(Time),
         And(options.isAutoplay, [playVisualEffects(), setAutoJudge()]),
         // setJudgeVariable(),
+    ]
+
+    const updateSequential = [
+        // DebugLog(window.good.late),
+        If(
+            GreaterOr(
+                Subtract(Time, NoteData.time, InputOffset),
+                window.good.late
+            ),
+            [onMiss],
+            []
+        ),
     ]
 
     return {
@@ -123,6 +137,9 @@ export function tapNote(isCritical: boolean): Script {
         },
         touch: {
             code: touch,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         updateParallel: {
             code: updateParallel,

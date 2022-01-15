@@ -11,7 +11,9 @@ export const archetypes = defineArchetypes({
     input: {
         script: scripts.inputIndex,
     },
-
+    judgeRenderer: {
+        script: scripts.judgeRendererIndex,
+    },
     tapNote: {
         script: scripts.tapNoteIndex,
         input: true,

@@ -5,6 +5,7 @@ import {
     Equal,
     Greater,
     GreaterOr,
+    If,
     InputAccuracy,
     InputBucket,
     InputBucketValue,
@@ -29,7 +30,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
-import { setJudgeVariable } from './common/judge-renderer'
+import { onMiss, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
@@ -105,6 +106,17 @@ export function slideEnd(isCritical: boolean): Script {
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
+    const updateSequential = [
+        // DebugLog(window.good.late),
+        If(
+            GreaterOr(
+                Subtract(Time, NoteData.time, InputOffset),
+                window.good.late
+            ),
+            [onMiss],
+            []
+        ),
+    ]
     return {
         preprocess: {
             code: preprocess,
@@ -120,6 +132,9 @@ export function slideEnd(isCritical: boolean): Script {
         },
         touch: {
             code: touch,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         updateParallel: {
             code: updateParallel,

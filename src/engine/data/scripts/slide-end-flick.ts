@@ -41,7 +41,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
-import { setJudgeVariable } from './common/judge-renderer'
+import { setJudgeVariable } from './common/judge'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,

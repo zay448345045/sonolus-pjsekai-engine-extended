@@ -1,8 +1,6 @@
 import {
-    Add,
     And,
     bool,
-    Clamp,
     Code,
     Divide,
     Draw,
@@ -10,12 +8,10 @@ import {
     EntityMemory,
     Equal,
     Floor,
-    Greater,
     GreaterOr,
     HasSkinSprite,
     If,
     Lerp,
-    Less,
     LessOr,
     Multiply,
     Not,
@@ -24,15 +20,15 @@ import {
     Remap,
     Script,
     SkinSprite,
+    Spawn,
     State,
     Subtract,
-    Time,
     TouchDX,
     TouchId,
     TouchStarted,
     TouchX,
-    visualize,
 } from 'sonolus.js'
+import { scripts } from '.'
 import { options } from '../../configuration/options'
 import {
     baseNote,
@@ -43,14 +39,12 @@ import {
     sekaiStage,
     SekaiStageSprite,
     stage as stageC,
-    JudgmentMissSprite,
 } from './common/constants'
 import { playEmptyLaneEffect } from './common/effect'
 import { playStageSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { rectByEdge } from './common/utils'
 import { disallowEmpties } from './input'
-import { currentJudge, judgeTime } from './common/judge-renderer'
 
 export function stage(): Script {
     const spawnOrder = -999
@@ -68,7 +62,7 @@ export function stage(): Script {
         )
     )
 
-    const updateParallel = [drawStageCover(), drawJudgment(), drawStage()]
+    const updateParallel = [drawStageCover(), drawStage()]
 
     return {
         spawnOrder: {
@@ -98,65 +92,6 @@ export function stage(): Script {
                 1
             )
         )
-    }
-
-    function drawJudgment() {
-        //76, 250
-        const judgeWidth = Multiply(sekaiStage.h, 0.0875, 250 / 76)
-        const judgeHeight = Divide(Multiply(sekaiStage.h, 0.0875), 2)
-        const animateDuration = 0.05
-        const scale = Divide(
-            Clamp(Subtract(Time, judgeTime.get()), 0.05, animateDuration),
-            animateDuration
-        )
-        const left = Add(
-            sekaiStage.l,
-            Multiply(sekaiStage.w, 0.5),
-            Multiply(Divide(judgeWidth, -2), scale)
-        )
-        const right = Add(
-            sekaiStage.l,
-            Multiply(sekaiStage.w, 0.5),
-            Multiply(Divide(judgeWidth, 2), scale)
-        )
-        const bottom = Add(
-            Multiply(sekaiStage.h, -0.15),
-            Subtract(judgeHeight, Multiply(judgeHeight, scale))
-        )
-        const top = Add(
-            Multiply(sekaiStage.h, -0.15),
-            Multiply(sekaiStage.h, 0.0875),
-            Multiply(judgeHeight, Subtract(1, scale), -1)
-        )
-        // return Or(
-        //     Equal(currentJudge.get(), -1),
-        //     Draw(
-        //         Add(JudgmentMissSprite, currentJudge.get()),
-        //         ...rectByEdge(left, right, bottom, top),
-        //         Layer.Judgement,
-        //         1
-        //     )
-        // )
-        return [
-            If(
-                And(
-                    Greater(currentJudge.get(), 0),
-                    Less(Subtract(Time, judgeTime.get()), 0.5)
-                ),
-
-                Draw(
-                    Add(
-                        JudgmentMissSprite,
-                        If(options.isAutoplay, 2, currentJudge.get()),
-                        -1
-                    ),
-                    ...rectByEdge(left, right, bottom, top),
-                    Layer.Judgement,
-                    1
-                ),
-                []
-            ),
-        ]
     }
 
     function drawStage() {
