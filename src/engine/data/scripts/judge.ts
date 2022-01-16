@@ -2,17 +2,26 @@ import {
     Add,
     And,
     Clamp,
+    customSkinSprite,
     Divide,
     Draw,
+    EntityMemory,
     Greater,
     If,
     Less,
     Multiply,
     Script,
+    Sin,
     Subtract,
     Time,
 } from 'sonolus.js'
-import { JudgmentMissSprite, Layer, sekaiStage } from './common/constants'
+import { options } from '../../configuration/options'
+import {
+    engineId,
+    JudgmentMissSprite,
+    Layer,
+    sekaiStage,
+} from './common/constants'
 import { judgeTime, currentJudge } from './common/judge'
 import { rectByEdge } from './common/utils'
 
@@ -86,9 +95,34 @@ export function judge(): Script {
             ),
         ]
     }
-    const spawnOrder = -999
 
-    const updateParallel = [drawJudgment()]
+    function drawAutolive() {
+        const height = Multiply(sekaiStage.h, 25 / 588)
+        const width = Multiply(height, 321 / 64)
+        const padding = Multiply(width, 0.1)
+        return [
+            If(
+                And(options.isAutoplay, options.isAutoJudgmentEnabled),
+                [
+                    Draw(
+                        customSkinSprite(engineId, 7),
+                        ...rectByEdge(
+                            Subtract(sekaiStage.r, width, Multiply(width, 0.5)),
+                            Subtract(sekaiStage.r, Multiply(width, 0.5)),
+                            Add(-1, padding),
+                            // sekaiStage.t
+                            Add(-1, height, padding)
+                        ),
+                        Layer.Judgement,
+                        Sin(Multiply(Time, 3.14))
+                    ),
+                ],
+                []
+            ),
+        ]
+    }
+    const spawnOrder = -999
+    const updateParallel = [drawJudgment(), drawAutolive()]
 
     return {
         spawnOrder: {
