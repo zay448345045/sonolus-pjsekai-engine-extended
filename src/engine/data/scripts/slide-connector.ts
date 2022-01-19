@@ -63,7 +63,7 @@ import {
 import { checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
 import { rectByEdge } from './common/utils'
 import { disallowEmpties } from './input'
-import { udloop } from './common/utils'
+import { udLoop } from './common/utils'
 const leniency = 1
 
 class ConnectorDataPointer extends Pointer {
@@ -321,26 +321,24 @@ export function slideConnector(isCritical: boolean): Script {
                             )
                         ),
                         If(
-                            Equal(
-                                ConnectorData.headSharedMemory.slideTime,
-                                Time
-                            ),
+                            Equal(ConnectorData.headInfo.state, State.Spawned),
+                            1,
                             Add(
                                 1,
                                 Multiply(
-                                    udloop(
+                                    udLoop(
                                         Multiply(
                                             Subtract(
                                                 Time,
-                                                ConnectorData.headTime
+                                                ConnectorData.headSharedMemory
+                                                    .startTime
                                             ),
                                             2
                                         )
                                     ),
                                     0.25
                                 )
-                            ),
-                            1
+                            )
                         ),
                         0.5
                     )

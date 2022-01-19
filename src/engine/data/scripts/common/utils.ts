@@ -80,6 +80,9 @@ export function rectBySize(
     )
 }
 
-export function udloop(value: Code<number>) {
-    return If(Less(Mod(value, 2), 1), Mod(value, 2), Subtract(1, Mod(value, 1)))
+export function udLoop(value: Code<number>) {
+    return Subtract(
+        1,
+        If(Less(Mod(value, 2), 1), Mod(value, 2), Subtract(1, Mod(value, 1)))
+    )
 }

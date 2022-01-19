@@ -81,6 +81,10 @@ export class NoteSharedMemoryPointer extends Pointer {
     public get slideHitboxR() {
         return this.to<number>(2)
     }
+
+    public get startTime() {
+        return this.to<number>(3)
+    }
 }
 
 export const NoteSharedMemory = createEntitySharedMemory(

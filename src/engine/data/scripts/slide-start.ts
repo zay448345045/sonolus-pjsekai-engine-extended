@@ -74,6 +74,7 @@ export function slideStart(isCritical: boolean): Script {
         calculateNoteLayout(NoteData.center, NoteData.width, noteLayout),
 
         NoteSharedMemory.slideTime.set(-1000),
+        NoteSharedMemory.startTime.set(noteSpawnTime),
     ]
 
     const spawnOrder = noteSpawnTime
