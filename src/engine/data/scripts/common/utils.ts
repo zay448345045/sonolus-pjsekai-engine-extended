@@ -1,4 +1,13 @@
-import { Add, Code, Multiply, Pointer, Subtract } from 'sonolus.js'
+import {
+    Add,
+    Code,
+    If,
+    Less,
+    Mod,
+    Multiply,
+    Pointer,
+    Subtract,
+} from 'sonolus.js'
 
 export type Tuple<
     T,
@@ -69,4 +78,8 @@ export function rectBySize(
         Add(y, h),
         direction
     )
+}
+
+export function udloop(value: Code<number>) {
+    return If(Less(Mod(value, 2), 1), Mod(value, 2), Subtract(1, Mod(value, 1)))
 }

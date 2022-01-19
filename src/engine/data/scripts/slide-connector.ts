@@ -3,6 +3,7 @@ import {
     And,
     bool,
     Code,
+    Cos,
     createEntityData,
     DestroyParticleEffect,
     Draw,
@@ -24,6 +25,7 @@ import {
     Pointer,
     Power,
     Script,
+    Sin,
     SkinSprite,
     SpawnParticleEffect,
     State,
@@ -61,7 +63,7 @@ import {
 import { checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
 import { rectByEdge } from './common/utils'
 import { disallowEmpties } from './input'
-
+import { udloop } from './common/utils'
 const leniency = 1
 
 class ConnectorDataPointer extends Pointer {
@@ -318,7 +320,28 @@ export function slideConnector(isCritical: boolean): Script {
                                 Time
                             )
                         ),
-                        1,
+                        If(
+                            Equal(
+                                ConnectorData.headSharedMemory.slideTime,
+                                Time
+                            ),
+                            Add(
+                                1,
+                                Multiply(
+                                    udloop(
+                                        Multiply(
+                                            Subtract(
+                                                Time,
+                                                ConnectorData.headTime
+                                            ),
+                                            2
+                                        )
+                                    ),
+                                    0.25
+                                )
+                            ),
+                            1
+                        ),
                         0.5
                     )
                 )
