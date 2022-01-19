@@ -20,6 +20,7 @@ import {
     Remap,
     Script,
     SkinSprite,
+    Spawn,
     State,
     Subtract,
     TouchDX,
@@ -27,6 +28,7 @@ import {
     TouchStarted,
     TouchX,
 } from 'sonolus.js'
+import { scripts } from '.'
 import { options } from '../../configuration/options'
 import {
     baseNote,
@@ -62,7 +64,17 @@ export function stage(): Script {
 
     const updateParallel = [drawStageCover(), drawStage()]
 
+    const initialize = [
+        And(
+            options.isBetterJudgmentEnabled,
+            Spawn(scripts.judgeRendererIndex, [])
+        ),
+    ]
+
     return {
+        initialize: {
+            code: initialize,
+        },
         spawnOrder: {
             code: spawnOrder,
         },

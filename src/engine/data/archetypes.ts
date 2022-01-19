@@ -89,4 +89,8 @@ export const archetypes = defineArchetypes({
         script: scripts.criticalTraceFlickIndex,
         input: true,
     },
+
+    judgeRenderer: {
+        script: scripts.judgeRendererIndex,
+    },
 })

@@ -110,4 +110,16 @@ export const options = defineOptions({
         type: 'toggle',
         def: 1,
     },
+    isBetterJudgmentEnabled: {
+        name: 'Use better judgment text' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 1,
+    },
+    isAutoJudgmentEnabled: {
+        name: 'Show AUTO on judgment' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 1,
+    },
 })

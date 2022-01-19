@@ -63,6 +63,7 @@ import {
 } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
+import { onMiss, setAutoJudge, setJudgeVariable } from './common/judge'
 
 export function traceNote(isCritical: boolean): Script {
     const bucket = isCritical
@@ -87,7 +88,7 @@ export function traceNote(isCritical: boolean): Script {
 
     const shouldSpawn = GreaterOr(Time, noteSpawnTime)
 
-    const initialize = initializeNoteSimLine()
+    const initialize = [initializeNoteSimLine()]
 
     const touch = Or(
         options.isAutoplay,
@@ -119,7 +120,23 @@ export function traceNote(isCritical: boolean): Script {
         ]
     )
 
-    const terminate = And(options.isAutoplay, playVisualEffects())
+    const terminate = [
+        And(options.isAutoplay, [playVisualEffects(), setAutoJudge()]),
+    ]
+    const updateSequential = [
+        // DebugLog(window.good.late),
+        If(
+            Or(
+                GreaterOr(
+                    Subtract(Time, NoteData.time, InputOffset),
+                    window.good.late
+                ),
+                And(options.isAutoplay, GreaterOr(Time, NoteData.time))
+            ),
+            [onMiss],
+            []
+        ),
+    ]
 
     return {
         preprocess: {
@@ -136,6 +153,9 @@ export function traceNote(isCritical: boolean): Script {
         },
         touch: {
             code: touch,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         updateParallel: {
             code: updateParallel,
@@ -168,6 +188,7 @@ export function traceNote(isCritical: boolean): Script {
                 ],
                 [InputJudgment.set(1), InputAccuracy.set(0)]
             ),
+            setJudgeVariable(),
             playVisualEffects(),
             isCritical
                 ? playCriticalTraceJudgmentSFX()

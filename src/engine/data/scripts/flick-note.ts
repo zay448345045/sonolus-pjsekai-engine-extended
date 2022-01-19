@@ -6,6 +6,7 @@ import {
     Equal,
     Greater,
     GreaterOr,
+    If,
     InputAccuracy,
     InputBucket,
     InputBucketValue,
@@ -40,6 +41,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
+import { onMiss, setJudgeVariable } from './common/judge'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
@@ -137,6 +139,20 @@ export function flickNote(isCritical: boolean): Script {
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
+    const updateSequential = [
+        // DebugLog(window.good.late),
+        If(
+            Or(
+                GreaterOr(
+                    Subtract(Time, NoteData.time, InputOffset),
+                    window.good.late
+                ),
+                And(options.isAutoplay, GreaterOr(Time, NoteData.time))
+            ),
+            [onMiss],
+            []
+        ),
+    ]
     return {
         preprocess: {
             code: preprocess,
@@ -152,6 +168,9 @@ export function flickNote(isCritical: boolean): Script {
         },
         touch: {
             code: touch,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         updateParallel: {
             code: updateParallel,
@@ -187,6 +206,7 @@ export function flickNote(isCritical: boolean): Script {
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
+            setJudgeVariable(),
             isCritical
                 ? playCriticalFlickJudgmentSFX()
                 : playFlickJudgmentSFX(),

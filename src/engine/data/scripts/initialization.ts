@@ -6,6 +6,7 @@ import {
     GoodMultiplier,
     GreatMultiplier,
     HorizontalAlign,
+    If,
     Multiply,
     PerfectMultiplier,
     Script,
@@ -163,7 +164,11 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.0875),
                 0,
-                UIJudgmentConfiguration.alpha,
+                If(
+                    options.isBetterJudgmentEnabled,
+                    0,
+                    UIJudgmentConfiguration.alpha
+                ),
                 HorizontalAlign.Center,
                 false
             ),

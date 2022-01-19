@@ -41,6 +41,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
+import { onMiss, setJudgeVariable } from './common/judge'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
@@ -159,6 +160,20 @@ export function traceFlick(isCritical: boolean): Script {
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
+    const updateSequential = [
+        // DebugLog(window.good.late),
+        If(
+            Or(
+                GreaterOr(
+                    Subtract(Time, NoteData.time, InputOffset),
+                    window.good.late
+                ),
+                And(options.isAutoplay, GreaterOr(Time, NoteData.time))
+            ),
+            [onMiss],
+            []
+        ),
+    ]
     return {
         preprocess: {
             code: preprocess,
@@ -174,6 +189,9 @@ export function traceFlick(isCritical: boolean): Script {
         },
         touch: {
             code: touch,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         updateParallel: {
             code: updateParallel,
@@ -200,6 +218,7 @@ export function traceFlick(isCritical: boolean): Script {
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
+            setJudgeVariable(),
 
             playFlickJudgmentSFX(),
         ]
