@@ -13,7 +13,9 @@ import {
     GreaterOr,
     HasParticleEffect,
     If,
+    InputOffset,
     Lerp,
+    Less,
     Max,
     Min,
     MoveParticleEffect,
@@ -318,13 +320,20 @@ export function slideConnector(isCritical: boolean): Script {
                             Equal(
                                 ConnectorData.headSharedMemory.slideTime,
                                 Time
+                            ),
+                            Less(
+                                Subtract(
+                                    Time,
+                                    ConnectorData.headSharedMemory.startTime
+                                ),
+                                InputOffset
                             )
                         ),
                         If(
                             Equal(ConnectorData.headInfo.state, State.Spawned),
                             1,
                             Add(
-                                1,
+                                1.1,
                                 Multiply(
                                     udLoop(
                                         Multiply(
