@@ -333,7 +333,7 @@ export function slideConnector(isCritical: boolean): Script {
                             Equal(ConnectorData.headInfo.state, State.Spawned),
                             1,
                             Add(
-                                1.1,
+                                1,
                                 Multiply(
                                     udLoop(
                                         Multiply(
@@ -342,7 +342,7 @@ export function slideConnector(isCritical: boolean): Script {
                                                 ConnectorData.headSharedMemory
                                                     .startTime
                                             ),
-                                            2
+                                            5
                                         )
                                     ),
                                     0.25
