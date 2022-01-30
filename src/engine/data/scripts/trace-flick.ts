@@ -1,4 +1,5 @@
 import {
+    Add,
     And,
     bool,
     Divide,
@@ -151,9 +152,16 @@ export function traceFlick(isCritical: boolean): Script {
         Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
         [
             updateNoteY(),
+            arrowSprite.updateAnimation(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, noteZ),
+            tickSprite.draw(
+                noteScale,
+                noteBottom,
+                noteTop,
+                tickLayout,
+                Add(noteZ, 1)
+            ),
             arrowSprite.draw(noteScale, arrowLayout, arrowZ),
         ]
     )

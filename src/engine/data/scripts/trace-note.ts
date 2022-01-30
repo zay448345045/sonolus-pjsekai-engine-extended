@@ -1,4 +1,5 @@
 import {
+    Add,
     And,
     bool,
     EntityMemory,
@@ -116,7 +117,13 @@ export function traceNote(isCritical: boolean): Script {
             updateNoteY(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, noteZ),
+            tickSprite.draw(
+                noteScale,
+                noteBottom,
+                noteTop,
+                tickLayout,
+                Add(noteZ, 1)
+            ),
         ]
     )
 

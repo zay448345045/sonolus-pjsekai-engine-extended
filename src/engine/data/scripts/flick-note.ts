@@ -1,4 +1,5 @@
 import {
+    Add,
     And,
     bool,
     Divide,
@@ -12,6 +13,7 @@ import {
     InputBucketValue,
     InputJudgment,
     InputOffset,
+    Mod,
     Multiply,
     Not,
     NotEqual,
@@ -131,6 +133,7 @@ export function flickNote(isCritical: boolean): Script {
         Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
         [
             updateNoteY(),
+            arrowSprite.updateAnimation(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
             arrowSprite.draw(noteScale, arrowLayout, arrowZ),
