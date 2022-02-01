@@ -87,4 +87,5 @@ export class TickSprite {
 
 export const tickGreenSprite = new TickSprite(2)
 export const tickYellowSprite = new TickSprite(4)
+export const tickRedSprite = new TickSprite(1)
 export const tickGraySprite = new TickSprite(0)

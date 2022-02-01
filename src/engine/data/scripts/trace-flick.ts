@@ -63,6 +63,7 @@ import {
     calculateNoteLayout,
     getNoteLayout,
     noteTraceGraySprite,
+    noteTraceRedSprite,
     noteTraceYellowSprite,
 } from './common/note-sprite'
 import { playFlickJudgmentSFX } from './common/sfx'
@@ -70,6 +71,7 @@ import {
     calculateTickLayout,
     getTickLayout,
     tickGraySprite,
+    tickRedSprite,
     tickYellowSprite,
 } from './common/tick-sprite'
 import {
@@ -78,15 +80,28 @@ import {
     checkTouchYInHitbox,
 } from './common/touch'
 
-export function traceFlick(isCritical: boolean): Script {
+export function traceFlick(
+    isCritical: boolean,
+    isNonDirectonal: boolean
+): Script {
     const bucket = isCritical
         ? buckets.criticalTraceFlickIndex
+        : isNonDirectonal
+        ? buckets.traceNdFlickIndex
         : buckets.traceFlickIndex
     const window = isCritical
         ? windows.slideEndFlick.critical
         : windows.slideEndFlick.normal
-    const noteSprite = isCritical ? noteTraceYellowSprite : noteTraceGraySprite
-    const tickSprite = isCritical ? tickYellowSprite : tickGraySprite
+    const noteSprite = isCritical
+        ? noteTraceYellowSprite
+        : isNonDirectonal
+        ? noteTraceRedSprite
+        : noteTraceGraySprite
+    const tickSprite = isCritical
+        ? tickYellowSprite
+        : isNonDirectonal
+        ? tickRedSprite
+        : tickGraySprite
     const arrowSprite = isCritical ? arrowYellowSprite : arrowRedSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
@@ -152,7 +167,6 @@ export function traceFlick(isCritical: boolean): Script {
         Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
         [
             updateNoteY(),
-            arrowSprite.updateAnimation(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
             tickSprite.draw(
@@ -162,7 +176,12 @@ export function traceFlick(isCritical: boolean): Script {
                 tickLayout,
                 Add(noteZ, 1)
             ),
-            arrowSprite.draw(noteScale, arrowLayout, arrowZ),
+            isNonDirectonal
+                ? []
+                : [
+                      arrowSprite.draw(noteScale, arrowLayout, arrowZ),
+                      arrowSprite.updateAnimation(),
+                  ],
         ]
     )
 
@@ -217,11 +236,16 @@ export function traceFlick(isCritical: boolean): Script {
                 window.judge(Subtract(TouchT, InputOffset), NoteData.time)
             ),
             InputAccuracy.set(Subtract(TouchT, InputOffset, NoteData.time)),
-            Or(
-                NotEqual(InputJudgment, 1),
-                checkDirection(TouchDX, TouchDY, NoteData.direction),
-                [InputJudgment.set(2), InputAccuracy.set(window.perfect.late)]
-            ),
+            isNonDirectonal
+                ? []
+                : Or(
+                      NotEqual(InputJudgment, 1),
+                      checkDirection(TouchDX, TouchDY, NoteData.direction),
+                      [
+                          InputJudgment.set(2),
+                          InputAccuracy.set(window.perfect.late),
+                      ]
+                  ),
             InputBucket.set(bucket),
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
@@ -235,18 +259,25 @@ export function traceFlick(isCritical: boolean): Script {
     function playVisualEffects() {
         return [
             playNoteLaneEffect(),
-            playNoteEffect(
-                isCritical
-                    ? ParticleEffect.NoteCircularTapYellow
-                    : ParticleEffect.NoteCircularTapRed,
-                isCritical
-                    ? ParticleEffect.NoteLinearTapYellow
-                    : ParticleEffect.NoteLinearTapRed,
-                isCritical
-                    ? ParticleEffect.NoteLinearAlternativeYellow
-                    : ParticleEffect.NoteLinearAlternativeRed,
-                'flick'
-            ),
+            isNonDirectonal
+                ? playNoteEffect(
+                      ParticleEffect.NoteCircularTapRed,
+                      ParticleEffect.NoteLinearTapRed,
+                      0,
+                      'normal'
+                  )
+                : playNoteEffect(
+                      isCritical
+                          ? ParticleEffect.NoteCircularTapYellow
+                          : ParticleEffect.NoteCircularTapRed,
+                      isCritical
+                          ? ParticleEffect.NoteLinearTapYellow
+                          : ParticleEffect.NoteLinearTapRed,
+                      isCritical
+                          ? ParticleEffect.NoteLinearAlternativeYellow
+                          : ParticleEffect.NoteLinearAlternativeRed,
+                      'flick'
+                  ),
             playSlotEffect(isCritical ? 4 : 1),
         ]
     }

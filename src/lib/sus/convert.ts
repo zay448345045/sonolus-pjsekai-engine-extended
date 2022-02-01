@@ -48,6 +48,7 @@ export function fromSus(
         traceFlickIndex: number
         criticalTraceNoteIndex: number
         criticalTraceFlickIndex: number
+        traceNdFlickIndex: number
     }
 ): LevelData {
     const score = analyze(sus, ticksPerBeat)
@@ -436,7 +437,9 @@ export function fromSus(
                         ? archetypes.criticalTraceNoteIndex
                         : archetypes.criticalTraceFlickIndex
                     : flickMod === undefined
-                    ? archetypes.traceNoteIndex
+                    ? easeInMods.has(key)
+                        ? archetypes.traceNdFlickIndex
+                        : archetypes.traceNoteIndex
                     : archetypes.traceFlickIndex,
                 data: {
                     index: 0,

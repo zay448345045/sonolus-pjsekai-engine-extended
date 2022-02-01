@@ -90,6 +90,11 @@ export const archetypes = defineArchetypes({
         input: true,
     },
 
+    traceNdFlick: {
+        script: scripts.traceNdFlickIndex,
+        input: true,
+    },
+
     judgeRenderer: {
         script: scripts.judgeRendererIndex,
     },

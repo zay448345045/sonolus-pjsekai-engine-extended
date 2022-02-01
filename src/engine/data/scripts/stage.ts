@@ -111,7 +111,7 @@ export function stage(): Script {
             And(
                 options.isBetterPauseButtonEnabled,
                 Draw(
-                    100301,
+                    PauseButtonSprite,
                     ...rectByEdge(
                         // 1 - 4 / 750,
                         // 1 - 97 / 750,
