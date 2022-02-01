@@ -2,6 +2,7 @@ import {
     And,
     bool,
     Code,
+    DebugLog,
     Divide,
     Draw,
     EntityInfo,
@@ -35,6 +36,7 @@ import {
     lane,
     Layer,
     origin,
+    PauseButtonSprite,
     screen,
     sekaiStage,
     SekaiStageSprite,
@@ -62,7 +64,7 @@ export function stage(): Script {
         )
     )
 
-    const updateParallel = [drawStageCover(), drawStage()]
+    const updateParallel = [drawStageCover(), drawStage(), drawComponents()]
 
     const initialize = [
         And(
@@ -102,6 +104,29 @@ export function stage(): Script {
                 1
             )
         )
+    }
+
+    function drawComponents() {
+        return [
+            And(
+                options.isBetterPauseButtonEnabled,
+                Draw(
+                    100301,
+                    ...rectByEdge(
+                        // 1 - 4 / 750,
+                        // 1 - 97 / 750,
+                        // 1 - 4 / 750,
+                        // 1 - 97 / 750
+                        Subtract(screen.r, (97 / 750) * 2),
+                        Subtract(screen.r, (4 / 750) * 2),
+                        1 - (103 / 750) * 2,
+                        1 - 10 / 750
+                    ),
+                    Layer.Components,
+                    1
+                )
+            ),
+        ]
     }
 
     function drawStage() {

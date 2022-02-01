@@ -60,17 +60,33 @@ export function initialization(): Script {
 
     function setupUI() {
         return [
-            UIMenu.set(
-                Subtract(screen.r, 0.05),
-                0.95,
-                1,
-                1,
-                Multiply(0.15, UIMenuConfiguration.scale),
-                Multiply(0.15, UIMenuConfiguration.scale),
-                0,
-                UIMenuConfiguration.alpha,
-                HorizontalAlign.Center,
-                true
+            If(
+                options.isBetterPauseButtonEnabled,
+
+                UIMenu.set(
+                    Subtract(screen.r, 0.05),
+                    0.95,
+                    1,
+                    1,
+                    0.25,
+                    0.25,
+                    0,
+                    0,
+                    HorizontalAlign.Center,
+                    true
+                ),
+                UIMenu.set(
+                    Subtract(screen.r, 0.05),
+                    0.95,
+                    1,
+                    1,
+                    Multiply(0.15, UIMenuConfiguration.scale),
+                    Multiply(0.15, UIMenuConfiguration.scale),
+                    0,
+                    UIMenuConfiguration.alpha,
+                    HorizontalAlign.Center,
+                    true
+                )
             ),
 
             UIPrimaryMetricBar.set(

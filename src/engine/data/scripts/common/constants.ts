@@ -65,7 +65,8 @@ export const tickClip = customEffectClip(engineId, 4)
 export enum Layer {
     Cover = 1000,
     SlotGlowEffect = 200,
-    Judgement = 1100,
+    Judgement = 900,
+    Components = 950,
     NoteArrow = 102,
     NoteTick = 101,
     NoteBody = 100,
@@ -224,3 +225,7 @@ export const linearHoldEffect = {
 // Judgment Sprite
 
 export const JudgmentMissSprite = customSkinSprite(engineId, 2)
+
+// Components
+
+export const PauseButtonSprite = customSkinSprite(engineId + 1, 1)

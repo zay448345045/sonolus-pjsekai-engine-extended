@@ -122,4 +122,10 @@ export const options = defineOptions({
         type: 'toggle',
         def: 1,
     },
+    isBetterPauseButtonEnabled: {
+        name: 'Use better pause button' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 1,
+    },
 })
