@@ -126,6 +126,12 @@ export const options = defineOptions({
         name: 'Use better pause button' as OptionName,
         scope: 'Sekai',
         type: 'toggle',
-        def: 1,
+        def: 0,
+    },
+    hideAllComponents: {
+        name: 'Hide all components' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 0,
     },
 })

@@ -8,6 +8,7 @@ import {
     HorizontalAlign,
     If,
     Multiply,
+    Or,
     PerfectMultiplier,
     Script,
     Spawn,
@@ -61,7 +62,10 @@ export function initialization(): Script {
     function setupUI() {
         return [
             If(
-                options.isBetterPauseButtonEnabled,
+                Or(
+                    options.isBetterPauseButtonEnabled,
+                    options.hideAllComponents
+                ),
 
                 UIMenu.set(
                     Subtract(screen.r, 0.05),
@@ -97,7 +101,11 @@ export function initialization(): Script {
                 Multiply(0.75, UIPrimaryMetricConfiguration.scale),
                 Multiply(0.15, UIPrimaryMetricConfiguration.scale),
                 0,
-                UIPrimaryMetricConfiguration.alpha,
+                If(
+                    options.hideAllComponents,
+                    0,
+                    UIPrimaryMetricConfiguration.alpha
+                ),
                 HorizontalAlign.Left,
                 true
             ),
@@ -109,7 +117,11 @@ export function initialization(): Script {
                 Multiply(0.75, UIPrimaryMetricConfiguration.scale),
                 Multiply(0.15, UIPrimaryMetricConfiguration.scale),
                 0,
-                UIPrimaryMetricConfiguration.alpha,
+                If(
+                    options.hideAllComponents,
+                    0,
+                    UIPrimaryMetricConfiguration.alpha
+                ),
                 HorizontalAlign.Right,
                 false
             ),
@@ -126,7 +138,11 @@ export function initialization(): Script {
                 Multiply(0.55, UISecondaryMetricConfiguration.scale),
                 Multiply(0.15, UISecondaryMetricConfiguration.scale),
                 0,
-                UISecondaryMetricConfiguration.alpha,
+                If(
+                    options.hideAllComponents,
+                    0,
+                    UISecondaryMetricConfiguration.alpha
+                ),
                 HorizontalAlign.Left,
                 true
             ),
@@ -142,7 +158,11 @@ export function initialization(): Script {
                 Multiply(0.55, UISecondaryMetricConfiguration.scale),
                 Multiply(0.15, UISecondaryMetricConfiguration.scale),
                 0,
-                UISecondaryMetricConfiguration.alpha,
+                If(
+                    options.hideAllComponents,
+                    0,
+                    UISecondaryMetricConfiguration.alpha
+                ),
                 HorizontalAlign.Right,
                 false
             ),
@@ -155,7 +175,7 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.175, UIComboConfiguration.scale),
                 0,
-                UIComboConfiguration.alpha,
+                If(options.hideAllComponents, 0, UIComboConfiguration.alpha),
                 HorizontalAlign.Center,
                 false
             ),
@@ -167,7 +187,7 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.175, 0.35, UIComboConfiguration.scale),
                 0,
-                UIComboConfiguration.alpha,
+                If(options.hideAllComponents, 0, UIComboConfiguration.alpha),
                 HorizontalAlign.Center,
                 false
             ),
@@ -181,7 +201,10 @@ export function initialization(): Script {
                 Multiply(stage.h, 0.0875),
                 0,
                 If(
-                    options.isBetterJudgmentEnabled,
+                    Or(
+                        options.isBetterJudgmentEnabled,
+                        options.hideAllComponents
+                    ),
                     0,
                     UIJudgmentConfiguration.alpha
                 ),

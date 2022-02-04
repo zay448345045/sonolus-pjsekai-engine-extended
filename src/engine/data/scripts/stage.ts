@@ -69,6 +69,7 @@ export function stage(): Script {
     const initialize = [
         And(
             options.isBetterJudgmentEnabled,
+            Not(options.hideAllComponents),
             Spawn(scripts.judgeRendererIndex, [])
         ),
     ]
