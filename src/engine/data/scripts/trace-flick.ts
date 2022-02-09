@@ -62,15 +62,16 @@ import {
 import {
     calculateNoteLayout,
     getNoteLayout,
-    noteTraceGraySprite,
     noteTraceRedSprite,
     noteTraceYellowSprite,
 } from './common/note-sprite'
-import { playFlickJudgmentSFX } from './common/sfx'
+import {
+    playCriticalFlickJudgmentSFX,
+    playTraceFlickJudgmentSFX,
+} from './common/sfx'
 import {
     calculateTickLayout,
     getTickLayout,
-    tickGraySprite,
     tickRedSprite,
     tickYellowSprite,
 } from './common/tick-sprite'
@@ -92,16 +93,8 @@ export function traceFlick(
     const window = isCritical
         ? windows.slideEndFlick.critical
         : windows.slideEndFlick.normal
-    const noteSprite = isCritical
-        ? noteTraceYellowSprite
-        : isNonDirectonal
-        ? noteTraceRedSprite
-        : noteTraceGraySprite
-    const tickSprite = isCritical
-        ? tickYellowSprite
-        : isNonDirectonal
-        ? tickRedSprite
-        : tickGraySprite
+    const noteSprite = isCritical ? noteTraceYellowSprite : noteTraceRedSprite
+    const tickSprite = isCritical ? tickYellowSprite : tickRedSprite
     const arrowSprite = isCritical ? arrowYellowSprite : arrowRedSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
@@ -252,7 +245,9 @@ export function traceFlick(
             playVisualEffects(),
             setJudgeVariable(),
 
-            playFlickJudgmentSFX(),
+            isCritical
+                ? playCriticalFlickJudgmentSFX()
+                : playTraceFlickJudgmentSFX(),
         ]
     }
 

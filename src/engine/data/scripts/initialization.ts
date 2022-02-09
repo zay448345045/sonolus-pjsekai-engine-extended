@@ -268,6 +268,9 @@ export function initialization(): Script {
                 archetypes.slideHiddenTickIndex,
                 archetypes.traceNoteIndex,
                 archetypes.traceFlickIndex,
+                archetypes.criticalTraceNoteIndex,
+                archetypes.criticalTraceFlickIndex,
+                archetypes.traceNdFlickIndex,
             ].map((archetype) =>
                 ArchetypeLife.of(archetype).missLifeIncrement.set(-40)
             ),
