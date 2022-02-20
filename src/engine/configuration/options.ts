@@ -129,7 +129,7 @@ export const options = defineOptions({
         def: 0,
     },
     hideAllComponents: {
-        name: 'Hide all components' as OptionName,
+        name: 'Hide UI' as OptionName,
         scope: 'Sekai',
         type: 'toggle',
         def: 0,
