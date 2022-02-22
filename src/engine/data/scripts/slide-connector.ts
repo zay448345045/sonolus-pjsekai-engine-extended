@@ -1,9 +1,9 @@
+import { ParticleEffect, SkinSprite } from 'sonolus-core'
 import {
     Add,
     And,
     bool,
     Code,
-    Cos,
     createEntityData,
     DestroyParticleEffect,
     Draw,
@@ -13,9 +13,7 @@ import {
     GreaterOr,
     HasParticleEffect,
     If,
-    InputOffset,
     Lerp,
-    Less,
     Max,
     Min,
     MoveParticleEffect,
@@ -23,12 +21,9 @@ import {
     Not,
     NotEqual,
     Or,
-    ParticleEffect,
     Pointer,
     Power,
     Script,
-    Sin,
-    SkinSprite,
     SpawnParticleEffect,
     State,
     Subtract,
@@ -65,7 +60,7 @@ import {
 import { checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
 import { rectByEdge } from './common/utils'
 import { disallowEmpties } from './input'
-import { udLoop } from './common/utils'
+
 const leniency = 1
 
 class ConnectorDataPointer extends Pointer {
@@ -320,35 +315,9 @@ export function slideConnector(isCritical: boolean): Script {
                             Equal(
                                 ConnectorData.headSharedMemory.slideTime,
                                 Time
-                            ),
-                            Less(
-                                Subtract(
-                                    Time,
-                                    ConnectorData.headSharedMemory.startTime
-                                ),
-                                InputOffset
                             )
                         ),
-                        If(
-                            Equal(ConnectorData.headInfo.state, State.Spawned),
-                            1,
-                            Add(
-                                1,
-                                Multiply(
-                                    udLoop(
-                                        Multiply(
-                                            Subtract(
-                                                Time,
-                                                ConnectorData.headSharedMemory
-                                                    .startTime
-                                            ),
-                                            5
-                                        )
-                                    ),
-                                    0.25
-                                )
-                            )
-                        ),
+                        1,
                         0.5
                     )
                 )

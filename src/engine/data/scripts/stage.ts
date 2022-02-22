@@ -1,8 +1,8 @@
+import { SkinSprite } from 'sonolus-core'
 import {
     And,
     bool,
     Code,
-    DebugLog,
     Divide,
     Draw,
     EntityInfo,
@@ -20,8 +20,6 @@ import {
     Or,
     Remap,
     Script,
-    SkinSprite,
-    Spawn,
     State,
     Subtract,
     TouchDX,
@@ -29,14 +27,12 @@ import {
     TouchStarted,
     TouchX,
 } from 'sonolus.js'
-import { scripts } from '.'
 import { options } from '../../configuration/options'
 import {
     baseNote,
     lane,
     Layer,
     origin,
-    PauseButtonSprite,
     screen,
     sekaiStage,
     SekaiStageSprite,
@@ -64,20 +60,9 @@ export function stage(): Script {
         )
     )
 
-    const updateParallel = [drawStageCover(), drawStage(), drawComponents()]
-
-    const initialize = [
-        And(
-            options.isBetterJudgmentEnabled,
-            Not(options.hideAllComponents),
-            Spawn(scripts.judgeRendererIndex, [])
-        ),
-    ]
+    const updateParallel = [drawStageCover(), drawStage()]
 
     return {
-        initialize: {
-            code: initialize,
-        },
         spawnOrder: {
             code: spawnOrder,
         },
@@ -105,29 +90,6 @@ export function stage(): Script {
                 1
             )
         )
-    }
-
-    function drawComponents() {
-        return [
-            And(
-                options.isBetterPauseButtonEnabled,
-                Draw(
-                    PauseButtonSprite,
-                    ...rectByEdge(
-                        // 1 - 4 / 750,
-                        // 1 - 97 / 750,
-                        // 1 - 4 / 750,
-                        // 1 - 97 / 750
-                        Subtract(screen.r, (97 / 750) * 2),
-                        Subtract(screen.r, (4 / 750) * 2),
-                        1 - (103 / 750) * 2,
-                        1 - 10 / 750
-                    ),
-                    Layer.Components,
-                    1
-                )
-            ),
-        ]
     }
 
     function drawStage() {

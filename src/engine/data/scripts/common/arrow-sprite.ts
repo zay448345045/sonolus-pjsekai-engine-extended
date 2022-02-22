@@ -1,3 +1,4 @@
+import { SkinSprite } from 'sonolus-core'
 import {
     Abs,
     Add,
@@ -18,7 +19,6 @@ import {
     Multiply,
     Pointer,
     Round,
-    SkinSprite,
     Subtract,
     SwitchInteger,
     Time,
