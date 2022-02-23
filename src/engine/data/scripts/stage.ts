@@ -1,8 +1,10 @@
 import { SkinSprite } from 'sonolus-core'
 import {
+    Add,
     And,
     bool,
     Code,
+    DebugLog,
     Divide,
     Draw,
     EntityInfo,
@@ -20,6 +22,7 @@ import {
     Or,
     Remap,
     Script,
+    Spawn,
     State,
     Subtract,
     TouchDX,
@@ -27,6 +30,7 @@ import {
     TouchStarted,
     TouchX,
 } from 'sonolus.js'
+import { scripts } from '.'
 import { options } from '../../configuration/options'
 import {
     baseNote,
@@ -42,7 +46,8 @@ import { playEmptyLaneEffect } from './common/effect'
 import { playStageSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { rectByEdge } from './common/utils'
-import { disallowEmpties } from './input'
+import { disallowEmpties, rotateAngle } from './input'
+import { PauseButtonSprite } from './common/constants'
 
 export function stage(): Script {
     const spawnOrder = -999
@@ -60,9 +65,21 @@ export function stage(): Script {
         )
     )
 
-    const updateParallel = [drawStageCover(), drawStage()]
+    const updateParallel = [drawStageCover(), drawStage(), drawComponents()]
+    const updateSequential = [backRotate()]
+
+    const initialize = [
+        And(
+            options.isBetterJudgmentEnabled,
+            Not(options.hideAllComponents),
+            Spawn(scripts.judgeRendererIndex, [])
+        ),
+    ]
 
     return {
+        initialize: {
+            code: initialize,
+        },
         spawnOrder: {
             code: spawnOrder,
         },
@@ -72,6 +89,9 @@ export function stage(): Script {
         touch: {
             code: touch,
             order: 1,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         updateParallel: {
             code: updateParallel,
@@ -191,10 +211,44 @@ export function stage(): Script {
         )
     }
 
+    function drawComponents() {
+        return [
+            And(
+                options.isBetterPauseButtonEnabled,
+                Draw(
+                    PauseButtonSprite,
+                    ...rectByEdge(
+                        // 1 - 4 / 750,
+                        // 1 - 97 / 750,
+                        // 1 - 4 / 750,
+                        // 1 - 97 / 750
+                        Subtract(screen.r, (97 / 750) * 2),
+                        Subtract(screen.r, (4 / 750) * 2),
+                        1 - (103 / 750) * 2,
+                        1 - 10 / 750
+                    ),
+                    Layer.Components,
+                    1
+                )
+            ),
+        ]
+    }
+
+    function backRotate() {
+        return [
+            rotateAngle.set(Multiply(rotateAngle.get(), 0.9)),
+            DebugLog(rotateAngle.get()),
+        ]
+    }
+
     function onEmptyTap() {
         const index = EntityMemory.to<number>(32)
 
-        return [index.set(xToIndex(TouchX)), playEmpty(index)]
+        return [
+            rotateAngle.set(Add(rotateAngle.get(), TouchX)),
+            index.set(xToIndex(TouchX)),
+            playEmpty(index),
+        ]
     }
 
     function onEmptyMove() {
@@ -202,6 +256,7 @@ export function stage(): Script {
         const indexOld = EntityMemory.to<number>(33)
 
         return [
+            rotateAngle.set(Add(rotateAngle.get(), TouchX)),
             indexNew.set(xToIndex(TouchX)),
             indexOld.set(xToIndex(Subtract(TouchX, TouchDX))),
             And(NotEqual(indexNew, indexOld), playEmpty(indexNew)),

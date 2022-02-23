@@ -13,7 +13,9 @@ import {
     GreaterOr,
     HasParticleEffect,
     If,
+    InputOffset,
     Lerp,
+    Less,
     Max,
     Min,
     MoveParticleEffect,
@@ -58,7 +60,7 @@ import {
     noteYellowSprite,
 } from './common/note-sprite'
 import { checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
-import { rectByEdge } from './common/utils'
+import { rectByEdge, udLoop } from './common/utils'
 import { disallowEmpties } from './input'
 
 const leniency = 1
@@ -294,7 +296,6 @@ export function slideConnector(isCritical: boolean): Script {
 
             connectorBottom.set(Lerp(origin, lane.b, shYScale)),
             connectorTop.set(Lerp(origin, lane.b, stYScale)),
-
             Draw(
                 connectionSprite,
                 Multiply(Lerp(headL, tailL, shXScale), shYScale),
@@ -315,9 +316,35 @@ export function slideConnector(isCritical: boolean): Script {
                             Equal(
                                 ConnectorData.headSharedMemory.slideTime,
                                 Time
+                            ),
+                            Less(
+                                Subtract(
+                                    Time,
+                                    ConnectorData.headSharedMemory.startTime
+                                ),
+                                InputOffset
                             )
                         ),
-                        1,
+                        If(
+                            Equal(ConnectorData.headInfo.state, State.Spawned),
+                            1,
+                            Add(
+                                1,
+                                Multiply(
+                                    udLoop(
+                                        Multiply(
+                                            Subtract(
+                                                Time,
+                                                ConnectorData.headSharedMemory
+                                                    .startTime
+                                            ),
+                                            5
+                                        )
+                                    ),
+                                    0.25
+                                )
+                            )
+                        ),
                         0.5
                     )
                 )
