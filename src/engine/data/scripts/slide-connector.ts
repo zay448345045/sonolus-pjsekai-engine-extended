@@ -5,11 +5,13 @@ import {
     bool,
     Code,
     createEntityData,
+    DebugLog,
     DestroyParticleEffect,
     Draw,
     EntityInfo,
     EntityMemory,
     Equal,
+    Greater,
     GreaterOr,
     HasParticleEffect,
     If,
@@ -113,6 +115,7 @@ export function slideConnector(isCritical: boolean): Script {
     const connectionSprite = isCritical
         ? SkinSprite.NoteConnectionYellowSeamless
         : SkinSprite.NoteConnectionGreenSeamless
+    const connectionActiveSprite = isCritical ? 100314 : 100312
     const noteSprite = isCritical ? noteYellowSprite : noteGreenSprite
     const circularParticleEffect = isCritical
         ? ParticleEffect.NoteCircularHoldYellow
@@ -296,56 +299,115 @@ export function slideConnector(isCritical: boolean): Script {
 
             connectorBottom.set(Lerp(origin, lane.b, shYScale)),
             connectorTop.set(Lerp(origin, lane.b, stYScale)),
-            Draw(
-                connectionSprite,
-                Multiply(Lerp(headL, tailL, shXScale), shYScale),
-                connectorBottom,
-                Multiply(Lerp(headL, tailL, stXScale), stYScale),
-                connectorTop,
-                Multiply(Lerp(headR, tailR, stXScale), stYScale),
-                connectorTop,
-                Multiply(Lerp(headR, tailR, shXScale), shYScale),
-                connectorBottom,
-                Layer.NoteConnector,
-                Multiply(
-                    options.connectorAlpha,
-                    If(
-                        Or(
-                            options.isAutoplay,
-                            Equal(ConnectorData.headInfo.state, State.Spawned),
-                            Equal(
-                                ConnectorData.headSharedMemory.slideTime,
-                                Time
+            If(
+                And(
+                    Or(
+                        options.isAutoplay,
+                        Equal(ConnectorData.headInfo.state, State.Spawned),
+                        Equal(ConnectorData.headSharedMemory.slideTime, Time),
+                        Less(
+                            Subtract(
+                                Time,
+                                ConnectorData.headSharedMemory.startTime
                             ),
-                            Less(
+                            InputOffset
+                        )
+                    ),
+                    Not(Equal(ConnectorData.headInfo.state, State.Spawned))
+                ),
+                [
+                    DebugLog(
+                        Subtract(
+                            1,
+                            udLoop(
                                 Subtract(
                                     Time,
                                     ConnectorData.headSharedMemory.startTime
-                                ),
-                                InputOffset
-                            )
-                        ),
-                        If(
-                            Equal(ConnectorData.headInfo.state, State.Spawned),
-                            1,
-                            Add(
-                                1,
-                                Multiply(
-                                    udLoop(
-                                        Multiply(
-                                            Subtract(
-                                                Time,
-                                                ConnectorData.headSharedMemory
-                                                    .startTime
-                                            ),
-                                            5
-                                        )
-                                    ),
-                                    0.25
                                 )
                             )
-                        ),
-                        0.5
+                        )
+                    ),
+                    Draw(
+                        connectionSprite,
+                        Multiply(Lerp(headL, tailL, shXScale), shYScale),
+                        connectorBottom,
+                        Multiply(Lerp(headL, tailL, stXScale), stYScale),
+                        connectorTop,
+                        Multiply(Lerp(headR, tailR, stXScale), stYScale),
+                        connectorTop,
+                        Multiply(Lerp(headR, tailR, shXScale), shYScale),
+                        connectorBottom,
+                        Layer.NoteConnector,
+                        Multiply(
+                            options.connectorAlpha,
+                            udLoop(
+                                Subtract(
+                                    Time,
+                                    ConnectorData.headSharedMemory.startTime
+                                )
+                            )
+                        )
+                    ),
+                    Draw(
+                        connectionActiveSprite,
+                        Multiply(Lerp(headL, tailL, shXScale), shYScale),
+                        connectorBottom,
+                        Multiply(Lerp(headL, tailL, stXScale), stYScale),
+                        connectorTop,
+                        Multiply(Lerp(headR, tailR, stXScale), stYScale),
+                        connectorTop,
+                        Multiply(Lerp(headR, tailR, shXScale), shYScale),
+                        connectorBottom,
+                        Layer.NoteConnector,
+                        Multiply(
+                            options.connectorAlpha,
+                            Subtract(
+                                1,
+                                udLoop(
+                                    Subtract(
+                                        Time,
+                                        ConnectorData.headSharedMemory.startTime
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                ],
+                Draw(
+                    connectionSprite,
+                    Multiply(Lerp(headL, tailL, shXScale), shYScale),
+                    connectorBottom,
+                    Multiply(Lerp(headL, tailL, stXScale), stYScale),
+                    connectorTop,
+                    Multiply(Lerp(headR, tailR, stXScale), stYScale),
+                    connectorTop,
+                    Multiply(Lerp(headR, tailR, shXScale), shYScale),
+                    connectorBottom,
+                    Layer.NoteConnector,
+                    Multiply(
+                        options.connectorAlpha,
+                        If(
+                            Or(
+                                options.isAutoplay,
+                                Equal(
+                                    ConnectorData.headInfo.state,
+                                    State.Spawned
+                                ),
+                                Equal(
+                                    ConnectorData.headSharedMemory.slideTime,
+                                    Time
+                                ),
+                                Less(
+                                    Subtract(
+                                        Time,
+                                        ConnectorData.headSharedMemory.startTime
+                                    ),
+                                    InputOffset
+                                )
+                            ),
+                            1,
+                            0.5
+                        )
                     )
                 )
             ),
