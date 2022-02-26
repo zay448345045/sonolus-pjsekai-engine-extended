@@ -12,7 +12,6 @@ import {
     EntityInfo,
     EntityMemory,
     Equal,
-    Greater,
     GreaterOr,
     HasParticleEffect,
     If,

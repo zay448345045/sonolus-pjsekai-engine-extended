@@ -14,7 +14,6 @@ import {
     InputBucketValue,
     InputJudgment,
     InputOffset,
-    Mod,
     Multiply,
     Not,
     NotEqual,
@@ -71,7 +70,12 @@ import {
     playFlickJudgmentSFX,
 } from './common/sfx'
 import { checkDirection, checkTouchYInHitbox } from './common/touch'
-import { disallowEmpties, disallowEnds, disallowStart, rotateAngle } from './input'
+import {
+    disallowEmpties,
+    disallowEnds,
+    disallowStart,
+    rotateAngle,
+} from './input'
 
 const leniency = 1
 
