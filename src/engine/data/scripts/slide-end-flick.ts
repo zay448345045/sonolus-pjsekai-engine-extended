@@ -139,7 +139,12 @@ export function slideEndFlick(isCritical: boolean): Script {
                     )
                 )
             ),
-            onComplete()
+            [
+                onComplete(),
+                rotateAngle.set(
+                    Add(rotateAngle.get(), Multiply(NoteData.center, -2))
+                ),
+            ]
         )
     )
 

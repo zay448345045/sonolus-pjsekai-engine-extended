@@ -231,15 +231,18 @@ export function slideConnector(isCritical: boolean): Script {
                 Lerp(headHitboxR, tailHitboxR, noteScale)
             ),
         ]),
-        rotateAngle.set(
-            Add(
-                rotateAngle.get(),
-                Divide(
-                    Add(
-                        Lerp(headHitboxL, tailHitboxL, noteScale),
-                        Lerp(headHitboxR, tailHitboxR, noteScale)
-                    ),
-                    2
+        And(
+            options.isAutoplay,
+            rotateAngle.set(
+                Add(
+                    rotateAngle.get(),
+                    Divide(
+                        Add(
+                            Lerp(headHitboxL, tailHitboxL, noteScale),
+                            Lerp(headHitboxR, tailHitboxR, noteScale)
+                        ),
+                        2
+                    )
                 )
             )
         ),

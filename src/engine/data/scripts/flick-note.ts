@@ -127,7 +127,12 @@ export function flickNote(isCritical: boolean): Script {
             GreaterOr(TouchVR, minFlickVR),
             checkTouchYInHitbox(Subtract(TouchY, TouchDY)),
             checkTouchXInNoteHitbox(Subtract(TouchX, TouchDX)),
-            onComplete()
+            [
+                onComplete(),
+                rotateAngle.set(
+                    Add(rotateAngle.get(), Multiply(NoteData.center, -2))
+                ),
+            ]
         ),
     ])
 
