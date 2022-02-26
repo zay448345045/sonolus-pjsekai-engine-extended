@@ -1,5 +1,6 @@
 import { ParticleEffect } from 'sonolus-core'
 import {
+    Add,
     And,
     bool,
     EntityMemory,
@@ -51,10 +52,15 @@ import {
     noteCyanSprite,
     noteYellowSprite,
 } from './common/note-sprite'
-import { setAutoJudge, setJudgeVariable, onMiss } from './common/judge'
+import { setJudgeVariable, onMiss } from './common/judge'
 import { playCriticalTapJudgmentSFX, playTapJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
-import { disallowEmpties, disallowEnds, disallowStart } from './input'
+import {
+    disallowEmpties,
+    disallowEnds,
+    disallowStart,
+    rotateAngle,
+} from './input'
 
 const leniency = 0.75
 
@@ -106,7 +112,7 @@ export function tapNote(isCritical: boolean): Script {
 
     const terminate = [
         // DebugLog(Time),
-        And(options.isAutoplay, [playVisualEffects(), setAutoJudge()]),
+        And(options.isAutoplay, [playVisualEffects()]),
         // setJudgeVariable(),
     ]
 
@@ -120,7 +126,15 @@ export function tapNote(isCritical: boolean): Script {
                 ),
                 And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
-            [onMiss],
+            [
+                onMiss,
+                And(
+                    options.isAutoplay,
+                    rotateAngle.set(
+                        Add(rotateAngle.get(), Multiply(NoteData.center, 0.2))
+                    )
+                ),
+            ],
             []
         ),
     ]
@@ -158,6 +172,9 @@ export function tapNote(isCritical: boolean): Script {
             disallowEmpties.add(TouchId),
             disallowEnds.add(TouchId),
             noteInputState.set(InputState.Terminated),
+            rotateAngle.set(
+                Add(rotateAngle.get(), Multiply(NoteData.center, 0.5))
+            ),
 
             InputJudgment.set(
                 window.judge(Subtract(TouchST, InputOffset), NoteData.time)

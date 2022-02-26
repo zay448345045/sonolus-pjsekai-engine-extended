@@ -7,6 +7,7 @@ import {
     createEntityData,
     DebugLog,
     DestroyParticleEffect,
+    Divide,
     Draw,
     EntityInfo,
     EntityMemory,
@@ -34,6 +35,7 @@ import {
     SwitchInteger,
     Time,
     TouchId,
+    TouchX,
     Unlerp,
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
@@ -63,7 +65,7 @@ import {
 } from './common/note-sprite'
 import { checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
 import { rectByEdge, udLoop } from './common/utils'
-import { disallowEmpties } from './input'
+import { disallowEmpties, rotateAngle } from './input'
 
 const leniency = 1
 
@@ -216,10 +218,8 @@ export function slideConnector(isCritical: boolean): Script {
 
     const noteScale = EntityMemory.to<number>(32)
 
-    const updateSequential = And(
-        Not(options.isAutoplay),
-        GreaterOr(Time, ConnectorData.headTime),
-        [
+    const updateSequential = And(GreaterOr(Time, ConnectorData.headTime), [
+        And(Not(options.isAutoplay), [
             noteScale.set(
                 ease(
                     Unlerp(ConnectorData.headTime, ConnectorData.tailTime, Time)
@@ -231,8 +231,20 @@ export function slideConnector(isCritical: boolean): Script {
             ConnectorData.headSharedMemory.slideHitboxR.set(
                 Lerp(headHitboxR, tailHitboxR, noteScale)
             ),
-        ]
-    )
+        ]),
+        rotateAngle.set(
+            Add(
+                rotateAngle.get(),
+                Divide(
+                    Add(
+                        Lerp(headHitboxL, tailHitboxL, noteScale),
+                        Lerp(headHitboxR, tailHitboxR, noteScale)
+                    ),
+                    2
+                )
+            )
+        ),
+    ])
 
     const touch = Or(
         options.isAutoplay,
@@ -246,6 +258,7 @@ export function slideConnector(isCritical: boolean): Script {
             ),
             [
                 disallowEmpties.add(TouchId),
+                rotateAngle.set(Add(rotateAngle.get(), TouchX)),
                 ConnectorData.headSharedMemory.slideTime.set(Time),
             ]
         )

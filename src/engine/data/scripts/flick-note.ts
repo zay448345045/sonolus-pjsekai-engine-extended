@@ -71,7 +71,7 @@ import {
     playFlickJudgmentSFX,
 } from './common/sfx'
 import { checkDirection, checkTouchYInHitbox } from './common/touch'
-import { disallowEmpties, disallowEnds, disallowStart } from './input'
+import { disallowEmpties, disallowEnds, disallowStart, rotateAngle } from './input'
 
 const leniency = 1
 
@@ -152,7 +152,15 @@ export function flickNote(isCritical: boolean): Script {
                 ),
                 And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
-            [onMiss],
+            [
+                onMiss,
+                And(
+                    options.isAutoplay,
+                    rotateAngle.set(
+                        Add(rotateAngle.get(), Multiply(NoteData.center, -2))
+                    )
+                ),
+            ],
             []
         ),
     ]

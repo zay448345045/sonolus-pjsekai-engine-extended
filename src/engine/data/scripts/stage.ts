@@ -4,24 +4,28 @@ import {
     And,
     bool,
     Code,
-    DebugLog,
+    Cos,
     Divide,
     Draw,
     EntityInfo,
     EntityMemory,
     Equal,
     Floor,
+    Greater,
     GreaterOr,
     HasSkinSprite,
     If,
     Lerp,
     LessOr,
+    LevelTransform,
     Multiply,
     Not,
     NotEqual,
     Or,
+    Radian,
     Remap,
     Script,
+    Sin,
     Spawn,
     State,
     Subtract,
@@ -54,19 +58,28 @@ export function stage(): Script {
 
     const shouldSpawn = Equal(EntityInfo.of(0).state, State.Despawned)
 
-    const touch = Or(
-        options.isAutoplay,
-        And(
-            Not(disallowEmpties.contains(TouchId)),
-            checkTouchYInHitbox(),
-            GreaterOr(TouchX, Multiply(lane.w, -6)),
-            LessOr(TouchX, Multiply(lane.w, 6)),
-            If(TouchStarted, onEmptyTap(), onEmptyMove())
-        )
-    )
+    const touch = [
+        Or(
+            options.isAutoplay,
+            And(
+                Not(disallowEmpties.contains(TouchId)),
+                checkTouchYInHitbox(),
+                GreaterOr(TouchX, Multiply(lane.w, -6)),
+                LessOr(TouchX, Multiply(lane.w, 6)),
+                [
+                    If(TouchStarted, onEmptyTap(), onEmptyMove()),
+                    rotateAngle.set(
+                        Add(rotateAngle.get(), Multiply(TouchX, 0.1))
+                    ),
+                ]
+            )
+        ),
+    ]
 
     const updateParallel = [drawStageCover(), drawStage(), drawComponents()]
-    const updateSequential = [backRotate()]
+    const updateSequential = [
+        And(Greater(options.stageTilt, 0), [backRotate(), updateRotate()]),
+    ]
 
     const initialize = [
         And(
@@ -233,22 +246,34 @@ export function stage(): Script {
             ),
         ]
     }
-
     function backRotate() {
+        return [rotateAngle.set(Multiply(rotateAngle.get(), 0.9))]
+    }
+
+    function updateRotate() {
         return [
-            rotateAngle.set(Multiply(rotateAngle.get(), 0.9)),
-            DebugLog(rotateAngle.get()),
+            LevelTransform.to(0).set(
+                Cos(Multiply(Radian(rotateAngle.get()), options.stageTilt))
+            ),
+            LevelTransform.to(1).set(
+                Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt))
+            ),
+            LevelTransform.to(4).set(
+                Multiply(
+                    Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt)),
+                    -1
+                )
+            ),
+            LevelTransform.to(5).set(
+                Cos(Multiply(Radian(rotateAngle.get()), options.stageTilt))
+            ),
         ]
     }
 
     function onEmptyTap() {
         const index = EntityMemory.to<number>(32)
 
-        return [
-            rotateAngle.set(Add(rotateAngle.get(), TouchX)),
-            index.set(xToIndex(TouchX)),
-            playEmpty(index),
-        ]
+        return [index.set(xToIndex(TouchX)), playEmpty(index)]
     }
 
     function onEmptyMove() {
@@ -256,7 +281,6 @@ export function stage(): Script {
         const indexOld = EntityMemory.to<number>(33)
 
         return [
-            rotateAngle.set(Add(rotateAngle.get(), TouchX)),
             indexNew.set(xToIndex(TouchX)),
             indexOld.set(xToIndex(Subtract(TouchX, TouchDX))),
             And(NotEqual(indexNew, indexOld), playEmpty(indexNew)),

@@ -134,4 +134,14 @@ export const options = defineOptions({
         type: 'toggle',
         def: 0,
     },
+    stageTilt: {
+        name: OptionName.StageTilt,
+        scope: 'Sekai',
+        type: 'slider',
+        def: 0,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        display: 'percentage',
+    },
 })

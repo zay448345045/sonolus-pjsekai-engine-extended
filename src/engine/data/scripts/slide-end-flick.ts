@@ -1,5 +1,6 @@
 import { ParticleEffect } from 'sonolus-core'
 import {
+    Add,
     And,
     bool,
     Divide,
@@ -41,7 +42,7 @@ import {
     playNoteLaneEffect,
     playSlotEffect,
 } from './common/effect'
-import { setJudgeVariable } from './common/judge'
+import { onMiss, setJudgeVariable } from './common/judge'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
@@ -73,6 +74,7 @@ import {
     checkTouchXInHitbox,
     checkTouchYInHitbox,
 } from './common/touch'
+import { rotateAngle } from './input'
 
 const leniency = 1
 
@@ -155,6 +157,28 @@ export function slideEndFlick(isCritical: boolean): Script {
     )
 
     const terminate = And(options.isAutoplay, playVisualEffects())
+    const updateSequential = [
+        // DebugLog(window.good.late),
+        If(
+            Or(
+                GreaterOr(
+                    Subtract(Time, NoteData.time, InputOffset),
+                    window.good.late
+                ),
+                And(options.isAutoplay, GreaterOr(Time, NoteData.time))
+            ),
+            [
+                onMiss,
+                And(
+                    options.isAutoplay,
+                    rotateAngle.set(
+                        Add(rotateAngle.get(), Multiply(NoteData.center, -2))
+                    )
+                ),
+            ],
+            []
+        ),
+    ]
 
     return {
         preprocess: {
@@ -174,6 +198,9 @@ export function slideEndFlick(isCritical: boolean): Script {
         },
         updateParallel: {
             code: updateParallel,
+        },
+        updateSequential: {
+            code: updateSequential,
         },
         terminate: {
             code: terminate,
