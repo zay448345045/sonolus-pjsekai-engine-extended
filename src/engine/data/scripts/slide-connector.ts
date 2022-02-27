@@ -356,9 +356,12 @@ export function slideConnector(isCritical: boolean): Script {
                         Multiply(
                             options.connectorAlpha,
                             udLoop(
-                                Subtract(
-                                    Time,
-                                    ConnectorData.headSharedMemory.startTime
+                                Multiply(
+                                    2,
+                                    Subtract(
+                                        Time,
+                                        ConnectorData.headSharedMemory.startTime
+                                    )
                                 )
                             )
                         )
@@ -377,11 +380,15 @@ export function slideConnector(isCritical: boolean): Script {
                         Multiply(
                             options.connectorAlpha,
                             Subtract(
-                                1,
+                                1.5,
                                 udLoop(
-                                    Subtract(
-                                        Time,
-                                        ConnectorData.headSharedMemory.startTime
+                                    Multiply(
+                                        2,
+                                        Subtract(
+                                            Time,
+                                            ConnectorData.headSharedMemory
+                                                .startTime
+                                        )
                                     )
                                 )
                             )
