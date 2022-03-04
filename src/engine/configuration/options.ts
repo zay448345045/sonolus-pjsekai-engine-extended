@@ -150,7 +150,7 @@ export const options = defineOptions({
         type: 'slider',
         def: 1,
         min: 0.1,
-        max: 20,
+        max: 100,
         step: 0.1,
         display: 'number',
     },
