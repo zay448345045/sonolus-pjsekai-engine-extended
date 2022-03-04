@@ -171,7 +171,14 @@ export const baseNote = {
 export const noteOnScreenDuration = Lerp(
     0.35,
     4,
-    Power(UnlerpClamped(12, 1, options.noteSpeed), 1.31)
+    Power(
+        UnlerpClamped(
+            12,
+            1,
+            Multiply(options.noteSpeed, options.additionalNoteSpeed)
+        ),
+        1.31
+    )
 )
 
 // Tap Effect

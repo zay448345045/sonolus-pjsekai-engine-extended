@@ -144,4 +144,14 @@ export const options = defineOptions({
         step: 0.01,
         display: 'percentage',
     },
+    additionalNoteSpeed: {
+        name: 'Additional Note Speed' as OptionName,
+        scope: 'Sekai',
+        type: 'slider',
+        def: 1,
+        min: 0.1,
+        max: 20,
+        step: 0.1,
+        display: 'number',
+    },
 })
