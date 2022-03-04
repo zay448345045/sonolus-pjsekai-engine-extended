@@ -137,7 +137,7 @@ export function getZ(layer: number, time: Code<number>, center: Code<number>) {
 }
 
 export function applyLevelSpeed(...times: Pointer<number>[]) {
-    return times.map((time) => time.set(Divide(time, options.speed)))
+    return times.map((time) => time.set(Divide(time, Multiply(options.speed, options.additionalNoteSpeed)))
 }
 export function applyMirrorCenters(...centers: Pointer<number>[]) {
     return And(
