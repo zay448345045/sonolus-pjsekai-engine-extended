@@ -280,6 +280,7 @@ export function slideConnector(isCritical: boolean): Script {
     const connectorTop = EntityMemory.to<number>(42)
 
     const center = EntityMemory.to<number>(43)
+    const z = isCritical ? Layer.NoteConnectorCritical : Layer.NoteConnector
 
     const updateParallel = Or(GreaterOr(Time, ConnectorData.tailTime), [
         vhTime.set(Max(ConnectorData.headTime, Time)),
@@ -352,7 +353,7 @@ export function slideConnector(isCritical: boolean): Script {
                         connectorTop,
                         Multiply(Lerp(headR, tailR, shXScale), shYScale),
                         connectorBottom,
-                        Layer.NoteConnector,
+                        z,
                         Multiply(
                             options.connectorAlpha,
                             udLoop(
@@ -376,7 +377,7 @@ export function slideConnector(isCritical: boolean): Script {
                         connectorTop,
                         Multiply(Lerp(headR, tailR, shXScale), shYScale),
                         connectorBottom,
-                        Layer.NoteConnector,
+                        z,
                         Multiply(
                             options.connectorAlpha,
                             Subtract(
@@ -405,7 +406,7 @@ export function slideConnector(isCritical: boolean): Script {
                     connectorTop,
                     Multiply(Lerp(headR, tailR, shXScale), shYScale),
                     connectorBottom,
-                    Layer.NoteConnector,
+                    z,
                     Multiply(
                         options.connectorAlpha,
                         If(
