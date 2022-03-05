@@ -168,17 +168,9 @@ export const baseNote = {
     bw: Remap(origin, lane.b, 0, lane.w, baseNoteBottom),
 }
 
-export const noteOnScreenDuration = Lerp(
-    0.35,
-    4,
-    Power(
-        UnlerpClamped(
-            12,
-            1,
-            Multiply(options.noteSpeed, options.additionalNoteSpeed)
-        ),
-        1.31
-    )
+export const noteOnScreenDuration = Divide(
+    Lerp(0.35, 4, Power(UnlerpClamped(12, 1, options.noteSpeed), 1.31)),
+    options.additionalNoteSpeed
 )
 
 // Tap Effect
