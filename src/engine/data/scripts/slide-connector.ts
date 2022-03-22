@@ -354,18 +354,7 @@ export function slideConnector(isCritical: boolean): Script {
                         Multiply(Lerp(headR, tailR, shXScale), shYScale),
                         connectorBottom,
                         z,
-                        Multiply(
-                            options.connectorAlpha,
-                            udLoop(
-                                Multiply(
-                                    2,
-                                    Subtract(
-                                        Time,
-                                        ConnectorData.headSharedMemory.startTime
-                                    )
-                                )
-                            )
-                        )
+                        options.connectorAlpha
                     ),
                     Draw(
                         connectionActiveSprite,
@@ -377,11 +366,11 @@ export function slideConnector(isCritical: boolean): Script {
                         connectorTop,
                         Multiply(Lerp(headR, tailR, shXScale), shYScale),
                         connectorBottom,
-                        z,
+                        Add(z, 2),
                         Multiply(
                             options.connectorAlpha,
                             Subtract(
-                                1.5,
+                                1,
                                 udLoop(
                                     Multiply(
                                         2,
