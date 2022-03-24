@@ -126,101 +126,140 @@ export function stage(): Script {
     }
 
     function drawStage() {
-        return If(
-            HasSkinSprite(SekaiStageSprite),
-            Draw(
-                SekaiStageSprite,
-                ...rectByEdge(
-                    sekaiStage.l,
-                    sekaiStage.r,
-                    sekaiStage.b,
-                    sekaiStage.t
-                ),
-                Layer.Stage,
-                1
-            ),
-            [
+        return Or(
+            options.hideLane,
+            If(
+                HasSkinSprite(SekaiStageSprite),
                 Draw(
-                    SkinSprite.JudgmentLine,
-                    Multiply(baseNote.bw, -6),
-                    baseNote.b,
-                    Multiply(baseNote.tw, -6),
-                    baseNote.t,
-                    Multiply(baseNote.tw, 6),
-                    baseNote.t,
-                    Multiply(baseNote.bw, 6),
-                    baseNote.b,
-                    Layer.JudgmentLine,
-                    1
-                ),
-                [...Array(6).keys()]
-                    .map((i) => [(i - 3) * 2, (i - 2) * 2])
-                    .map(([l, r]) =>
-                        Draw(
-                            SkinSprite.Lane,
-                            Remap(
-                                origin,
-                                lane.b,
-                                0,
-                                Multiply(l, lane.w),
-                                screen.b
-                            ),
-                            screen.b,
-                            Remap(
-                                origin,
-                                lane.b,
-                                0,
-                                Multiply(l, lane.w),
-                                stageC.t
-                            ),
-                            stageC.t,
-                            Remap(
-                                origin,
-                                lane.b,
-                                0,
-                                Multiply(r, lane.w),
-                                stageC.t
-                            ),
-                            stageC.t,
-                            Remap(
-                                origin,
-                                lane.b,
-                                0,
-                                Multiply(r, lane.w),
-                                screen.b
-                            ),
-                            screen.b,
-                            Layer.Stage,
-                            1
-                        )
+                    SekaiStageSprite,
+                    ...rectByEdge(
+                        sekaiStage.l,
+                        sekaiStage.r,
+                        sekaiStage.b,
+                        sekaiStage.t
                     ),
-                Draw(
-                    SkinSprite.StageLeftBorder,
-                    Remap(origin, lane.b, 0, Multiply(-6.5, lane.w), screen.b),
-                    screen.b,
-                    Remap(origin, lane.b, 0, Multiply(-6.5, lane.w), stageC.t),
-                    stageC.t,
-                    Remap(origin, lane.b, 0, Multiply(-6, lane.w), stageC.t),
-                    stageC.t,
-                    Remap(origin, lane.b, 0, Multiply(-6, lane.w), screen.b),
-                    screen.b,
                     Layer.Stage,
                     1
                 ),
-                Draw(
-                    SkinSprite.StageRightBorder,
-                    Remap(origin, lane.b, 0, Multiply(6, lane.w), screen.b),
-                    screen.b,
-                    Remap(origin, lane.b, 0, Multiply(6, lane.w), stageC.t),
-                    stageC.t,
-                    Remap(origin, lane.b, 0, Multiply(6.5, lane.w), stageC.t),
-                    stageC.t,
-                    Remap(origin, lane.b, 0, Multiply(6.5, lane.w), screen.b),
-                    screen.b,
-                    Layer.Stage,
-                    1
-                ),
-            ]
+                [
+                    Draw(
+                        SkinSprite.JudgmentLine,
+                        Multiply(baseNote.bw, -6),
+                        baseNote.b,
+                        Multiply(baseNote.tw, -6),
+                        baseNote.t,
+                        Multiply(baseNote.tw, 6),
+                        baseNote.t,
+                        Multiply(baseNote.bw, 6),
+                        baseNote.b,
+                        Layer.JudgmentLine,
+                        1
+                    ),
+                    [...Array(6).keys()]
+                        .map((i) => [(i - 3) * 2, (i - 2) * 2])
+                        .map(([l, r]) =>
+                            Draw(
+                                SkinSprite.Lane,
+                                Remap(
+                                    origin,
+                                    lane.b,
+                                    0,
+                                    Multiply(l, lane.w),
+                                    screen.b
+                                ),
+                                screen.b,
+                                Remap(
+                                    origin,
+                                    lane.b,
+                                    0,
+                                    Multiply(l, lane.w),
+                                    stageC.t
+                                ),
+                                stageC.t,
+                                Remap(
+                                    origin,
+                                    lane.b,
+                                    0,
+                                    Multiply(r, lane.w),
+                                    stageC.t
+                                ),
+                                stageC.t,
+                                Remap(
+                                    origin,
+                                    lane.b,
+                                    0,
+                                    Multiply(r, lane.w),
+                                    screen.b
+                                ),
+                                screen.b,
+                                Layer.Stage,
+                                1
+                            )
+                        ),
+                    Draw(
+                        SkinSprite.StageLeftBorder,
+                        Remap(
+                            origin,
+                            lane.b,
+                            0,
+                            Multiply(-6.5, lane.w),
+                            screen.b
+                        ),
+                        screen.b,
+                        Remap(
+                            origin,
+                            lane.b,
+                            0,
+                            Multiply(-6.5, lane.w),
+                            stageC.t
+                        ),
+                        stageC.t,
+                        Remap(
+                            origin,
+                            lane.b,
+                            0,
+                            Multiply(-6, lane.w),
+                            stageC.t
+                        ),
+                        stageC.t,
+                        Remap(
+                            origin,
+                            lane.b,
+                            0,
+                            Multiply(-6, lane.w),
+                            screen.b
+                        ),
+                        screen.b,
+                        Layer.Stage,
+                        1
+                    ),
+                    Draw(
+                        SkinSprite.StageRightBorder,
+                        Remap(origin, lane.b, 0, Multiply(6, lane.w), screen.b),
+                        screen.b,
+                        Remap(origin, lane.b, 0, Multiply(6, lane.w), stageC.t),
+                        stageC.t,
+                        Remap(
+                            origin,
+                            lane.b,
+                            0,
+                            Multiply(6.5, lane.w),
+                            stageC.t
+                        ),
+                        stageC.t,
+                        Remap(
+                            origin,
+                            lane.b,
+                            0,
+                            Multiply(6.5, lane.w),
+                            screen.b
+                        ),
+                        screen.b,
+                        Layer.Stage,
+                        1
+                    ),
+                ]
+            )
         )
     }
 

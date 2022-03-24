@@ -134,6 +134,12 @@ export const options = defineOptions({
         type: 'toggle',
         def: 0,
     },
+    hideLane: {
+        name: 'Hide lane' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 0,
+    },
     stageTilt: {
         name: OptionName.StageTilt,
         scope: 'Sekai',
