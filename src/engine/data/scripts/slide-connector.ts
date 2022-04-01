@@ -5,7 +5,6 @@ import {
     bool,
     Code,
     createEntityData,
-    DebugLog,
     DestroyParticleEffect,
     Divide,
     Draw,
@@ -332,17 +331,6 @@ export function slideConnector(isCritical: boolean): Script {
                     Not(Equal(ConnectorData.headInfo.state, State.Spawned))
                 ),
                 [
-                    DebugLog(
-                        Subtract(
-                            1,
-                            udLoop(
-                                Subtract(
-                                    Time,
-                                    ConnectorData.headSharedMemory.startTime
-                                )
-                            )
-                        )
-                    ),
                     Draw(
                         connectionSprite,
                         Multiply(Lerp(headL, tailL, shXScale), shYScale),
@@ -373,7 +361,7 @@ export function slideConnector(isCritical: boolean): Script {
                                 1,
                                 udLoop(
                                     Multiply(
-                                        2,
+                                        4,
                                         Subtract(
                                             Time,
                                             ConnectorData.headSharedMemory
