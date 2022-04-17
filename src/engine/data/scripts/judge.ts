@@ -5,7 +5,6 @@ import {
     customSkinSprite,
     Divide,
     Draw,
-    EntityMemory,
     Greater,
     If,
     Less,

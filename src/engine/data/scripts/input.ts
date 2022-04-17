@@ -58,17 +58,9 @@ export function input(): Script {
     ])
 
     return {
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        touch: {
-            code: touch,
-        },
+        spawnOrder,
+        shouldSpawn,
+        updateSequential,
+        touch,
     }
 }
