@@ -90,25 +90,15 @@ export function stage(): Script {
     ]
 
     return {
-        initialize: {
-            code: initialize,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
+        initialize,
+        spawnOrder,
+        shouldSpawn,
         touch: {
             code: touch,
             order: 1,
         },
-        updateSequential: {
-            code: updateSequential,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
+        updateParallel,
+        updateSequential,
     }
 
     function drawStageCover() {

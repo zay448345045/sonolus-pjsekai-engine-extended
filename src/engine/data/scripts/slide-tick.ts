@@ -93,27 +93,13 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
         ),
     ]
     return {
-        preprocess: {
-            code: preprocess,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        touch: {
-            code: touch,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
-        terminate: {
-            code: terminate,
-        },
+        preprocess,
+        spawnOrder,
+        shouldSpawn,
+        touch,
+        updateParallel,
+        updateSequential,
+        terminate,
     }
 
     function onComplete() {

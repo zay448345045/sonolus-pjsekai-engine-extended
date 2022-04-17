@@ -126,30 +126,14 @@ export function slideStart(isCritical: boolean): Script {
         ),
     ]
     return {
-        preprocess: {
-            code: preprocess,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        initialize: {
-            code: initialize,
-        },
-        touch: {
-            code: touch,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
-        terminate: {
-            code: terminate,
-        },
+        preprocess,
+        spawnOrder,
+        shouldSpawn,
+        initialize,
+        touch,
+        updateParallel,
+        updateSequential,
+        terminate,
     }
 
     function onComplete() {
