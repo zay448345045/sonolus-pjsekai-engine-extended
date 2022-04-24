@@ -2,7 +2,6 @@ import { And, Code, LevelMemory, Or, Script, TouchId } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { List } from './common/list'
 
-export const disallowStart = TemporaryMemory.to<boolean>(0)
 export const rotateAngle = LevelMemory.to<number>(65)
 
 class TouchList {
