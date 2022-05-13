@@ -58,7 +58,7 @@ export function initialization(): Script {
             If(
                 Or(
                     options.isBetterPauseButtonEnabled,
-                    options.hideAllComponents
+                    options.hideUI
                 ),
 
                 UIMenu.set(
@@ -96,7 +96,7 @@ export function initialization(): Script {
                 Multiply(0.15, UIPrimaryMetricConfiguration.scale),
                 0,
                 If(
-                    options.hideAllComponents,
+                    options.hideUI,
                     0,
                     UIPrimaryMetricConfiguration.alpha
                 ),
@@ -112,7 +112,7 @@ export function initialization(): Script {
                 Multiply(0.15, UIPrimaryMetricConfiguration.scale),
                 0,
                 If(
-                    options.hideAllComponents,
+                    options.hideUI,
                     0,
                     UIPrimaryMetricConfiguration.alpha
                 ),
@@ -133,7 +133,7 @@ export function initialization(): Script {
                 Multiply(0.15, UISecondaryMetricConfiguration.scale),
                 0,
                 If(
-                    options.hideAllComponents,
+                    options.hideUI,
                     0,
                     UISecondaryMetricConfiguration.alpha
                 ),
@@ -153,7 +153,7 @@ export function initialization(): Script {
                 Multiply(0.15, UISecondaryMetricConfiguration.scale),
                 0,
                 If(
-                    options.hideAllComponents,
+                    options.hideUI,
                     0,
                     UISecondaryMetricConfiguration.alpha
                 ),
@@ -169,7 +169,7 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.175, UIComboConfiguration.scale),
                 0,
-                If(options.hideAllComponents, 0, UIComboConfiguration.alpha),
+                If(options.hideUI, 0, UIComboConfiguration.alpha),
                 HorizontalAlign.Center,
                 false
             ),
@@ -181,7 +181,7 @@ export function initialization(): Script {
                 0,
                 Multiply(stage.h, 0.175, 0.35, UIComboConfiguration.scale),
                 0,
-                If(options.hideAllComponents, 0, UIComboConfiguration.alpha),
+                If(options.hideUI, 0, UIComboConfiguration.alpha),
                 HorizontalAlign.Center,
                 false
             ),
@@ -197,7 +197,7 @@ export function initialization(): Script {
                 If(
                     Or(
                         options.isBetterJudgmentEnabled,
-                        options.hideAllComponents
+                        options.hideUI
                     ),
                     0,
                     UIJudgmentConfiguration.alpha

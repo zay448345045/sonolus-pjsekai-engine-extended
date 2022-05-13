@@ -90,7 +90,7 @@ export function stage(): Script {
     const initialize = [
         And(
             options.isBetterJudgmentEnabled,
-            Not(options.hideAllComponents),
+            Not(options.hideUI),
             Spawn(scripts.judgeRendererIndex, [])
         ),
     ]
@@ -280,6 +280,7 @@ export function stage(): Script {
         return [
             And(
                 options.isBetterPauseButtonEnabled,
+                Not(options.hideUI),
                 Draw(
                     PauseButtonSprite,
                     ...rectByEdge(
