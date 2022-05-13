@@ -160,4 +160,14 @@ export const options = defineOptions({
         step: 0.1,
         display: 'number',
     },
+    backgroundBrightness: {
+        name: 'Background Brightness' as OptionName,
+        scope: 'Sekai',
+        type: 'slider',
+        def: 100,
+        min: 0,
+        max: 100,
+        step: 1,
+        display: 'number',
+    },
 })

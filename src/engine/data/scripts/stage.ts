@@ -16,6 +16,7 @@ import {
     HasSkinSprite,
     If,
     Lerp,
+    Less,
     LessOr,
     LevelTransform,
     Multiply,
@@ -76,7 +77,12 @@ export function stage(): Script {
         ),
     ]
 
-    const updateParallel = [drawStageCover(), drawStage(), drawComponents()]
+    const updateParallel = [
+        drawStageCover(),
+        drawBackgroundHider(),
+        drawStage(),
+        drawComponents(),
+    ]
     const updateSequential = [
         And(Greater(options.stageTilt, 0), [backRotate(), updateRotate()]),
     ]
@@ -111,6 +117,23 @@ export function stage(): Script {
                 ...rectByEdge(screen.l, screen.r, stageCoverBottom, screen.t),
                 Layer.Cover,
                 1
+            )
+        )
+    }
+
+    function drawBackgroundHider() {
+        return And(
+            bool(Less(options.backgroundBrightness, 100)),
+            Draw(
+                SkinSprite.StageCover,
+                ...rectByEdge(
+                    Multiply(screen.l, 2),
+                    Multiply(screen.r, 2),
+                    Multiply(screen.b, 2),
+                    Multiply(screen.t, 2)
+                ),
+                0,
+                Subtract(1, Divide(options.backgroundBrightness, 100))
             )
         )
     }
