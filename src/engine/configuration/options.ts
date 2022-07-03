@@ -170,4 +170,10 @@ export const options = defineOptions({
         step: 1,
         display: 'number',
     },
+    lockSlide: {
+        name: 'Lock slide rendering' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 0,
+    },
 })

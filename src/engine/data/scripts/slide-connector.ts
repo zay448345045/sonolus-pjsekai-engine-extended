@@ -5,6 +5,7 @@ import {
     bool,
     Code,
     createEntityData,
+    DebugLog,
     DestroyParticleEffect,
     Divide,
     Draw,
@@ -53,7 +54,10 @@ import {
     calculateHitbox,
     getSpawnTime,
     getZ,
+    noteBottom,
     NoteSharedMemory,
+    noteTop,
+    updateNoteY,
 } from './common/note'
 import {
     calculateNoteLayout,
@@ -282,7 +286,15 @@ export function slideConnector(isCritical: boolean): Script {
     const z = isCritical ? Layer.NoteConnectorCritical : Layer.NoteConnector
 
     const updateParallel = Or(GreaterOr(Time, ConnectorData.tailTime), [
-        vhTime.set(Max(ConnectorData.headTime, Time)),
+        If(
+            options.lockSlide,
+            [
+                vhTime.set(
+                    Min(ConnectorData.headTime, Add(Time, noteOnScreenDuration))
+                ),
+            ],
+            [vhTime.set(Max(ConnectorData.headTime, Time))]
+        ),
         vtTime.set(
             Min(ConnectorData.tailTime, Add(Time, noteOnScreenDuration))
         ),
@@ -316,6 +328,7 @@ export function slideConnector(isCritical: boolean): Script {
             connectorTop.set(Lerp(origin, lane.b, stYScale)),
             If(
                 And(
+                    Not(options.lockSlide),
                     Or(
                         options.isAutoplay,
                         Equal(ConnectorData.headInfo.state, State.Spawned),
@@ -389,6 +402,7 @@ export function slideConnector(isCritical: boolean): Script {
                         If(
                             Or(
                                 options.isAutoplay,
+                                options.lockSlide,
                                 Equal(
                                     ConnectorData.headInfo.state,
                                     State.Spawned
@@ -414,28 +428,34 @@ export function slideConnector(isCritical: boolean): Script {
         ]),
 
         And(GreaterOr(Time, ConnectorData.headTime), [
-            noteScale.set(
-                ease(
-                    Unlerp(ConnectorData.headTime, ConnectorData.tailTime, Time)
-                )
-            ),
+            Or(options.lockSlide, [
+                noteScale.set(
+                    ease(
+                        Unlerp(
+                            ConnectorData.headTime,
+                            ConnectorData.tailTime,
+                            Time
+                        )
+                    )
+                ),
 
-            noteSprite.draw(
-                1,
-                baseNote.b,
-                baseNote.t,
-                [
-                    Lerp(headLayout[0], tailLayout[0], noteScale),
-                    Lerp(headLayout[1], tailLayout[1], noteScale),
-                    Lerp(headLayout[2], tailLayout[2], noteScale),
-                    Lerp(headLayout[3], tailLayout[3], noteScale),
-                    Lerp(headLayout[4], tailLayout[4], noteScale),
-                    Lerp(headLayout[5], tailLayout[5], noteScale),
-                    Lerp(headLayout[6], tailLayout[6], noteScale),
-                    Lerp(headLayout[7], tailLayout[7], noteScale),
-                ],
-                slideZ
-            ),
+                noteSprite.draw(
+                    1,
+                    baseNote.b,
+                    baseNote.t,
+                    [
+                        Lerp(headLayout[0], tailLayout[0], noteScale),
+                        Lerp(headLayout[1], tailLayout[1], noteScale),
+                        Lerp(headLayout[2], tailLayout[2], noteScale),
+                        Lerp(headLayout[3], tailLayout[3], noteScale),
+                        Lerp(headLayout[4], tailLayout[4], noteScale),
+                        Lerp(headLayout[5], tailLayout[5], noteScale),
+                        Lerp(headLayout[6], tailLayout[6], noteScale),
+                        Lerp(headLayout[7], tailLayout[7], noteScale),
+                    ],
+                    slideZ
+                ),
+            ]),
 
             And(
                 options.isNoteEffectEnabled,

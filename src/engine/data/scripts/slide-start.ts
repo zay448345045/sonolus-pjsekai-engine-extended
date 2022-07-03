@@ -102,7 +102,7 @@ export function slideStart(isCritical: boolean): Script {
         And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
         Equal(noteInputState, InputState.Terminated),
         Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-        And(Less(Time, NoteData.time), [
+        And(Or(options.lockSlide, Less(Time, NoteData.time)), [
             updateNoteY(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
