@@ -5,7 +5,6 @@ import {
     bool,
     Code,
     createEntityData,
-    DebugLog,
     DestroyParticleEffect,
     Divide,
     Draw,
@@ -54,10 +53,7 @@ import {
     calculateHitbox,
     getSpawnTime,
     getZ,
-    noteBottom,
     NoteSharedMemory,
-    noteTop,
-    updateNoteY,
 } from './common/note'
 import {
     calculateNoteLayout,
