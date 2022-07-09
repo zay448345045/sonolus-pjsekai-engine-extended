@@ -86,7 +86,12 @@ export function slideEnd(isCritical: boolean): Script {
             Not(bool(noteInputState)),
             checkNoteTimeInEarlyWindow(window.good.early),
             TouchEnded,
-            Not(disallowEnds.contains(TouchId)),
+            Not(
+                And(
+                    disallowEnds.contains(TouchId),
+                    GreaterOr(disallowEnds.time(TouchId), Subtract(Time, 0.083))
+                )
+            ),
             checkTouchYInHitbox(),
             checkTouchXInNoteHitbox(),
             onComplete()
