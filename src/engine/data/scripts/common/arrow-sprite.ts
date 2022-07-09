@@ -171,7 +171,13 @@ export class ArrowSprite {
 
     public draw(scale: Code<number>, layout: ArrowLayout, z: Code<number>) {
         const [sprite, x1, y1, x2, y2, x3, y3, x4, y4] = layout
-        const yShift = Multiply(this.animateProgress, scale, 0.4)
+        const yShift = Add(
+            Multiply(
+                Subtract(Multiply(this.animateProgress, 1.5), 0.5),
+                scale,
+                0.2
+            )
+        )
         const xShift = Multiply(
             this.animateProgress,
             scale,
