@@ -59,7 +59,7 @@ export function autoSFX(): Script {
                             archetypes.flickNoteIndex,
                             EffectClip.PerfectAlternative,
                         ],
-                        [archetypes.slideTickIndex, getTickClip()],
+                        // [archetypes.slideTickIndex, getTickClip()],
                         [
                             archetypes.slideEndFlickIndex,
                             EffectClip.PerfectAlternative,
@@ -69,10 +69,10 @@ export function autoSFX(): Script {
                             archetypes.criticalFlickNoteIndex,
                             getCriticalFlickClip(),
                         ],
-                        [
-                            archetypes.criticalSlideTickIndex,
-                            getCriticalTickClip(),
-                        ],
+                        // [
+                        //     archetypes.criticalSlideTickIndex,
+                        //     getCriticalTickClip(),
+                        // ],
                         [
                             archetypes.criticalSlideEndFlickIndex,
                             getCriticalFlickClip(),
