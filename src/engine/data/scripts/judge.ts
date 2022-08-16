@@ -6,6 +6,7 @@ import {
     Divide,
     Draw,
     Greater,
+    HasSkinSprite,
     If,
     Less,
     Multiply,
@@ -121,7 +122,10 @@ export function judge(): Script {
         ]
     }
     const spawnOrder = -999
-    const updateParallel = [drawJudgment(), drawAutolive()]
+    const updateParallel = And(HasSkinSprite(JudgmentMissSprite), [
+        drawJudgment(),
+        drawAutolive(),
+    ])
 
     return {
         spawnOrder: {

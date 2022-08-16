@@ -5,6 +5,7 @@ import {
     ConsecutiveGreatScore,
     GoodMultiplier,
     GreatMultiplier,
+    HasSkinSprite,
     HorizontalAlign,
     If,
     Multiply,
@@ -31,7 +32,7 @@ import { scripts } from '.'
 import { options } from '../../configuration/options'
 import { archetypes } from '../archetypes'
 import { buckets } from '../buckets'
-import { screen, stage, windows } from './common/constants'
+import { screen, stage, windows, JudgmentMissSprite } from './common/constants'
 
 export function initialization(): Script {
     const preprocess = [setupUI(), setupBuckets(), setupScore(), setupLife()]
@@ -56,10 +57,7 @@ export function initialization(): Script {
     function setupUI() {
         return [
             If(
-                Or(
-                    options.isBetterPauseButtonEnabled,
-                    options.hideUI
-                ),
+                Or(options.isBetterPauseButtonEnabled, options.hideUI),
 
                 UIMenu.set(
                     Subtract(screen.r, 0.05),
@@ -95,11 +93,7 @@ export function initialization(): Script {
                 Multiply(0.75, UIPrimaryMetricConfiguration.scale),
                 Multiply(0.15, UIPrimaryMetricConfiguration.scale),
                 0,
-                If(
-                    options.hideUI,
-                    0,
-                    UIPrimaryMetricConfiguration.alpha
-                ),
+                If(options.hideUI, 0, UIPrimaryMetricConfiguration.alpha),
                 HorizontalAlign.Left,
                 true
             ),
@@ -118,11 +112,7 @@ export function initialization(): Script {
                 0,
                 Multiply(0.08, UIPrimaryMetricConfiguration.scale),
                 0,
-                If(
-                    options.hideUI,
-                    0,
-                    UIPrimaryMetricConfiguration.alpha
-                ),
+                If(options.hideUI, 0, UIPrimaryMetricConfiguration.alpha),
                 HorizontalAlign.Right,
                 false
             ),
@@ -139,11 +129,7 @@ export function initialization(): Script {
                 Multiply(0.55, UISecondaryMetricConfiguration.scale),
                 Multiply(0.15, UISecondaryMetricConfiguration.scale),
                 0,
-                If(
-                    options.hideUI,
-                    0,
-                    UISecondaryMetricConfiguration.alpha
-                ),
+                If(options.hideUI, 0, UISecondaryMetricConfiguration.alpha),
                 HorizontalAlign.Left,
                 true
             ),
@@ -163,11 +149,7 @@ export function initialization(): Script {
                 0,
                 Multiply(0.08, UISecondaryMetricConfiguration.scale),
                 0,
-                If(
-                    options.hideUI,
-                    0,
-                    UISecondaryMetricConfiguration.alpha
-                ),
+                If(options.hideUI, 0, UISecondaryMetricConfiguration.alpha),
                 HorizontalAlign.Right,
                 false
             ),
@@ -207,7 +189,10 @@ export function initialization(): Script {
                 0,
                 If(
                     Or(
-                        options.isBetterJudgmentEnabled,
+                        And(
+                            options.isBetterJudgmentEnabled,
+                            HasSkinSprite(JudgmentMissSprite)
+                        ),
                         options.hideUI
                     ),
                     0,
