@@ -37,14 +37,14 @@ export function autoSFX(): Script {
                 archetypes.tapNoteIndex,
                 archetypes.flickNoteIndex,
                 archetypes.slideStartIndex,
-                archetypes.slideTickIndex,
+                // archetypes.slideTickIndex,
                 archetypes.slideEndIndex,
                 archetypes.slideEndFlickIndex,
 
                 archetypes.criticalTapNoteIndex,
                 archetypes.criticalFlickNoteIndex,
                 archetypes.criticalSlideStartIndex,
-                archetypes.criticalSlideTickIndex,
+                // archetypes.criticalSlideTickIndex,
                 archetypes.criticalSlideEndIndex,
                 archetypes.criticalSlideEndFlickIndex,
             ].map((index) => [index, false]),
@@ -59,7 +59,7 @@ export function autoSFX(): Script {
                             archetypes.flickNoteIndex,
                             EffectClip.PerfectAlternative,
                         ],
-                        // [archetypes.slideTickIndex, getTickClip()],
+                        [archetypes.slideTickIndex, getTickClip()],
                         [
                             archetypes.slideEndFlickIndex,
                             EffectClip.PerfectAlternative,
@@ -69,10 +69,10 @@ export function autoSFX(): Script {
                             archetypes.criticalFlickNoteIndex,
                             getCriticalFlickClip(),
                         ],
-                        // [
-                        //     archetypes.criticalSlideTickIndex,
-                        //     getCriticalTickClip(),
-                        // ],
+                        [
+                            archetypes.criticalSlideTickIndex,
+                            getCriticalTickClip(),
+                        ],
                         [
                             archetypes.criticalSlideEndFlickIndex,
                             getCriticalFlickClip(),
