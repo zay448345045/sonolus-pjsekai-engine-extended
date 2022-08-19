@@ -110,8 +110,8 @@ export const options = defineOptions({
         type: 'toggle',
         def: 1,
     },
-    isBetterJudgmentEnabled: {
-        name: 'Use better judgment text' as OptionName,
+    isBetterJudgementEnabled: {
+        name: 'Use better judgement text' as OptionName,
         scope: 'Sekai',
         type: 'toggle',
         def: 1,
@@ -136,6 +136,12 @@ export const options = defineOptions({
     },
     hideLane: {
         name: 'Hide lane' as OptionName,
+        scope: 'Sekai',
+        type: 'toggle',
+        def: 0,
+    },
+    hideNotes: {
+        name: 'Hide notes' as OptionName,
         scope: 'Sekai',
         type: 'toggle',
         def: 0,

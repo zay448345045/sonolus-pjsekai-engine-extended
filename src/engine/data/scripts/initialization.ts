@@ -190,7 +190,7 @@ export function initialization(): Script {
                 If(
                     Or(
                         And(
-                            options.isBetterJudgmentEnabled,
+                            options.isBetterJudgementEnabled,
                             HasSkinSprite(JudgmentMissSprite)
                         ),
                         options.hideUI
