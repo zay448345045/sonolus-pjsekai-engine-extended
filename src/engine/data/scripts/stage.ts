@@ -84,7 +84,8 @@ export function stage(): Script {
         drawComponents(),
     ]
     const updateSequential = [
-        And(Greater(options.stageTilt, 0), [backRotate(), updateRotate()]),
+        And(Greater(options.stageTilt, 0), [backRotate()]),
+        updateTransform(),
     ]
 
     const initialize = [
@@ -303,10 +304,13 @@ export function stage(): Script {
         return [rotateAngle.set(Multiply(rotateAngle.get(), 0.9))]
     }
 
-    function updateRotate() {
+    function updateTransform() {
         return [
             LevelTransform.to(0).set(
-                Cos(Multiply(Radian(rotateAngle.get()), options.stageTilt))
+                Multiply(
+                    Cos(Multiply(Radian(rotateAngle.get()), options.stageTilt)),
+                    options.stageSize
+                )
             ),
             LevelTransform.to(1).set(
                 Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt))
@@ -318,7 +322,13 @@ export function stage(): Script {
                 )
             ),
             LevelTransform.to(5).set(
-                Cos(Multiply(Radian(rotateAngle.get()), options.stageTilt))
+                Multiply(
+                    Cos(Multiply(Radian(rotateAngle.get()), options.stageTilt)),
+                    options.stageSize
+                )
+            ),
+            LevelTransform.to(7).set(
+                Multiply(Subtract(1, options.stageSize), -1)
             ),
         ]
     }

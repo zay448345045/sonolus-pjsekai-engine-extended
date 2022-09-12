@@ -156,6 +156,16 @@ export const options = defineOptions({
         step: 0.01,
         display: 'percentage',
     },
+    stageSize: {
+        name: OptionName.StageSize,
+        scope: 'Sekai',
+        type: 'slider',
+        def: 1,
+        min: 0,
+        max: 2,
+        step: 0.01,
+        display: 'percentage',
+    },
     additionalNoteSpeed: {
         name: 'Additional Note Speed' as OptionName,
         scope: 'Sekai',
