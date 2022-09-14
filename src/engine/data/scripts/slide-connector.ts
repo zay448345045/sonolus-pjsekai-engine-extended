@@ -1,10 +1,12 @@
 import { ParticleEffect, SkinSprite } from 'sonolus-core'
 import {
+    Abs,
     Add,
     And,
     bool,
     Code,
     createEntityData,
+    DebugLog,
     DestroyParticleEffect,
     Divide,
     Draw,
@@ -17,6 +19,7 @@ import {
     InputOffset,
     Lerp,
     Less,
+    LessOr,
     Max,
     Min,
     MoveParticleEffect,
@@ -281,6 +284,16 @@ export function slideConnector(isCritical: boolean): Script {
     const center = EntityMemory.to<number>(43)
     const z = isCritical ? Layer.NoteConnectorCritical : Layer.NoteConnector
 
+    const isZeroWidth = LessOr(
+        Abs(
+            Subtract(
+                Lerp(headLayout[2], tailLayout[2], noteScale),
+                Lerp(headLayout[3], tailLayout[3], noteScale)
+            )
+        ),
+        0
+    )
+
     const updateParallel = Or(
         GreaterOr(
             Time,
@@ -352,7 +365,8 @@ export function slideConnector(isCritical: boolean): Script {
                                 InputOffset
                             )
                         ),
-                        Not(Equal(ConnectorData.headInfo.state, State.Spawned))
+                        Not(Equal(ConnectorData.headInfo.state, State.Spawned)),
+                        Not(isZeroWidth)
                     ),
                     [
                         Draw(
@@ -451,36 +465,47 @@ export function slideConnector(isCritical: boolean): Script {
                             )
                         )
                     ),
-
-                    noteSprite.draw(
-                        1,
-                        baseNote.b,
-                        baseNote.t,
-                        [
-                            Lerp(headLayout[0], tailLayout[0], noteScale),
+                    DebugLog(
+                        Subtract(
                             Lerp(headLayout[1], tailLayout[1], noteScale),
-                            Lerp(headLayout[2], tailLayout[2], noteScale),
-                            Lerp(headLayout[3], tailLayout[3], noteScale),
-                            Lerp(headLayout[4], tailLayout[4], noteScale),
-                            Lerp(headLayout[5], tailLayout[5], noteScale),
-                            Lerp(headLayout[6], tailLayout[6], noteScale),
-                            Lerp(headLayout[7], tailLayout[7], noteScale),
-                        ],
-                        slideZ
+                            Lerp(headLayout[5], tailLayout[5], noteScale)
+                        )
+                    ),
+
+                    Or(
+                        isZeroWidth,
+                        noteSprite.draw(
+                            1,
+                            baseNote.b,
+                            baseNote.t,
+                            [
+                                Lerp(headLayout[0], tailLayout[0], noteScale),
+                                Lerp(headLayout[1], tailLayout[1], noteScale),
+                                Lerp(headLayout[2], tailLayout[2], noteScale),
+                                Lerp(headLayout[3], tailLayout[3], noteScale),
+                                Lerp(headLayout[4], tailLayout[4], noteScale),
+                                Lerp(headLayout[5], tailLayout[5], noteScale),
+                                Lerp(headLayout[6], tailLayout[6], noteScale),
+                                Lerp(headLayout[7], tailLayout[7], noteScale),
+                            ],
+                            slideZ
+                        )
                     ),
                 ]),
-
-                And(
-                    options.isNoteEffectEnabled,
-                    Or(
-                        HasParticleEffect(circularParticleEffect),
-                        HasParticleEffect(linearParticleEffect)
-                    ),
-                    center.set(
-                        Lerp(
-                            ConnectorData.headCenter,
-                            ConnectorData.tailCenter,
-                            noteScale
+                Or(
+                    isZeroWidth,
+                    And(
+                        options.isNoteEffectEnabled,
+                        Or(
+                            HasParticleEffect(circularParticleEffect),
+                            HasParticleEffect(linearParticleEffect)
+                        ),
+                        center.set(
+                            Lerp(
+                                ConnectorData.headCenter,
+                                ConnectorData.tailCenter,
+                                noteScale
+                            )
                         )
                     )
                 ),
@@ -489,11 +514,14 @@ export function slideConnector(isCritical: boolean): Script {
                     options.isNoteEffectEnabled,
                     HasParticleEffect(circularParticleEffect),
                     If(
-                        Or(
-                            options.isAutoplay,
-                            Equal(
-                                ConnectorData.headSharedMemory.slideTime,
-                                Time
+                        And(
+                            Not(isZeroWidth),
+                            Or(
+                                options.isAutoplay,
+                                Equal(
+                                    ConnectorData.headSharedMemory.slideTime,
+                                    Time
+                                )
                             )
                         ),
                         [
@@ -544,11 +572,14 @@ export function slideConnector(isCritical: boolean): Script {
                     options.isNoteEffectEnabled,
                     HasParticleEffect(linearParticleEffect),
                     If(
-                        Or(
-                            options.isAutoplay,
-                            Equal(
-                                ConnectorData.headSharedMemory.slideTime,
-                                Time
+                        And(
+                            Not(isZeroWidth),
+                            Or(
+                                options.isAutoplay,
+                                Equal(
+                                    ConnectorData.headSharedMemory.slideTime,
+                                    Time
+                                )
                             )
                         ),
                         [

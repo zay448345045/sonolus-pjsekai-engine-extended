@@ -1,5 +1,6 @@
 import { SkinSprite } from 'sonolus-core'
 import {
+    Abs,
     Add,
     And,
     Code,
@@ -7,7 +8,9 @@ import {
     Draw,
     HasSkinSprite,
     If,
+    LessOr,
     Multiply,
+    Or,
     Pointer,
     Subtract,
 } from 'sonolus.js'
@@ -62,40 +65,56 @@ export class NoteSprite {
         layout: NoteLayout,
         z: Code<number>
     ) {
-        return If(
-            this.exists,
-            [
+        return Or(
+            LessOr(Abs(Subtract(layout[0], layout[1])), 0),
+            If(
+                this.exists,
+                [
+                    Draw(
+                        this.mid,
+                        Multiply(layout[6], scale),
+                        bottom,
+                        Multiply(layout[4], scale),
+                        top,
+                        Multiply(layout[5], scale),
+                        top,
+                        Multiply(layout[7], scale),
+                        bottom,
+                        z,
+                        1
+                    ),
+                    Draw(
+                        this.left,
+                        Multiply(layout[2], scale),
+                        bottom,
+                        Multiply(layout[0], scale),
+                        top,
+                        Multiply(layout[4], scale),
+                        top,
+                        Multiply(layout[6], scale),
+                        bottom,
+                        z,
+                        1
+                    ),
+                    Draw(
+                        this.right,
+                        Multiply(layout[7], scale),
+                        bottom,
+                        Multiply(layout[5], scale),
+                        top,
+                        Multiply(layout[1], scale),
+                        top,
+                        Multiply(layout[3], scale),
+                        bottom,
+                        z,
+                        1
+                    ),
+                ],
                 Draw(
-                    this.mid,
-                    Multiply(layout[6], scale),
-                    bottom,
-                    Multiply(layout[4], scale),
-                    top,
-                    Multiply(layout[5], scale),
-                    top,
-                    Multiply(layout[7], scale),
-                    bottom,
-                    z,
-                    1
-                ),
-                Draw(
-                    this.left,
+                    this.fallback,
                     Multiply(layout[2], scale),
                     bottom,
                     Multiply(layout[0], scale),
-                    top,
-                    Multiply(layout[4], scale),
-                    top,
-                    Multiply(layout[6], scale),
-                    bottom,
-                    z,
-                    1
-                ),
-                Draw(
-                    this.right,
-                    Multiply(layout[7], scale),
-                    bottom,
-                    Multiply(layout[5], scale),
                     top,
                     Multiply(layout[1], scale),
                     top,
@@ -103,20 +122,7 @@ export class NoteSprite {
                     bottom,
                     z,
                     1
-                ),
-            ],
-            Draw(
-                this.fallback,
-                Multiply(layout[2], scale),
-                bottom,
-                Multiply(layout[0], scale),
-                top,
-                Multiply(layout[1], scale),
-                top,
-                Multiply(layout[3], scale),
-                bottom,
-                z,
-                1
+                )
             )
         )
     }
