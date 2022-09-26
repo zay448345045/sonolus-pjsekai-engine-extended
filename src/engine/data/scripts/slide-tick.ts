@@ -124,9 +124,12 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
                     0,
                     'tick'
                 ),
-                isCritical
-                    ? playCriticalTickJudgmentSFX()
-                    : playTickJudgmentSFX(),
+                Or(
+                    options.isAutoplay,
+                    isCritical
+                        ? playCriticalTickJudgmentSFX()
+                        : playTickJudgmentSFX()
+                ),
             ]
         )
     }
