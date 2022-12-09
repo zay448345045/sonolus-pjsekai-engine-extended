@@ -48,7 +48,7 @@ export function initialization(): Script {
     function setupUI() {
         return [
             If(
-                Or(options.isBetterPauseButtonEnabled, options.hideUI),
+                Or(options.isCustomPauseButtonEnabled, options.hideUI),
                 UIMenu.set(
                     Subtract(screen.r, 0.05),
                     0.95,
@@ -165,7 +165,7 @@ export function initialization(): Script {
                 0,
                 If(
                     Or(
-                        And(options.isBetterJudgementEnabled, HasSkinSprite(JudgmentMissSprite)),
+                        And(options.isCustomJudgementEnabled, HasSkinSprite(JudgmentMissSprite)),
                         options.hideUI
                     ),
                     0,
