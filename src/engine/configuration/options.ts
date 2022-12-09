@@ -125,8 +125,8 @@ export const options = defineOptions({
         type: 'toggle',
         def: 1,
     },
-    isBetterJudgementEnabled: {
-        name: 'Use better judgement text' as NameText,
+    isCustomJudgementEnabled: {
+        name: 'Use custom judgement text' as NameText,
         scope: 'Sekai',
         type: 'toggle',
         def: 1,
@@ -137,8 +137,8 @@ export const options = defineOptions({
         type: 'toggle',
         def: 1,
     },
-    isBetterPauseButtonEnabled: {
-        name: 'Use better pause button' as NameText,
+    isCustomPauseButtonEnabled: {
+        name: 'Use custom pause button' as NameText,
         scope: 'Sekai',
         type: 'toggle',
         def: 0,

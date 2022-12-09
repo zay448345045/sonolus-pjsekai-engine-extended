@@ -3,7 +3,7 @@ import { options } from '../../configuration/options'
 import { Dictionary } from './common/dictionary'
 import { List } from './common/list'
 
-export const rotateAngle = LevelMemory.to<number>(64)
+export const rotateAngle = LevelMemory.to<number>(130)
 class TouchList {
     private readonly old: List<number>
     private readonly now: List<number>

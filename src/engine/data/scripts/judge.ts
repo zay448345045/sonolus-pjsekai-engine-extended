@@ -16,13 +16,8 @@ import {
     Time,
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
-import {
-    engineId,
-    JudgmentMissSprite,
-    Layer,
-    sekaiStage,
-} from './common/constants'
-import { judgeTime, currentJudge } from './common/judge'
+import { engineId, JudgmentMissSprite, Layer, sekaiStage } from './common/constants'
+import { currentJudge, judgeTime } from './common/judge'
 import { rectByEdge } from './common/utils'
 
 export function judge(): Script {
@@ -37,11 +32,7 @@ export function judge(): Script {
                 startSize,
                 Multiply(
                     Divide(
-                        Clamp(
-                            Subtract(Time, judgeTime.get()),
-                            0,
-                            animateDuration
-                        ),
+                        Clamp(Subtract(Time, judgeTime.get()), 0, animateDuration),
                         animateDuration
                     ),
                     1 - startSize
@@ -79,10 +70,7 @@ export function judge(): Script {
         // )
         return [
             If(
-                And(
-                    Greater(currentJudge.get(), 0),
-                    Less(Subtract(Time, judgeTime.get()), 0.3)
-                ),
+                And(Greater(currentJudge.get(), 0), Less(Subtract(Time, judgeTime.get()), 0.3)),
                 [
                     Draw(
                         Add(JudgmentMissSprite, currentJudge.get(), -1),
@@ -122,10 +110,7 @@ export function judge(): Script {
         ]
     }
     const spawnOrder = -999
-    const updateParallel = And(HasSkinSprite(JudgmentMissSprite), [
-        drawJudgment(),
-        drawAutolive(),
-    ])
+    const updateParallel = And(HasSkinSprite(JudgmentMissSprite), [drawJudgment(), drawAutolive()])
 
     return {
         spawnOrder: {
