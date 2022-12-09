@@ -244,12 +244,15 @@ export function slideConnector(isCritical: boolean): Script {
 
     const hiddenTime = Add(Time, Multiply(options.hidden, noteOnScreenDuration))
 
-    const shouldPlaySFX = Or(
-        options.isAutoplay,
-        options.lockSlide,
-        Equal(ConnectorData.headInfo.state, State.Spawned),
-        LessOr(Subtract(Time, ConnectorData.headSharedMemory.slideTime), Add(DeltaTime, 0.01)),
-        Less(Subtract(Time, ConnectorData.headSharedMemory.startTime), InputOffset)
+    const shouldPlaySFX = And(
+        Or(
+            options.isAutoplay,
+            options.lockSlide,
+            Equal(ConnectorData.headInfo.state, State.Spawned),
+            LessOr(Subtract(Time, ConnectorData.headSharedMemory.slideTime), Add(DeltaTime, 0.01)),
+            Less(Subtract(Time, ConnectorData.headSharedMemory.startTime), InputOffset)
+        ),
+        Not(isZeroWidth)
     )
     const updateSequential = [
         And(GreaterOr(Time, ConnectorData.headTime), [
