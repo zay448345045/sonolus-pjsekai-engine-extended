@@ -1,4 +1,4 @@
-import { LevelData } from 'sonolus-core'
+import { EngineInfo, LevelData } from 'sonolus-core'
 import { Fannithm, fromFannithm as _fromFannithm } from './fannithm/convert'
 import { Resource } from './Resource'
 import { fromSus as _fromSus } from './sus/convert'
@@ -6,11 +6,11 @@ import { fromSus as _fromSus } from './sus/convert'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const archetypes = require('./archetypes')
 
-export const version = '0.1.0'
+export const version = '0.2.0'
 
 export const engineInfo = {
     name: 'pjsekai',
-    version: 6,
+    version: 7,
     title: {
         en: 'Project Sekai',
         ja: 'プロセカ',
@@ -37,16 +37,16 @@ export const engineInfo = {
             'https://github.com/NonSpicyBurrito/sonolus-pjsekai-engine',
         ].join('\n'),
     },
-} as const
+} as const satisfies Partial<EngineInfo>
 
 export const engineConfiguration = new Resource('EngineConfiguration')
 export const engineData = new Resource('EngineData')
 export const engineThumbnail = new Resource('thumbnail.png')
 
-export function fromSus(sus: string, offset = 0): LevelData {
-    return _fromSus(sus, offset, archetypes)
+export function fromSus(sus: string, bgmOffset = 0, chartOffset = 0): LevelData {
+    return _fromSus(sus, bgmOffset, chartOffset, archetypes)
 }
 
-export function fromFannithm(fannithm: Fannithm, offset = 0): LevelData {
-    return _fromFannithm(fannithm, offset, archetypes)
+export function fromFannithm(fannithm: Fannithm, bgmOffset = 0, chartOffset = 0): LevelData {
+    return _fromFannithm(fannithm, bgmOffset, chartOffset, archetypes)
 }

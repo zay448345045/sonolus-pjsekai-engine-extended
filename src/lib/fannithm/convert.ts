@@ -42,10 +42,7 @@ export type Fannithm = {
                   curve?: Curve
               }
             | {
-                  type:
-                      | NoteType.Start
-                      | NoteType.Invisible
-                      | NoteType.EndDefault
+                  type: NoteType.Start | NoteType.Invisible | NoteType.EndDefault
                   lane: number
                   width: number
                   curve: Curve
@@ -102,7 +99,8 @@ const ticksPerHidden = 0.5
 
 export function fromFannithm(
     fannithm: Fannithm,
-    offset: number,
+    bgmOffset: number,
+    chartOffset: number,
     archetypes: {
         initializationIndex: number
         stageIndex: number
@@ -148,9 +146,7 @@ export function fromFannithm(
             const timing = timings.find((timing) => tick >= timing.tick)
             if (!timing) throw 'Unexpected missing timing'
 
-            return (
-                timing.time + offset + ((tick - timing.tick) * 60) / timing.bpm
-            )
+            return timing.time + chartOffset + ((tick - timing.tick) * 60) / timing.bpm
         })
     })
 
@@ -191,12 +187,7 @@ export function fromFannithm(
                             : archetypes.tapNoteIndex,
                         data: {
                             index: 0,
-                            values: [
-                                time,
-                                note.lane - 6 + note.width / 2,
-                                note.width / 2,
-                                0,
-                            ],
+                            values: [time, note.lane - 6 + note.width / 2, note.width / 2, 0],
                         },
                     },
                 })
@@ -228,8 +219,7 @@ export function fromFannithm(
 
     fannithm.slides.forEach((slide) => {
         const minHiddenTick =
-            Math.floor(toTick(slide.notes[0].beat) / ticksPerHidden + 1) *
-            ticksPerHidden
+            Math.floor(toTick(slide.notes[0].beat) / ticksPerHidden + 1) * ticksPerHidden
 
         let head: NoteInfo | undefined
         let ref: Wrapper | undefined
@@ -249,11 +239,7 @@ export function fromFannithm(
                                 : archetypes.slideStartIndex,
                             data: {
                                 index: 0,
-                                values: [
-                                    time,
-                                    note.lane - 6 + note.width / 2,
-                                    note.width / 2,
-                                ],
+                                values: [time, note.lane - 6 + note.width / 2, note.width / 2],
                             },
                         },
                     })
@@ -272,12 +258,7 @@ export function fromFannithm(
                                 : archetypes.slideEndIndex,
                             data: {
                                 index: 0,
-                                values: [
-                                    time,
-                                    note.lane - 6 + note.width / 2,
-                                    note.width / 2,
-                                    0,
-                                ],
+                                values: [time, note.lane - 6 + note.width / 2, note.width / 2, 0],
                             },
                         },
                     })
@@ -329,11 +310,7 @@ export function fromFannithm(
                                 : archetypes.slideTickIndex,
                             data: {
                                 index: 0,
-                                values: [
-                                    time,
-                                    note.lane - 6 + note.width / 2,
-                                    note.width / 2,
-                                ],
+                                values: [time, note.lane - 6 + note.width / 2, note.width / 2],
                             },
                         },
                     })
@@ -363,20 +340,12 @@ export function fromFannithm(
                 throw 'Unexpected connection'
 
             const easeType =
-                head.note.curve === Curve.EaseIn
-                    ? 0
-                    : head.note.curve === Curve.EaseOut
-                    ? 1
-                    : -1
+                head.note.curve === Curve.EaseIn ? 0 : head.note.curve === Curve.EaseOut ? 1 : -1
 
             for (const info of connectedNotes) {
-                const y = ease(
-                    (info.time - head.time) / (time - head.time),
-                    easeType
-                )
+                const y = ease((info.time - head.time) / (time - head.time), easeType)
                 const lane = head.note.lane + (note.lane - head.note.lane) * y
-                const width =
-                    head.note.width + (note.width - head.note.width) * y
+                const width = head.note.width + (note.width - head.note.width) * y
 
                 wrappers.push({
                     group: 0,
@@ -387,11 +356,7 @@ export function fromFannithm(
                             : archetypes.slideTickIndex,
                         data: {
                             index: 0,
-                            values: [
-                                info.time,
-                                lane - 6 + width / 2,
-                                width / 2,
-                            ],
+                            values: [info.time, lane - 6 + width / 2, width / 2],
                         },
                     },
                 })
@@ -423,8 +388,7 @@ export function fromFannithm(
             const endTick = toTick(note.beat)
             for (
                 let i = Math.max(
-                    Math.ceil(toTick(head.note.beat) / ticksPerHidden) *
-                        ticksPerHidden,
+                    Math.ceil(toTick(head.note.beat) / ticksPerHidden) * ticksPerHidden,
                     minHiddenTick
                 );
                 i < endTick;
@@ -433,8 +397,7 @@ export function fromFannithm(
                 const t = toTime(slide.timeline, [i, 0, 1])
                 const y = ease((t - head.time) / (time - head.time), easeType)
                 const lane = head.note.lane + (note.lane - head.note.lane) * y
-                const width =
-                    head.note.width + (note.width - head.note.width) * y
+                const width = head.note.width + (note.width - head.note.width) * y
                 if (t === 65.8) {
                     console.log({
                         tail: note,
@@ -476,7 +439,10 @@ export function fromFannithm(
         wrapper.entity.data.values.push(wrappers.indexOf(wrapper.ref))
     })
 
-    return { entities: wrappers.map(({ entity }) => entity) }
+    return {
+        bgmOffset,
+        entities: wrappers.map(({ entity }) => entity),
+    }
 
     function toTime(timelineId: string, beat: Beat) {
         const toTime = timelineToTimes.get(timelineId)

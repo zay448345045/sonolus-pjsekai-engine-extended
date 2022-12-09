@@ -12,7 +12,6 @@ import {
     Or,
     PerfectMultiplier,
     Script,
-    Spawn,
     Subtract,
     UIComboConfiguration,
     UIComboText,
@@ -28,25 +27,17 @@ import {
     UISecondaryMetricConfiguration,
     UISecondaryMetricValue,
 } from 'sonolus.js'
-import { scripts } from '.'
 import { options } from '../../configuration/options'
 import { archetypes } from '../archetypes'
 import { buckets } from '../buckets'
-import { screen, stage, windows, JudgmentMissSprite } from './common/constants'
+import { JudgmentMissSprite, screen, stage, windows } from './common/constants'
 
 export function initialization(): Script {
     const preprocess = [setupUI(), setupBuckets(), setupScore(), setupLife()]
 
     const spawnOrder = -1000
 
-    const updateSequential = [
-        And(
-            options.isAutoplay,
-            options.isSFXEnabled,
-            Spawn(scripts.autoSFXIndex, [])
-        ),
-        true,
-    ]
+    const updateSequential = true
 
     return {
         preprocess,
@@ -58,7 +49,6 @@ export function initialization(): Script {
         return [
             If(
                 Or(options.isBetterPauseButtonEnabled, options.hideUI),
-
                 UIMenu.set(
                     Subtract(screen.r, 0.05),
                     0.95,
@@ -98,15 +88,8 @@ export function initialization(): Script {
                 true
             ),
             UIPrimaryMetricValue.set(
-                Add(
-                    screen.l,
-                    0.05,
-                    Multiply(0.715, UIPrimaryMetricConfiguration.scale)
-                ),
-                Subtract(
-                    0.95,
-                    Multiply(0.035, UIPrimaryMetricConfiguration.scale)
-                ),
+                Add(screen.l, 0.05, Multiply(0.715, UIPrimaryMetricConfiguration.scale)),
+                Subtract(0.95, Multiply(0.035, UIPrimaryMetricConfiguration.scale)),
                 1,
                 1,
                 0,
@@ -118,11 +101,7 @@ export function initialization(): Script {
             ),
 
             UISecondaryMetricBar.set(
-                Subtract(
-                    screen.r,
-                    0.1,
-                    Multiply(0.15, UIMenuConfiguration.scale)
-                ),
+                Subtract(screen.r, 0.1, Multiply(0.15, UIMenuConfiguration.scale)),
                 0.95,
                 1,
                 1,
@@ -140,10 +119,7 @@ export function initialization(): Script {
                     Multiply(0.15, UIMenuConfiguration.scale),
                     Multiply(0.035, UISecondaryMetricConfiguration.scale)
                 ),
-                Subtract(
-                    0.95,
-                    Multiply(0.035, UISecondaryMetricConfiguration.scale)
-                ),
+                Subtract(0.95, Multiply(0.035, UISecondaryMetricConfiguration.scale)),
                 1,
                 1,
                 0,
@@ -189,10 +165,7 @@ export function initialization(): Script {
                 0,
                 If(
                     Or(
-                        And(
-                            options.isBetterJudgementEnabled,
-                            HasSkinSprite(JudgmentMissSprite)
-                        ),
+                        And(options.isBetterJudgementEnabled, HasSkinSprite(JudgmentMissSprite)),
                         options.hideUI
                     ),
                     0,
@@ -213,16 +186,10 @@ export function initialization(): Script {
             windows.slideEndFlick.normal.setBucket(buckets.slideEndFlickIndex),
 
             windows.tapNote.critical.setBucket(buckets.criticalTapNoteIndex),
-            windows.flickNote.critical.setBucket(
-                buckets.criticalFlickNoteIndex
-            ),
-            windows.slideStart.critical.setBucket(
-                buckets.criticalSlideStartIndex
-            ),
+            windows.flickNote.critical.setBucket(buckets.criticalFlickNoteIndex),
+            windows.slideStart.critical.setBucket(buckets.criticalSlideStartIndex),
             windows.slideEnd.critical.setBucket(buckets.criticalSlideEndIndex),
-            windows.slideEndFlick.critical.setBucket(
-                buckets.criticalSlideEndFlickIndex
-            ),
+            windows.slideEndFlick.critical.setBucket(buckets.criticalSlideEndFlickIndex),
         ]
     }
 
@@ -249,9 +216,7 @@ export function initialization(): Script {
                 archetypes.criticalSlideStartIndex,
                 archetypes.criticalSlideEndIndex,
                 archetypes.criticalSlideEndFlickIndex,
-            ].map((archetype) =>
-                ArchetypeLife.of(archetype).missLifeIncrement.set(-80)
-            ),
+            ].map((archetype) => ArchetypeLife.of(archetype).missLifeIncrement.set(-80)),
             [
                 archetypes.slideTickIndex,
                 archetypes.criticalSlideTickIndex,
@@ -261,9 +226,7 @@ export function initialization(): Script {
                 archetypes.criticalTraceNoteIndex,
                 archetypes.criticalTraceFlickIndex,
                 archetypes.traceNdFlickIndex,
-            ].map((archetype) =>
-                ArchetypeLife.of(archetype).missLifeIncrement.set(-40)
-            ),
+            ].map((archetype) => ArchetypeLife.of(archetype).missLifeIncrement.set(-40)),
         ]
     }
 }

@@ -26,17 +26,14 @@ import {
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { Layer, windows } from './common/constants'
-import {
-    playNoteEffect,
-    playNoteLaneEffect,
-    playSlotEffect,
-} from './common/effect'
+import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
 import { onMiss, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
     initializeNoteSimLine,
     InputState,
+    isNotHidden,
     noteBottom,
     NoteData,
     noteInputState,
@@ -44,8 +41,10 @@ import {
     NoteSharedMemory,
     noteSpawnTime,
     noteTop,
+    noteVisibleTime,
     noteZ,
     preprocessNote,
+    scheduleNoteAutoSFX,
     updateNoteY,
 } from './common/note'
 import {
@@ -54,20 +53,23 @@ import {
     noteGreenSprite,
     noteYellowSprite,
 } from './common/note-sprite'
-import { playTapJudgmentSFX } from './common/sfx'
+import { getTapClip, playJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowStart } from './input'
 
 const leniency = 1
 
 export function slideStart(isCritical: boolean): Script {
-    const bucket = isCritical
-        ? buckets.criticalSlideStartIndex
-        : buckets.slideStartIndex
-    const window = isCritical
-        ? windows.slideStart.critical
-        : windows.slideStart.normal
+    const bucket = isCritical ? buckets.criticalSlideStartIndex : buckets.slideStartIndex
+    const window = isCritical ? windows.slideStart.critical : windows.slideStart.normal
     const noteSprite = isCritical ? noteYellowSprite : noteGreenSprite
+    const circularEffect = isCritical
+        ? ParticleEffect.NoteCircularTapYellow
+        : ParticleEffect.NoteCircularTapGreen
+    const linearEffect = isCritical
+        ? ParticleEffect.NoteLinearTapYellow
+        : ParticleEffect.NoteLinearTapGreen
+    const slotColor = isCritical ? 4 : 2
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
 
@@ -98,16 +100,20 @@ export function slideStart(isCritical: boolean): Script {
         )
     )
 
-    const updateParallel = Or(
-        And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
-        Equal(noteInputState, InputState.Terminated),
-        Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-        And(Or(options.lockSlide, Less(Time, NoteData.time)), [
-            updateNoteY(),
+    const updateParallel = [
+        scheduleNoteAutoSFX(getTapClip(isCritical)),
 
-            noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-        ])
-    )
+        Or(
+            And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
+            Equal(noteInputState, InputState.Terminated),
+            Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
+            And(Less(Time, NoteData.time), GreaterOr(Time, noteVisibleTime), isNotHidden(), [
+                updateNoteY(),
+
+                noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
+            ])
+        ),
+    ]
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
@@ -115,10 +121,7 @@ export function slideStart(isCritical: boolean): Script {
         // DebugLog(window.good.late),
         If(
             Or(
-                GreaterOr(
-                    Subtract(Time, NoteData.time, InputOffset),
-                    window.good.late
-                ),
+                GreaterOr(Subtract(Time, NoteData.time, InputOffset), window.good.late),
                 And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
             [onMiss],
@@ -142,33 +145,22 @@ export function slideStart(isCritical: boolean): Script {
             disallowEmpties.add(TouchId),
             noteInputState.set(InputState.Terminated),
 
-            InputJudgment.set(
-                window.judge(Subtract(TouchST, InputOffset), NoteData.time)
-            ),
+            InputJudgment.set(window.judge(Subtract(TouchST, InputOffset), NoteData.time)),
             InputAccuracy.set(Subtract(TouchST, InputOffset, NoteData.time)),
             InputBucket.set(bucket),
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
             setJudgeVariable(),
-            playTapJudgmentSFX(),
+            playJudgmentSFX(false, getTapClip),
         ]
     }
 
     function playVisualEffects() {
         return [
             playNoteLaneEffect(),
-            playNoteEffect(
-                isCritical
-                    ? ParticleEffect.NoteCircularTapYellow
-                    : ParticleEffect.NoteCircularTapGreen,
-                isCritical
-                    ? ParticleEffect.NoteLinearTapYellow
-                    : ParticleEffect.NoteLinearTapGreen,
-                0,
-                'normal'
-            ),
-            playSlotEffect(isCritical ? 4 : 2),
+            playNoteEffect(circularEffect, linearEffect, 0, 'normal'),
+            playSlotEffect(slotColor),
         ]
     }
 }

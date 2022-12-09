@@ -26,11 +26,8 @@ import {
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { Layer, windows } from './common/constants'
-import {
-    playNoteEffect,
-    playNoteLaneEffect,
-    playSlotEffect,
-} from './common/effect'
+import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
+import { onMiss, setAutoJudge, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
@@ -52,27 +49,19 @@ import {
     noteTraceGraySprite,
     noteTraceYellowSprite,
 } from './common/note-sprite'
+import { getTraceClip, playJudgmentSFX } from './common/sfx'
 import {
     calculateTickLayout,
     getTickLayout,
     tickGraySprite,
     tickYellowSprite,
 } from './common/tick-sprite'
-import {
-    playCriticalTraceJudgmentSFX,
-    playTraceJudgmentSFX,
-} from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
-import { onMiss, setAutoJudge, setJudgeVariable } from './common/judge'
 
 export function traceNote(isCritical: boolean): Script {
-    const bucket = isCritical
-        ? buckets.criticalTraceNoteIndex
-        : buckets.traceNoteIndex
-    const window = isCritical
-        ? windows.tapNote.critical
-        : windows.tapNote.normal
+    const bucket = isCritical ? buckets.criticalTraceNoteIndex : buckets.traceNoteIndex
+    const window = isCritical ? windows.tapNote.critical : windows.tapNote.normal
     const noteSprite = isCritical ? noteTraceYellowSprite : noteTraceGraySprite
     const tickSprite = isCritical ? tickYellowSprite : tickGraySprite
 
@@ -96,10 +85,7 @@ export function traceNote(isCritical: boolean): Script {
         And(
             Not(bool(noteInputState)),
             Or(
-                And(
-                    checkNoteTimeInEarlyWindow(window.good.early),
-                    TouchStarted
-                ),
+                And(checkNoteTimeInEarlyWindow(window.good.early), TouchStarted),
                 checkNoteTimeInEarlyWindow(0)
             ),
             Not(disallowStart),
@@ -117,27 +103,16 @@ export function traceNote(isCritical: boolean): Script {
             updateNoteY(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(
-                noteScale,
-                noteBottom,
-                noteTop,
-                tickLayout,
-                Add(noteZ, 1)
-            ),
+            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
         ]
     )
 
-    const terminate = [
-        And(options.isAutoplay, [playVisualEffects(), setAutoJudge()]),
-    ]
+    const terminate = [And(options.isAutoplay, [playVisualEffects(), setAutoJudge()])]
     const updateSequential = [
         // DebugLog(window.good.late),
         If(
             Or(
-                GreaterOr(
-                    Subtract(Time, NoteData.time, InputOffset),
-                    window.good.late
-                ),
+                GreaterOr(Subtract(Time, NoteData.time, InputOffset), window.good.late),
                 And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
             [onMiss],
@@ -176,20 +151,13 @@ export function traceNote(isCritical: boolean): Script {
         return [
             disallowStart.set(true),
             disallowEmpties.add(TouchId),
-            disallowEnds.add(TouchId),
+            disallowEnds.add(TouchId, Time),
             noteInputState.set(InputState.Terminated),
             If(
                 TouchStarted,
                 [
-                    InputJudgment.set(
-                        window.judge(
-                            Subtract(TouchST, InputOffset),
-                            NoteData.time
-                        )
-                    ),
-                    InputAccuracy.set(
-                        Subtract(TouchST, InputOffset, NoteData.time)
-                    ),
+                    InputJudgment.set(window.judge(Subtract(TouchST, InputOffset), NoteData.time)),
+                    InputAccuracy.set(Subtract(TouchST, InputOffset, NoteData.time)),
                     InputBucket.set(bucket),
                     InputBucketValue.set(Multiply(InputAccuracy, 1000)),
                 ],
@@ -197,9 +165,7 @@ export function traceNote(isCritical: boolean): Script {
             ),
             setJudgeVariable(),
             playVisualEffects(),
-            isCritical
-                ? playCriticalTraceJudgmentSFX()
-                : playTraceJudgmentSFX(),
+            playJudgmentSFX(isCritical, getTraceClip),
         ]
     }
 
@@ -209,10 +175,10 @@ export function traceNote(isCritical: boolean): Script {
             playNoteEffect(
                 isCritical
                     ? ParticleEffect.NoteCircularTapYellow
-                    : ParticleEffect.NoteCircularTapBase,
+                    : ParticleEffect.NoteCircularTapNeutral,
                 isCritical
                     ? ParticleEffect.NoteLinearTapYellow
-                    : ParticleEffect.NoteLinearTapBase,
+                    : ParticleEffect.NoteLinearTapNeutral,
                 0,
                 'normal'
             ),

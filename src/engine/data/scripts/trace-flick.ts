@@ -31,17 +31,9 @@ import {
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
-import {
-    arrowRedSprite,
-    arrowYellowSprite,
-    getArrowLayout,
-} from './common/arrow-sprite'
+import { arrowRedSprite, arrowYellowSprite, getArrowLayout } from './common/arrow-sprite'
 import { Layer, minFlickVR, windows } from './common/constants'
-import {
-    playNoteEffect,
-    playNoteLaneEffect,
-    playSlotEffect,
-} from './common/effect'
+import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
 import { onMiss, setJudgeVariable } from './common/judge'
 import {
     applyMirrorDirections,
@@ -65,34 +57,22 @@ import {
     noteTraceRedSprite,
     noteTraceYellowSprite,
 } from './common/note-sprite'
-import {
-    playCriticalFlickJudgmentSFX,
-    playTraceFlickJudgmentSFX,
-} from './common/sfx'
+import {getTraceClip, playJudgmentSFX} from './common/sfx'
 import {
     calculateTickLayout,
     getTickLayout,
     tickRedSprite,
     tickYellowSprite,
 } from './common/tick-sprite'
-import {
-    checkDirection,
-    checkTouchXInHitbox,
-    checkTouchYInHitbox,
-} from './common/touch'
+import { checkDirection, checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
 
-export function traceFlick(
-    isCritical: boolean,
-    isNonDirectonal: boolean
-): Script {
+export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Script {
     const bucket = isCritical
         ? buckets.criticalTraceFlickIndex
         : isNonDirectonal
         ? buckets.traceNdFlickIndex
         : buckets.traceFlickIndex
-    const window = isCritical
-        ? windows.slideEndFlick.critical
-        : windows.slideEndFlick.normal
+    const window = isCritical ? windows.slideEndFlick.critical : windows.slideEndFlick.normal
     const noteSprite = isCritical ? noteTraceYellowSprite : noteTraceRedSprite
     const tickSprite = isCritical ? tickYellowSprite : tickRedSprite
     const arrowSprite = isCritical ? arrowYellowSprite : arrowRedSprite
@@ -162,19 +142,8 @@ export function traceFlick(
             updateNoteY(),
 
             noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(
-                noteScale,
-                noteBottom,
-                noteTop,
-                tickLayout,
-                Add(noteZ, 1)
-            ),
-            isNonDirectonal
-                ? []
-                : [
-                      arrowSprite.draw(noteScale, arrowLayout, arrowZ),
-                      arrowSprite.updateAnimation(),
-                  ],
+            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
+            isNonDirectonal ? [] : [arrowSprite.draw(noteScale, arrowLayout, arrowZ)],
         ]
     )
 
@@ -184,10 +153,7 @@ export function traceFlick(
         // DebugLog(window.good.late),
         If(
             Or(
-                GreaterOr(
-                    Subtract(Time, NoteData.time, InputOffset),
-                    window.good.late
-                ),
+                GreaterOr(Subtract(Time, NoteData.time, InputOffset), window.good.late),
                 And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
             [onMiss],
@@ -225,19 +191,14 @@ export function traceFlick(
         return [
             noteInputState.set(InputState.Terminated),
 
-            InputJudgment.set(
-                window.judge(Subtract(TouchT, InputOffset), NoteData.time)
-            ),
+            InputJudgment.set(window.judge(Subtract(TouchT, InputOffset), NoteData.time)),
             InputAccuracy.set(Subtract(TouchT, InputOffset, NoteData.time)),
             isNonDirectonal
                 ? []
                 : Or(
                       NotEqual(InputJudgment, 1),
                       checkDirection(TouchDX, TouchDY, NoteData.direction),
-                      [
-                          InputJudgment.set(2),
-                          InputAccuracy.set(window.perfect.late),
-                      ]
+                      [InputJudgment.set(2), InputAccuracy.set(window.perfect.late)]
                   ),
             InputBucket.set(bucket),
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
@@ -245,9 +206,7 @@ export function traceFlick(
             playVisualEffects(),
             setJudgeVariable(),
 
-            isCritical
-                ? playCriticalFlickJudgmentSFX()
-                : playTraceFlickJudgmentSFX(),
+            playJudgmentSFX(isCritical, getTraceClip),
         ]
     }
 

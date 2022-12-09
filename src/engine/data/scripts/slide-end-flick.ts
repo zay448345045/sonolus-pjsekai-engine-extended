@@ -3,7 +3,6 @@ import {
     Add,
     And,
     bool,
-    Divide,
     EntityMemory,
     Equal,
     Greater,
@@ -31,32 +30,28 @@ import {
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
-import {
-    arrowRedSprite,
-    arrowYellowSprite,
-    getArrowLayout,
-} from './common/arrow-sprite'
+import { arrowRedSprite, arrowYellowSprite, getArrowLayout } from './common/arrow-sprite'
 import { Layer, minFlickVR, windows } from './common/constants'
-import {
-    playNoteEffect,
-    playNoteLaneEffect,
-    playSlotEffect,
-} from './common/effect'
-import { onMiss, setJudgeVariable } from './common/judge'
+import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
+import { onMiss } from './common/judge'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
+    getZ,
     initializeNoteSimLine,
     InputState,
+    isNotHidden,
     noteBottom,
     NoteData,
     noteInputState,
     noteScale,
     noteSpawnTime,
     noteTop,
+    noteVisibleTime,
     noteZ,
     preprocessNote,
+    scheduleNoteAutoSFX,
     updateNoteY,
 } from './common/note'
 import {
@@ -65,32 +60,31 @@ import {
     noteRedSprite,
     noteYellowSprite,
 } from './common/note-sprite'
-import {
-    playCriticalFlickJudgmentSFX,
-    playFlickJudgmentSFX,
-} from './common/sfx'
-import {
-    checkDirection,
-    checkTouchXInHitbox,
-    checkTouchYInHitbox,
-} from './common/touch'
+import { getFlickClip, playJudgmentSFX } from './common/sfx'
+import { checkDirection, checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
 import { rotateAngle } from './input'
 
 const leniency = 1
 
 export function slideEndFlick(isCritical: boolean): Script {
-    const bucket = isCritical
-        ? buckets.criticalSlideEndFlickIndex
-        : buckets.slideEndFlickIndex
-    const window = isCritical
-        ? windows.slideEndFlick.critical
-        : windows.slideEndFlick.normal
+    const bucket = isCritical ? buckets.criticalSlideEndFlickIndex : buckets.slideEndFlickIndex
+    const window = isCritical ? windows.slideEndFlick.critical : windows.slideEndFlick.normal
     const noteSprite = isCritical ? noteYellowSprite : noteRedSprite
     const arrowSprite = isCritical ? arrowYellowSprite : arrowRedSprite
+    const circularEffect = isCritical
+        ? ParticleEffect.NoteCircularTapYellow
+        : ParticleEffect.NoteCircularTapRed
+    const linearEffect = isCritical
+        ? ParticleEffect.NoteLinearTapYellow
+        : ParticleEffect.NoteLinearTapRed
+    const alternativeEffect = isCritical
+        ? ParticleEffect.NoteLinearAlternativeYellow
+        : ParticleEffect.NoteLinearAlternativeRed
+    const slotColor = isCritical ? 4 : 1
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
     const arrowLayout = getArrowLayout(EntityMemory.to(8))
-    const arrowZ = EntityMemory.to<number>(17)
+    const arrowZ = EntityMemory.to<number>(18)
 
     const preprocess = [
         preprocessNote(bucket, window.good.late, leniency, Layer.NoteBody),
@@ -102,7 +96,7 @@ export function slideEndFlick(isCritical: boolean): Script {
             NoteData.direction,
             arrowLayout
         ),
-        arrowZ.set(Subtract(Layer.NoteArrow, Divide(NoteData.time, 1000))),
+        arrowZ.set(getZ(Layer.NoteArrow)),
     ]
 
     const spawnOrder = noteSpawnTime
@@ -139,46 +133,39 @@ export function slideEndFlick(isCritical: boolean): Script {
                     )
                 )
             ),
-            [
-                onComplete(),
-                rotateAngle.set(
-                    Add(rotateAngle.get(), Multiply(NoteData.center, -2))
-                ),
-            ]
+            [onComplete(), rotateAngle.set(Add(rotateAngle.get(), Multiply(NoteData.center, -2)))]
         )
     )
 
-    const updateParallel = Or(
-        And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
-        Equal(noteInputState, InputState.Terminated),
-        Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-        [
-            updateNoteY(),
-            arrowSprite.updateAnimation(),
+    const updateParallel = [
+        scheduleNoteAutoSFX(getFlickClip(isCritical)),
 
-            noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            arrowSprite.draw(noteScale, arrowLayout, arrowZ),
-        ]
-    )
+        Or(
+            And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
+            Equal(noteInputState, InputState.Terminated),
+            Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
+            And(GreaterOr(Time, noteVisibleTime), isNotHidden(), [
+                updateNoteY(),
+
+                noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
+                arrowSprite.draw(noteScale, arrowLayout, arrowZ),
+            ])
+        ),
+    ]
 
     const terminate = And(options.isAutoplay, playVisualEffects())
     const updateSequential = [
         // DebugLog(window.good.late),
         If(
             Or(
-                GreaterOr(
-                    Subtract(Time, NoteData.time, InputOffset),
-                    window.good.late
-                ),
+                GreaterOr(Subtract(Time, NoteData.time, InputOffset), window.good.late),
                 And(options.isAutoplay, GreaterOr(Time, NoteData.time))
             ),
             [
                 onMiss,
                 And(
                     options.isAutoplay,
-                    rotateAngle.set(
-                        Add(rotateAngle.get(), Multiply(NoteData.center, -2))
-                    )
+                    rotateAngle.set(Add(rotateAngle.get(), Multiply(NoteData.center, -2)))
                 ),
             ],
             []
@@ -186,72 +173,39 @@ export function slideEndFlick(isCritical: boolean): Script {
     ]
 
     return {
-        preprocess: {
-            code: preprocess,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        initialize: {
-            code: initialize,
-        },
-        touch: {
-            code: touch,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        terminate: {
-            code: terminate,
-        },
+        preprocess,
+        spawnOrder,
+        shouldSpawn,
+        initialize,
+        touch,
+        updateParallel,
+        updateSequential,
+        terminate,
     }
 
     function onComplete() {
         return [
             noteInputState.set(InputState.Terminated),
 
-            InputJudgment.set(
-                window.judge(Subtract(TouchT, InputOffset), NoteData.time)
-            ),
+            InputJudgment.set(window.judge(Subtract(TouchT, InputOffset), NoteData.time)),
             InputAccuracy.set(Subtract(TouchT, InputOffset, NoteData.time)),
-            Or(
-                NotEqual(InputJudgment, 1),
-                checkDirection(TouchDX, TouchDY, NoteData.direction),
-                [InputJudgment.set(2), InputAccuracy.set(window.perfect.late)]
-            ),
+            Or(NotEqual(InputJudgment, 1), checkDirection(TouchDX, TouchDY, NoteData.direction), [
+                InputJudgment.set(2),
+                InputAccuracy.set(window.perfect.late),
+            ]),
             InputBucket.set(bucket),
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
             playVisualEffects(),
-            setJudgeVariable(),
-            isCritical
-                ? playCriticalFlickJudgmentSFX()
-                : playFlickJudgmentSFX(),
+            playJudgmentSFX(isCritical, getFlickClip),
         ]
     }
 
     function playVisualEffects() {
         return [
             playNoteLaneEffect(),
-            playNoteEffect(
-                isCritical
-                    ? ParticleEffect.NoteCircularTapYellow
-                    : ParticleEffect.NoteCircularTapRed,
-                isCritical
-                    ? ParticleEffect.NoteLinearTapYellow
-                    : ParticleEffect.NoteLinearTapRed,
-                isCritical
-                    ? ParticleEffect.NoteLinearAlternativeYellow
-                    : ParticleEffect.NoteLinearAlternativeRed,
-                'flick'
-            ),
-            playSlotEffect(isCritical ? 4 : 1),
+            playNoteEffect(circularEffect, linearEffect, alternativeEffect, 'flick'),
+            playSlotEffect(slotColor),
         ]
     }
 }

@@ -38,6 +38,7 @@ Engine ID: `2`
 | 2   | Critical Tick  |
 | 3   | Critical Flick |
 | 4   | Tick           |
+| 5   | Critical Hold  |
 
 ## Documentation
 
@@ -78,11 +79,13 @@ Engine Thumbnail.
 Converts sus chart to Level Data.
 
 -   `sus`: sus chart.
--   `offset`: chart offset (default: `0`).
+-   `bgmOffset`: bgm offset (default: `0`).
+-   `chartOffset`: chart offset (default: `0`).
 
 ### `fromFannithm(fannithm, offset)`
 
 Converts Fannithm chart to Level Data.
 
 -   `fannithm`: Fannithm chart.
--   `offset`: chart offset (default: `0`).
+-   `bgmOffset`: bgm offset (default: `0`).
+-   `chartOffset`: chart offset (default: `0`).

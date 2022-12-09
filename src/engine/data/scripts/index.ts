@@ -1,8 +1,8 @@
 import { defineScripts } from 'sonolus.js'
-import { autoSFX } from './auto-sfx'
 import { flickNote } from './flick-note'
 import { initialization } from './initialization'
 import { input } from './input'
+import { judge } from './judge'
 import { simLine } from './sim-line'
 import { slideConnector } from './slide-connector'
 import { slideEnd } from './slide-end'
@@ -13,9 +13,8 @@ import { slotEffect } from './slot-effect'
 import { slotGlowEffect } from './slot-glow-effect'
 import { stage } from './stage'
 import { tapNote } from './tap-note'
-import { traceNote } from './trace-note'
 import { traceFlick } from './trace-flick'
-import { judge } from './judge'
+import { traceNote } from './trace-note'
 
 export const scripts = defineScripts({
     initialization,
@@ -48,7 +47,6 @@ export const scripts = defineScripts({
 
     traceNdFlick: () => traceFlick(false, true),
 
-    autoSFX,
     simLine,
 
     slotEffect,

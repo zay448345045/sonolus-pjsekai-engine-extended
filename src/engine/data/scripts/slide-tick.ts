@@ -20,16 +20,19 @@ import { onMiss, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
     checkTouchXInNoteHitbox,
+    isNotHidden,
     noteBottom,
     NoteData,
     noteScale,
     noteSpawnTime,
     noteTop,
+    noteVisibleTime,
     noteZ,
     preprocessNote,
+    scheduleNoteAutoSFX,
     updateNoteY,
 } from './common/note'
-import { playCriticalTickJudgmentSFX, playTickJudgmentSFX } from './common/sfx'
+import { getTickClip, playJudgmentSFX } from './common/sfx'
 import {
     calculateTickLayout,
     getTickLayout,
@@ -42,6 +45,12 @@ const leniency = 1
 
 export function slideTick(isCritical: boolean, isVisible = true): Script {
     const tickSprite = isCritical ? tickYellowSprite : tickGreenSprite
+    const circularEffect = isCritical
+        ? ParticleEffect.NoteCircularAlternativeYellow
+        : ParticleEffect.NoteCircularAlternativeGreen
+    const linearEffect = isCritical
+        ? ParticleEffect.NoteLinearTapYellow
+        : ParticleEffect.NoteLinearTapGreen
 
     const tickLayout = getTickLayout(EntityMemory.to(0))
 
@@ -64,22 +73,20 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
         )
     )
 
-    const updateParallel = Or(
-        And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
-        GreaterOr(Subtract(Time, NoteData.time, InputOffset), 0),
-        isVisible &&
-            And(Less(Time, NoteData.time), [
-                updateNoteY(),
+    const updateParallel = [
+        isVisible && scheduleNoteAutoSFX(getTickClip(isCritical)),
 
-                tickSprite.draw(
-                    noteScale,
-                    noteBottom,
-                    noteTop,
-                    tickLayout,
-                    noteZ
-                ),
-            ])
-    )
+        Or(
+            And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
+            GreaterOr(Subtract(Time, NoteData.time, InputOffset), 0),
+            isVisible &&
+                And(Less(Time, NoteData.time), GreaterOr(Time, noteVisibleTime), isNotHidden(), [
+                    updateNoteY(),
+
+                    tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, noteZ),
+                ])
+        ),
+    ]
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
@@ -108,27 +115,13 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
             InputAccuracy.set(0),
             playVisualEffects(),
             setJudgeVariable(),
+
+            playVisualEffects(),
+            isVisible && playJudgmentSFX(isCritical, getTickClip),
         ]
     }
 
     function playVisualEffects() {
-        return (
-            isVisible && [
-                playNoteEffect(
-                    isCritical
-                        ? ParticleEffect.NoteCircularAlternativeYellow
-                        : ParticleEffect.NoteCircularAlternativeGreen,
-                    isCritical
-                        ? ParticleEffect.NoteLinearTapYellow
-                        : ParticleEffect.NoteLinearTapGreen,
-                    0,
-                    'tick'
-                ),
-
-                isCritical
-                    ? Or(options.isAutoplay, playCriticalTickJudgmentSFX())
-                    : playTickJudgmentSFX(),
-            ]
-        )
+        return isVisible && playNoteEffect(circularEffect, linearEffect, 0, 'tick')
     }
 }

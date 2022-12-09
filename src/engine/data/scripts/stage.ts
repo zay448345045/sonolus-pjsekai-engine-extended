@@ -1,4 +1,4 @@
-import { SkinSprite } from 'sonolus-core'
+import { EffectClip, SkinSprite } from 'sonolus-core'
 import {
     Add,
     And,
@@ -23,6 +23,7 @@ import {
     Not,
     NotEqual,
     Or,
+    Play,
     Radian,
     Remap,
     Script,
@@ -41,18 +42,18 @@ import {
     baseNote,
     lane,
     Layer,
+    minSFXDistance,
     origin,
+    PauseButtonSprite,
     screen,
     sekaiStage,
     SekaiStageSprite,
     stage as stageC,
 } from './common/constants'
 import { playEmptyLaneEffect } from './common/effect'
-import { playStageSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { rectByEdge } from './common/utils'
 import { disallowEmpties, rotateAngle } from './input'
-import { PauseButtonSprite } from './common/constants'
 
 export function stage(): Script {
     const spawnOrder = -999
@@ -69,24 +70,14 @@ export function stage(): Script {
                 LessOr(TouchX, Multiply(lane.w, 6)),
                 [
                     If(TouchStarted, onEmptyTap(), onEmptyMove()),
-                    rotateAngle.set(
-                        Add(rotateAngle.get(), Multiply(TouchX, 0.1))
-                    ),
+                    rotateAngle.set(Add(rotateAngle.get(), Multiply(TouchX, 0.1))),
                 ]
             )
         ),
     ]
 
-    const updateParallel = [
-        drawStageCover(),
-        drawBackgroundHider(),
-        drawStage(),
-        drawComponents(),
-    ]
-    const updateSequential = [
-        And(Greater(options.stageTilt, 0), [backRotate()]),
-        updateTransform(),
-    ]
+    const updateParallel = [drawStageCover(), drawBackgroundHider(), drawStage(), drawComponents()]
+    const updateSequential = [And(Greater(options.stageTilt, 0), [backRotate()]), updateTransform()]
 
     const initialize = [
         And(
@@ -142,16 +133,12 @@ export function stage(): Script {
     function drawStage() {
         return Or(
             options.hideLane,
+
             If(
                 HasSkinSprite(SekaiStageSprite),
                 Draw(
                     SekaiStageSprite,
-                    ...rectByEdge(
-                        sekaiStage.l,
-                        sekaiStage.r,
-                        sekaiStage.b,
-                        sekaiStage.t
-                    ),
+                    ...rectByEdge(sekaiStage.l, sekaiStage.r, sekaiStage.b, sekaiStage.t),
                     Layer.Stage,
                     1
                 ),
@@ -174,37 +161,13 @@ export function stage(): Script {
                         .map(([l, r]) =>
                             Draw(
                                 SkinSprite.Lane,
-                                Remap(
-                                    origin,
-                                    lane.b,
-                                    0,
-                                    Multiply(l, lane.w),
-                                    screen.b
-                                ),
+                                Remap(origin, lane.b, 0, Multiply(l, lane.w), screen.b),
                                 screen.b,
-                                Remap(
-                                    origin,
-                                    lane.b,
-                                    0,
-                                    Multiply(l, lane.w),
-                                    stageC.t
-                                ),
+                                Remap(origin, lane.b, 0, Multiply(l, lane.w), stageC.t),
                                 stageC.t,
-                                Remap(
-                                    origin,
-                                    lane.b,
-                                    0,
-                                    Multiply(r, lane.w),
-                                    stageC.t
-                                ),
+                                Remap(origin, lane.b, 0, Multiply(r, lane.w), stageC.t),
                                 stageC.t,
-                                Remap(
-                                    origin,
-                                    lane.b,
-                                    0,
-                                    Multiply(r, lane.w),
-                                    screen.b
-                                ),
+                                Remap(origin, lane.b, 0, Multiply(r, lane.w), screen.b),
                                 screen.b,
                                 Layer.Stage,
                                 1
@@ -212,37 +175,13 @@ export function stage(): Script {
                         ),
                     Draw(
                         SkinSprite.StageLeftBorder,
-                        Remap(
-                            origin,
-                            lane.b,
-                            0,
-                            Multiply(-6.5, lane.w),
-                            screen.b
-                        ),
+                        Remap(origin, lane.b, 0, Multiply(-6.5, lane.w), screen.b),
                         screen.b,
-                        Remap(
-                            origin,
-                            lane.b,
-                            0,
-                            Multiply(-6.5, lane.w),
-                            stageC.t
-                        ),
+                        Remap(origin, lane.b, 0, Multiply(-6.5, lane.w), stageC.t),
                         stageC.t,
-                        Remap(
-                            origin,
-                            lane.b,
-                            0,
-                            Multiply(-6, lane.w),
-                            stageC.t
-                        ),
+                        Remap(origin, lane.b, 0, Multiply(-6, lane.w), stageC.t),
                         stageC.t,
-                        Remap(
-                            origin,
-                            lane.b,
-                            0,
-                            Multiply(-6, lane.w),
-                            screen.b
-                        ),
+                        Remap(origin, lane.b, 0, Multiply(-6, lane.w), screen.b),
                         screen.b,
                         Layer.Stage,
                         1
@@ -253,21 +192,9 @@ export function stage(): Script {
                         screen.b,
                         Remap(origin, lane.b, 0, Multiply(6, lane.w), stageC.t),
                         stageC.t,
-                        Remap(
-                            origin,
-                            lane.b,
-                            0,
-                            Multiply(6.5, lane.w),
-                            stageC.t
-                        ),
+                        Remap(origin, lane.b, 0, Multiply(6.5, lane.w), stageC.t),
                         stageC.t,
-                        Remap(
-                            origin,
-                            lane.b,
-                            0,
-                            Multiply(6.5, lane.w),
-                            screen.b
-                        ),
+                        Remap(origin, lane.b, 0, Multiply(6.5, lane.w), screen.b),
                         screen.b,
                         Layer.Stage,
                         1
@@ -312,14 +239,9 @@ export function stage(): Script {
                     options.stageSize
                 )
             ),
-            LevelTransform.to(1).set(
-                Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt))
-            ),
+            LevelTransform.to(1).set(Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt))),
             LevelTransform.to(4).set(
-                Multiply(
-                    Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt)),
-                    -1
-                )
+                Multiply(Sin(Multiply(Radian(rotateAngle.get()), options.stageTilt)), -1)
             ),
             LevelTransform.to(5).set(
                 Multiply(
@@ -327,9 +249,7 @@ export function stage(): Script {
                     options.stageSize
                 )
             ),
-            LevelTransform.to(7).set(
-                Multiply(Subtract(1, options.stageSize), -1)
-            ),
+            LevelTransform.to(7).set(Multiply(Subtract(1, options.stageSize), -1)),
         ]
     }
 
@@ -356,5 +276,8 @@ function xToIndex(x: Code<number>) {
 }
 
 function playEmpty(index: Code<number>) {
-    return [playStageSFX(), playEmptyLaneEffect(index)]
+    return [
+        And(options.isSFXEnabled, Play(EffectClip.Stage, minSFXDistance)),
+        playEmptyLaneEffect(index),
+    ]
 }

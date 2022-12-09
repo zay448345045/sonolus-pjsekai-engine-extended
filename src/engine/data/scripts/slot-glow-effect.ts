@@ -2,7 +2,6 @@ import {
     Abs,
     Add,
     customSkinSprite,
-    Divide,
     Draw,
     EntityMemory,
     GreaterOr,
@@ -17,6 +16,7 @@ import {
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { engineId, lane, Layer } from './common/constants'
+import { getZ } from './common/note'
 
 export function slotGlowEffect(): Script {
     const sprite = EntityMemory.to<number>(0)
@@ -42,13 +42,7 @@ export function slotGlowEffect(): Script {
         tR.set(Multiply(Add(center, width), tw)),
         bL.set(Multiply(Subtract(center, width), lane.w)),
         bR.set(Multiply(Add(center, width), lane.w)),
-        z.set(
-            Add(
-                Layer.SlotGlowEffect,
-                Divide(Time, 1000),
-                Divide(Abs(center), -10000)
-            )
-        ),
+        z.set(getZ(Layer.SlotGlowEffect, Multiply(Time, -1), Abs(center))),
     ]
 
     const a = EntityMemory.to<number>(32)
@@ -59,19 +53,7 @@ export function slotGlowEffect(): Script {
         a.set(Unlerp(endTime, startTime, Time)),
         p.set(Subtract(1, Power(a, 3))),
         t.set(Add(lane.b, Multiply(lane.w, 4, options.slotEffectSize, p))),
-        Draw(
-            sprite,
-            bL,
-            lane.b,
-            Lerp(bL, tL, p),
-            t,
-            Lerp(bR, tR, p),
-            t,
-            bR,
-            lane.b,
-            z,
-            a
-        ),
+        Draw(sprite, bL, lane.b, Lerp(bL, tL, p), t, Lerp(bR, tR, p), t, bR, lane.b, z, a),
     ])
 
     return {

@@ -1,18 +1,8 @@
-import {
-    Add,
-    And,
-    Code,
-    DataType,
-    Equal,
-    Less,
-    Or,
-    Pointer,
-    SwitchInteger,
-} from 'sonolus.js'
+import { Add, And, Code, DataType, Equal, Less, Or, Pointer, SwitchInteger } from 'sonolus.js'
 
 export class List<T extends DataType> {
-    public readonly pointer: Pointer
-    public readonly count: Pointer<number>
+    private readonly pointer: Pointer
+    private readonly count: Pointer<number>
     private readonly buffer: Pointer<T>
     private readonly size: number
 
