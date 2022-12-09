@@ -3,6 +3,7 @@ import { flickNote } from './flick-note'
 import { initialization } from './initialization'
 import { input } from './input'
 import { judge } from './judge'
+import { longSfx } from './long-sfx'
 import { simLine } from './sim-line'
 import { slideConnector } from './slide-connector'
 import { slideEnd } from './slide-end'
@@ -52,4 +53,5 @@ export const scripts = defineScripts({
     slotEffect,
     slotGlowEffect,
     judgeRenderer: judge,
+    longSfx,
 })

@@ -85,6 +85,7 @@ export function stage(): Script {
             Not(options.hideUI),
             Spawn(scripts.judgeRendererIndex, [])
         ),
+        Spawn(scripts.longSfxIndex, []),
     ]
 
     return {

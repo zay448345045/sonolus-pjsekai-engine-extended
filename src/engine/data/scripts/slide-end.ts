@@ -100,7 +100,7 @@ export function slideEnd(isCritical: boolean): Script {
     )
 
     const updateParallel = [
-        scheduleNoteAutoSFX(getTapClip(isCritical)),
+        scheduleNoteAutoSFX(getTapClip(false)),
 
         Or(
             And(options.isAutoplay, GreaterOr(Time, NoteData.time)),

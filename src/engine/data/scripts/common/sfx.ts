@@ -1,14 +1,30 @@
 import { EffectClip } from 'sonolus-core'
-import { Add, And, Code, HasEffectClip, If, InputJudgment, Not, Play } from 'sonolus.js'
+import {
+    Add,
+    And,
+    Code,
+    HasEffectClip,
+    If,
+    InputJudgment,
+    LevelMemory,
+    Not,
+    Play,
+} from 'sonolus.js'
 import { options } from '../../../configuration/options'
 import {
     criticalFlickClip,
     criticalHoldClip,
     criticalTapClip,
     criticalTickClip,
+    criticalTraceClip,
     minSFXDistance,
     tickClip,
+    traceClip,
+    traceFlickClip,
 } from './constants'
+
+export const holdSFXCount = LevelMemory.to<number>(128)
+export const criticalHoldSFXCount = LevelMemory.to<number>(129)
 
 export const getTapClip = (isCritical: boolean, judgment: Code<number> = 1) =>
     getClipIfCritical(isCritical, criticalTapClip, Add(EffectClip.Miss, judgment))
@@ -26,6 +42,12 @@ export const getFlickClip = (isCritical: boolean, judgment: Code<number> = 1) =>
 export const getHoldClip = (isCritical: boolean) =>
     getClipIfCritical(isCritical, criticalHoldClip, EffectClip.Hold)
 
+export const getTraceClip = (isCritical: boolean) =>
+    getClipIfCritical(isCritical, criticalTraceClip, traceClip)
+
+export const getTraceFlickClip = (isCritical: boolean) =>
+    getClipIfCritical(isCritical, criticalTraceClip, traceFlickClip)
+
 export const playJudgmentSFX = (
     isCritical: boolean,
     getClip: (isCritical: boolean, judgment: Code<number>) => Code<number>
@@ -36,7 +58,6 @@ export const playJudgmentSFX = (
         Play(getClip(isCritical, InputJudgment), minSFXDistance)
     )
 
-export const getTraceClip = (isCritical: boolean) => getClipIfCritical(isCritical, 100206, 100205)
 const getClipIfCritical = (isCritical: boolean, criticalId: Code<number>, id: Code<number>) =>
     isCritical ? getClip(criticalId, id) : id
 

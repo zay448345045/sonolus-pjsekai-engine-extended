@@ -88,4 +88,7 @@ export const archetypes = defineArchetypes({
     judgeRenderer: {
         script: scripts.judgeRendererIndex,
     },
+    longSfx: {
+        script: scripts.longSfxIndex,
+    },
 })
