@@ -57,7 +57,7 @@ import {
     noteTraceRedSprite,
     noteTraceYellowSprite,
 } from './common/note-sprite'
-import {getTraceClip, playJudgmentSFX} from './common/sfx'
+import { getTraceFlickClip, playJudgmentSFX } from './common/sfx'
 import {
     calculateTickLayout,
     getTickLayout,
@@ -206,7 +206,7 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
             playVisualEffects(),
             setJudgeVariable(),
 
-            playJudgmentSFX(isCritical, getTraceClip),
+            playJudgmentSFX(isCritical, getTraceFlickClip),
         ]
     }
 
