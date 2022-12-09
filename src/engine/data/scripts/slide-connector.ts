@@ -442,111 +442,120 @@ export function slideConnector(isCritical: boolean): Script {
                             )
                         ),
 
-                        And(
-                            options.isNoteEffectEnabled,
-                            Or(HasParticleEffect(circularEffect), HasParticleEffect(linearEffect)),
-                            center.set(
-                                Lerp(ConnectorData.headCenter, ConnectorData.tailCenter, noteScale)
-                            )
-                        ),
-
-                        And(
-                            options.isNoteEffectEnabled,
-                            HasParticleEffect(circularEffect),
-                            If(
+                        Or(isZeroWidth, [
+                            And(
+                                options.isNoteEffectEnabled,
                                 Or(
-                                    options.isAutoplay,
-                                    Equal(ConnectorData.headSharedMemory.slideTime, Time)
+                                    HasParticleEffect(circularEffect),
+                                    HasParticleEffect(linearEffect)
                                 ),
-                                [
+                                center.set(
+                                    Lerp(
+                                        ConnectorData.headCenter,
+                                        ConnectorData.tailCenter,
+                                        noteScale
+                                    )
+                                )
+                            ),
+
+                            And(
+                                options.isNoteEffectEnabled,
+                                HasParticleEffect(circularEffect),
+                                If(
                                     Or(
-                                        bool(circularId),
-                                        circularId.set(
-                                            SpawnParticleEffect(
-                                                circularEffect,
-                                                ...rectByEdge(0, 0, 0, 0),
-                                                1,
-                                                true
+                                        options.isAutoplay,
+                                        Equal(ConnectorData.headSharedMemory.slideTime, Time)
+                                    ),
+                                    [
+                                        Or(
+                                            bool(circularId),
+                                            circularId.set(
+                                                SpawnParticleEffect(
+                                                    circularEffect,
+                                                    ...rectByEdge(0, 0, 0, 0),
+                                                    1,
+                                                    true
+                                                )
                                             )
-                                        )
-                                    ),
+                                        ),
 
-                                    MoveParticleEffect(
-                                        circularId,
-                                        Subtract(
-                                            Multiply(center, circularHoldEffect.bw),
-                                            circularHoldEffect.w
+                                        MoveParticleEffect(
+                                            circularId,
+                                            Subtract(
+                                                Multiply(center, circularHoldEffect.bw),
+                                                circularHoldEffect.w
+                                            ),
+                                            circularHoldEffect.b,
+                                            Subtract(
+                                                Multiply(center, circularHoldEffect.tw),
+                                                circularHoldEffect.w
+                                            ),
+                                            circularHoldEffect.t,
+                                            Add(
+                                                Multiply(center, circularHoldEffect.tw),
+                                                circularHoldEffect.w
+                                            ),
+                                            circularHoldEffect.t,
+                                            Add(
+                                                Multiply(center, circularHoldEffect.bw),
+                                                circularHoldEffect.w
+                                            ),
+                                            circularHoldEffect.b
                                         ),
-                                        circularHoldEffect.b,
-                                        Subtract(
-                                            Multiply(center, circularHoldEffect.tw),
-                                            circularHoldEffect.w
-                                        ),
-                                        circularHoldEffect.t,
-                                        Add(
-                                            Multiply(center, circularHoldEffect.tw),
-                                            circularHoldEffect.w
-                                        ),
-                                        circularHoldEffect.t,
-                                        Add(
-                                            Multiply(center, circularHoldEffect.bw),
-                                            circularHoldEffect.w
-                                        ),
-                                        circularHoldEffect.b
-                                    ),
-                                ],
-                                And(bool(circularId), [
-                                    DestroyParticleEffect(circularId),
-                                    circularId.set(0),
-                                ])
-                            )
-                        ),
+                                    ],
+                                    And(bool(circularId), [
+                                        DestroyParticleEffect(circularId),
+                                        circularId.set(0),
+                                    ])
+                                )
+                            ),
 
-                        And(
-                            options.isNoteEffectEnabled,
-                            HasParticleEffect(linearEffect),
-                            If(
-                                Or(
-                                    options.isAutoplay,
-                                    Equal(ConnectorData.headSharedMemory.slideTime, Time)
-                                ),
-                                [
+                            And(
+                                options.isNoteEffectEnabled,
+                                HasParticleEffect(linearEffect),
+                                If(
                                     Or(
-                                        bool(linearId),
-                                        linearId.set(
-                                            SpawnParticleEffect(
-                                                linearEffect,
-                                                ...rectByEdge(0, 0, 0, 0),
-                                                1,
-                                                true
+                                        options.isAutoplay,
+                                        Equal(ConnectorData.headSharedMemory.slideTime, Time)
+                                    ),
+                                    [
+                                        Or(
+                                            bool(linearId),
+                                            linearId.set(
+                                                SpawnParticleEffect(
+                                                    linearEffect,
+                                                    ...rectByEdge(0, 0, 0, 0),
+                                                    1,
+                                                    true
+                                                )
                                             )
-                                        )
-                                    ),
+                                        ),
 
-                                    MoveParticleEffect(
-                                        linearId,
-                                        Subtract(Multiply(center, lane.w), linearHoldEffect.w),
-                                        lane.b,
-                                        Subtract(
-                                            Multiply(center, linearHoldEffect.tw),
-                                            linearHoldEffect.w
+                                        MoveParticleEffect(
+                                            linearId,
+                                            Subtract(Multiply(center, lane.w), linearHoldEffect.w),
+                                            lane.b,
+                                            Subtract(
+                                                Multiply(center, linearHoldEffect.tw),
+                                                linearHoldEffect.w
+                                            ),
+                                            linearHoldEffect.t,
+                                            Add(
+                                                Multiply(center, linearHoldEffect.tw),
+                                                linearHoldEffect.w
+                                            ),
+                                            linearHoldEffect.t,
+                                            Add(Multiply(center, lane.w), linearHoldEffect.w),
+                                            lane.b
                                         ),
-                                        linearHoldEffect.t,
-                                        Add(
-                                            Multiply(center, linearHoldEffect.tw),
-                                            linearHoldEffect.w
-                                        ),
-                                        linearHoldEffect.t,
-                                        Add(Multiply(center, lane.w), linearHoldEffect.w),
-                                        lane.b
-                                    ),
-                                ],
-                                And(bool(linearId), [
-                                    DestroyParticleEffect(linearId),
-                                    linearId.set(0),
-                                ])
-                            )
-                        ),
+                                    ],
+                                    And(bool(linearId), [
+                                        DestroyParticleEffect(linearId),
+                                        linearId.set(0),
+                                    ])
+                                )
+                            ),
+                        ]),
                     ]),
                 ])
             )
