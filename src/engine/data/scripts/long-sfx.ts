@@ -1,4 +1,4 @@
-import { And, EntityMemory, Equal, If, NotEqual, PlayLooped, Script, StopLooped } from 'sonolus.js'
+import { And, EntityMemory, Greater, If, LessOr, PlayLooped, Script, StopLooped } from 'sonolus.js'
 import { criticalHoldSFXCount, getHoldClip, holdSFXCount } from './common/sfx'
 
 export function longSfx(): Script {
@@ -21,8 +21,8 @@ export function longSfx(): Script {
         ).map(([current, previous, sfxId, sfx]) => [
             If(
                 previous.get(),
-                And(Equal(current.get(), 0), [previous.set(false), StopLooped(sfxId.get())]),
-                And(NotEqual(current.get(), 0), [previous.set(true), sfxId.set(PlayLooped(sfx))])
+                And(LessOr(current.get(), 0), [previous.set(false), StopLooped(sfxId.get())]),
+                And(Greater(current.get(), 0), [previous.set(true), sfxId.set(PlayLooped(sfx))])
             ),
         ]),
     ]
