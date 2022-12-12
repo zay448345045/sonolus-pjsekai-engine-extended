@@ -290,7 +290,7 @@ export function slideConnector(isCritical: boolean): Script {
 
                     Or(shouldPlaySFX, [
                         previousPressState.set(false),
-                        holdCount.set(Subtract(holdCount.get(), 1)),
+                        holdCount.set(Max(Subtract(holdCount.get(), 1), 0)),
                     ]),
 
                     And(shouldPlaySFX, [

@@ -1,11 +1,9 @@
 {
-  "extends": "./tsconfig",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src/lib",
-    "declaration": true
-  },
-  "include": [
-    "./src/lib"
-  ]
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": "./src/lib",
+        "declaration": true
+    },
+    "include": ["./src/lib"]
 }

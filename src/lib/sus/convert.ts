@@ -427,12 +427,7 @@ export function fromSus(
                     : archetypes.traceFlickIndex,
                 data: {
                     index: 0,
-                    values: [
-                        time,
-                        note.lane - 8 + note.width / 2,
-                        note.width / 2,
-                        flickMod || 0,
-                    ],
+                    values: [time, note.lane - 8 + note.width / 2, note.width / 2, flickMod || 0],
                 },
             },
         })
