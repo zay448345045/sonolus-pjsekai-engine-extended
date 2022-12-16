@@ -16,7 +16,7 @@
         "lint": "tsc -p . --noEmit && eslint --ext .ts src/",
         "serve": "ts-node-dev --respawn --transpile-only ./src/serve",
         "build": "ts-node ./src/build && tsc -p ./tsconfig.lib.json",
-        "postinstall": "ts-node ./src/build && tsc -p ./tsconfig.lib.json"
+        "postinstall": "tsc -p ./tsconfig.lib.json"
     },
     "devDependencies": {
         "@tsconfig/node16": "^1.0.3",
