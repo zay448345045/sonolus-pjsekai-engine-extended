@@ -91,7 +91,7 @@ export function slideEnd(isCritical: boolean): Script {
             TouchEnded,
             Or(
                 Not(disallowEnds.contains(TouchId)),
-                LessOr(disallowEnds.get(TouchId), Subtract(NoteData.time, window.good.early))
+                LessOr(disallowEnds.get(TouchId), Subtract(NoteData.time, window.great.early))
             ),
             checkTouchYInHitbox(),
             checkTouchXInNoteHitbox(),
