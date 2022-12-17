@@ -24,7 +24,8 @@
         "sonolus-core": "^6.0.0",
         "sonolus-express": "^5.0.0",
         "sonolus.js": "^8.0.0",
-        "ts-node": "^10.9.1"
+        "ts-node": "^10.9.1",
+        "typescript": "^4.9.3"
     },
     "devDependencies": {
         "@tsconfig/node16": "^1.0.3",
@@ -35,8 +36,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "prettier": "^2.7.1",
         "prettier-plugin-organize-imports": "^3.2.0",
-        "ts-node-dev": "^2.0.0",
-        "typescript": "^4.9.3"
+        "ts-node-dev": "^2.0.0"
     },
     "optionalDependencies": {
         "fsevents": "*"
