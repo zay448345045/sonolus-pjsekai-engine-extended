@@ -250,7 +250,7 @@ export function slideConnector(isCritical: boolean): Script {
             options.lockSlide,
             Equal(ConnectorData.headInfo.state, State.Spawned),
             LessOr(Subtract(Time, ConnectorData.headSharedMemory.slideTime), Add(DeltaTime, 0.01)),
-            Less(Subtract(Time, ConnectorData.headSharedMemory.startTime), InputOffset)
+            Less(Time, ConnectorData.headSharedMemory.slideTime)
         ),
         Not(isZeroWidth)
     )
@@ -308,7 +308,7 @@ export function slideConnector(isCritical: boolean): Script {
 
         And(GreaterOr(Time, ConnectorData.tailTime), [
             And(
-                previousPressState.get(),
+                shouldPlaySFX,
                 Not(postProcessDone.get()),
                 holdCount.set(Subtract(holdCount.get(), 1))
             ),
@@ -317,7 +317,7 @@ export function slideConnector(isCritical: boolean): Script {
         ]),
     ]
 
-    const updateParallel = And(
+    const updateParallel = [
         bool(
             Or(
                 GreaterOr(Time, ConnectorData.tailTime),
@@ -563,8 +563,8 @@ export function slideConnector(isCritical: boolean): Script {
                 ])
             )
         ),
-        postProcessDone.get()
-    )
+        0,
+    ]
 
     const terminate = [
         And(bool(circularId), DestroyParticleEffect(circularId)),
