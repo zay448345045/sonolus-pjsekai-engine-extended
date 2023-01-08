@@ -14,7 +14,7 @@
     ],
     "scripts": {
         "lint": "tsc -p . --noEmit && eslint --ext .ts src/",
-        "serve": "ts-node-dev --respawn --transpile-only ./src/serve",
+        "serve": "nodemon --watch src --exec \"ts-node ./src/serve.ts\" --ext .ts,.sus",
         "build": "ts-node ./src/build && tsc -p ./tsconfig.lib.json",
         "postinstall": "ts-node ./src/build && tsc -p ./tsconfig.lib.json"
     },
@@ -34,6 +34,7 @@
         "eslint": "^8.28.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "^4.2.1",
+        "nodemon": "^2.0.20",
         "prettier": "^2.7.1",
         "prettier-plugin-organize-imports": "^3.2.0",
         "ts-node-dev": "^2.0.0"

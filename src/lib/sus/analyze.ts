@@ -12,19 +12,31 @@ export type NoteObject = {
     type: number
 }
 
+export type RequestInfo = {
+    sideLane: boolean
+    laneOffset: number
+    ticksPerBeat: number
+}
+
 export type Score = {
     tapNotes: NoteObject[]
     directionalNotes: NoteObject[]
     slides: NoteObject[][]
     toTime: (tick: number) => number
+    request: RequestInfo
 }
 
 type ToTick = (measure: number, p: number, q: number) => number
 
-export function analyze(sus: string, ticksPerBeat: number): Score {
+export function analyze(sus: string): Score {
     const lines: Line[] = []
     const meta = new Map<string, string>()
     const measureChanges: MeasureChange[] = []
+    const request: RequestInfo = {
+        sideLane: false,
+        laneOffset: 0,
+        ticksPerBeat: 480,
+    }
 
     sus.split('\n')
         .map((line) => line.trim())
@@ -33,7 +45,9 @@ export function analyze(sus: string, ticksPerBeat: number): Score {
             const isLine = line.includes(':')
 
             const index = line.indexOf(isLine ? ':' : ' ')
-            if (index === -1) return
+            if (index === -1) {
+                return
+            }
 
             const left = line.substring(1, index).trim()
             const right = line.substring(index + 1).trim()
@@ -42,6 +56,23 @@ export function analyze(sus: string, ticksPerBeat: number): Score {
                 lines.push([left, right])
             } else if (left === 'MEASUREBS') {
                 measureChanges.unshift([lines.length, +right])
+            } else if (left === 'REQUEST') {
+                try {
+                    const content = JSON.parse(right)
+                    const key = content.split(' ')[0]
+                    const value = JSON.parse(content.split(' ')[1])
+                    switch (key) {
+                        case 'side_lane':
+                            request.sideLane = value
+                            break
+                        case 'lane_offset':
+                            request.laneOffset = value
+                            break
+                        case 'ticks_per_beat':
+                            request.ticksPerBeat = value
+                            break
+                    }
+                } catch (e) {}
             } else {
                 meta.set(left, right)
             }
@@ -69,10 +100,10 @@ export function analyze(sus: string, ticksPerBeat: number): Score {
         .map(({ measure, length }, i, values) => {
             const prev = values[i - 1]
             if (prev) {
-                ticks += (measure - prev.measure) * prev.length * ticksPerBeat
+                ticks += (measure - prev.measure) * prev.length * request.ticksPerBeat
             }
 
-            return { measure, ticksPerMeasure: length * ticksPerBeat, ticks }
+            return { measure, ticksPerMeasure: length * request.ticksPerBeat, ticks }
         })
         .reverse()
 
@@ -143,7 +174,7 @@ export function analyze(sus: string, ticksPerBeat: number): Score {
         .map(({ tick, bpm }, i, values) => {
             const prev = values[i - 1]
             if (prev) {
-                time += ((tick - prev.tick) * 60) / ticksPerBeat / prev.bpm
+                time += ((tick - prev.tick) * 60) / request.ticksPerBeat / prev.bpm
             }
 
             return { tick, bpm, time }
@@ -155,7 +186,11 @@ export function analyze(sus: string, ticksPerBeat: number): Score {
         const timing = timings.find((timing) => tick >= timing.tick)
         if (!timing) throw 'Unexpected missing timing'
 
-        return timing.time + -waveOffset + ((tick - timing.tick) * 60) / ticksPerBeat / timing.bpm
+        return (
+            timing.time +
+            -waveOffset +
+            ((tick - timing.tick) * 60) / request.ticksPerBeat / timing.bpm
+        )
     }
 
     return {
@@ -163,6 +198,7 @@ export function analyze(sus: string, ticksPerBeat: number): Score {
         directionalNotes,
         slides,
         toTime,
+        request,
     }
 }
 

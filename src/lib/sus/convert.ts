@@ -15,9 +15,6 @@ type NoteInfo = {
     isCritical: boolean
 }
 
-const ticksPerBeat = 480
-const ticksPerHidden = ticksPerBeat / 2
-
 export function fromSus(
     sus: string,
     bgmOffset: number,
@@ -52,7 +49,9 @@ export function fromSus(
         traceNdFlickIndex: number
     }
 ): LevelData {
-    const score = analyze(sus, ticksPerBeat)
+    const score = analyze(sus)
+    const ticksPerBeat = score.request.ticksPerBeat
+    const ticksPerHidden = ticksPerBeat / 2
 
     const flickMods = new Map<string, -1 | 0 | 1>()
     const criticalMods = new Set<string>()
@@ -135,7 +134,7 @@ export function fromSus(
 
     const taps = new Set<string>()
     score.tapNotes
-        .filter((note) => note.lane > 1 && note.lane < 14)
+        .filter((note) => score.request.sideLane || (note.lane > 1 && note.lane < 14))
         .forEach((note) => {
             const key = getKey(note)
             if (slides.has(key)) return
@@ -159,7 +158,7 @@ export function fromSus(
                                 index: 0,
                                 values: [
                                     time,
-                                    note.lane - 8 + note.width / 2,
+                                    note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
                                 ],
@@ -186,7 +185,7 @@ export function fromSus(
                                 index: 0,
                                 values: [
                                     time,
-                                    note.lane - 8 + note.width / 2,
+                                    note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
                                 ],
@@ -230,7 +229,11 @@ export function fromSus(
                                 : archetypes.slideStartIndex,
                             data: {
                                 index: 0,
-                                values: [time, note.lane - 8 + note.width / 2, note.width / 2],
+                                values: [
+                                    time,
+                                    note.lane - 8 + note.width / 2 + score.request.laneOffset,
+                                    note.width / 2,
+                                ],
                             },
                         },
                     })
@@ -261,7 +264,7 @@ export function fromSus(
                                 index: 0,
                                 values: [
                                     time,
-                                    note.lane - 8 + note.width / 2,
+                                    note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
                                 ],
@@ -298,7 +301,11 @@ export function fromSus(
                                 : archetypes.slideTickIndex,
                             data: {
                                 index: 0,
-                                values: [time, note.lane - 8 + note.width / 2, note.width / 2],
+                                values: [
+                                    time,
+                                    note.lane - 8 + note.width / 2 + score.request.laneOffset,
+                                    note.width / 2,
+                                ],
                             },
                         },
                     })
@@ -347,7 +354,11 @@ export function fromSus(
                             : archetypes.slideTickIndex,
                         data: {
                             index: 0,
-                            values: [info.time, lane - 8 + width / 2, width / 2],
+                            values: [
+                                info.time,
+                                lane - 8 + width / 2 + score.request.laneOffset,
+                                width / 2,
+                            ],
                         },
                     },
                 })
@@ -365,10 +376,10 @@ export function fromSus(
                         index: 0,
                         values: [
                             head.time,
-                            head.note.lane - 8 + head.note.width / 2,
+                            head.note.lane - 8 + head.note.width / 2 + score.request.laneOffset,
                             head.note.width / 2,
                             time,
-                            note.lane - 8 + note.width / 2,
+                            note.lane - 8 + note.width / 2 + score.request.laneOffset,
                             note.width / 2,
                             easeType,
                         ],
@@ -396,7 +407,7 @@ export function fromSus(
                         archetype: archetypes.slideHiddenTickIndex,
                         data: {
                             index: 0,
-                            values: [t, lane - 8 + width / 2, width / 2],
+                            values: [t, lane - 8 + width / 2 + score.request.laneOffset, width / 2],
                         },
                     },
                 })
@@ -427,7 +438,12 @@ export function fromSus(
                     : archetypes.traceFlickIndex,
                 data: {
                     index: 0,
-                    values: [time, note.lane - 8 + note.width / 2, note.width / 2, flickMod || 0],
+                    values: [
+                        time,
+                        note.lane - 8 + note.width / 2 + score.request.laneOffset,
+                        note.width / 2,
+                        flickMod || 0,
+                    ],
                 },
             },
         })
