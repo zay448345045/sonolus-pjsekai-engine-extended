@@ -78,9 +78,9 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
     const arrowSprite = isCritical ? arrowYellowSprite : arrowRedSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
-    const tickLayout = getTickLayout(EntityMemory.to(0))
-    const arrowLayout = getArrowLayout(EntityMemory.to(8))
-    const arrowZ = EntityMemory.to<number>(17)
+    const tickLayout = getTickLayout(EntityMemory.to(8))
+    const arrowLayout = getArrowLayout(EntityMemory.to(16))
+    const arrowZ = EntityMemory.to<number>(36)
 
     const preprocess = [
         preprocessNote(bucket, window.good.late, 0.75, Layer.NoteBody),
