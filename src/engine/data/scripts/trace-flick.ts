@@ -3,6 +3,7 @@ import {
     Add,
     And,
     bool,
+    DebugLog,
     Divide,
     EntityMemory,
     Equal,
@@ -23,11 +24,8 @@ import {
     Time,
     TouchDX,
     TouchDY,
-    TouchEnded,
     TouchT,
     TouchVR,
-    TouchX,
-    TouchY,
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
@@ -43,6 +41,7 @@ import {
     InputState,
     noteBottom,
     NoteData,
+    noteHitboxR,
     noteInputState,
     noteScale,
     noteSpawnTime,
@@ -64,7 +63,8 @@ import {
     tickRedSprite,
     tickYellowSprite,
 } from './common/tick-sprite'
-import { checkDirection, checkTouchXInHitbox, checkTouchYInHitbox } from './common/touch'
+import { checkDirection, checkTouchYInHitbox } from './common/touch'
+import { disallowStart, rotateAngle } from './input'
 
 export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Script {
     const bucket = isCritical
@@ -79,11 +79,11 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
     const tickLayout = getTickLayout(EntityMemory.to(8))
-    const arrowLayout = getArrowLayout(EntityMemory.to(16))
-    const arrowZ = EntityMemory.to<number>(36)
+    const arrowLayout = getArrowLayout(EntityMemory.to(14))
+    const arrowZ = EntityMemory.to<number>(51)
 
     const preprocess = [
-        preprocessNote(bucket, window.good.late, 0.75, Layer.NoteBody),
+        preprocessNote(bucket, window.good.late, 0.25, Layer.NoteBody),
         applyMirrorDirections(NoteData.direction),
         calculateNoteLayout(NoteData.center, NoteData.width, noteLayout),
         calculateTickLayout(NoteData.center, NoteData.width, tickLayout),
@@ -106,31 +106,12 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
         options.isAutoplay,
         And(
             Not(bool(noteInputState)),
-            checkNoteTimeInEarlyWindow(window.good.early),
+            checkNoteTimeInEarlyWindow(0),
+            Not(disallowStart),
             GreaterOr(TouchVR, minFlickVR),
-            checkTouchYInHitbox(Subtract(TouchY, TouchDY)),
-            If(
-                checkNoteTimeInEarlyWindow(0),
-                checkTouchXInNoteHitbox(Subtract(TouchX, TouchDX)),
-                And(
-                    checkTouchXInHitbox(
-                        NoteData.headSharedMemory.slideHitboxL,
-                        NoteData.headSharedMemory.slideHitboxR,
-                        Subtract(TouchX, TouchDX)
-                    ),
-                    Or(
-                        TouchEnded,
-                        Not(checkTouchYInHitbox()),
-                        Not(
-                            checkTouchXInHitbox(
-                                NoteData.headSharedMemory.slideHitboxL,
-                                NoteData.headSharedMemory.slideHitboxR
-                            )
-                        )
-                    )
-                )
-            ),
-            onComplete()
+            checkTouchYInHitbox(),
+            checkTouchXInNoteHitbox(),
+            [onComplete(), rotateAngle.set(Add(rotateAngle.get(), Multiply(NoteData.center, -2)))]
         )
     )
 

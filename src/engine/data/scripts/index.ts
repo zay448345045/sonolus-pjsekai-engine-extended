@@ -1,4 +1,5 @@
 import { defineScripts } from 'sonolus.js'
+import { damageNote } from './damage-note'
 import { flickNote } from './flick-note'
 import { initialization } from './initialization'
 import { input } from './input'
@@ -54,4 +55,5 @@ export const scripts = defineScripts({
     slotGlowEffect,
     judgeRenderer: judge,
     longSfx,
+    damageNote: () => damageNote(),
 })

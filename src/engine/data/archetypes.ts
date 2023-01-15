@@ -91,4 +91,9 @@ export const archetypes = defineArchetypes({
     longSfx: {
         script: scripts.longSfxIndex,
     },
+
+    damageNote: {
+        script: scripts.damageNoteIndex,
+        input: true,
+    },
 })

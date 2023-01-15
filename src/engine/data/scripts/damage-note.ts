@@ -1,6 +1,5 @@
-import { ParticleEffect } from 'sonolus-core'
+import { EffectClip, ParticleEffect } from 'sonolus-core'
 import {
-    Add,
     And,
     bool,
     EntityMemory,
@@ -9,27 +8,23 @@ import {
     GreaterOr,
     If,
     InputAccuracy,
-    InputBucket,
-    InputBucketValue,
     InputJudgment,
-    InputOffset,
-    Multiply,
+    Less,
     Not,
     Or,
     Script,
-    Subtract,
     Time,
     TouchId,
-    TouchST,
     TouchStarted,
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { Layer, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
-import { onMiss, setAutoJudge, setJudgeVariable } from './common/judge'
+import { currentJudge, judgeTime, setAutoJudge, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
+    checkNoteTimeInLateWindow,
     checkTouchXInNoteHitbox,
     initializeNoteSimLine,
     InputState,
@@ -43,49 +38,36 @@ import {
     preprocessNote,
     updateNoteY,
 } from './common/note'
-import {
-    calculateNoteLayout,
-    getNoteLayout,
-    noteTraceGraySprite,
-    noteTraceYellowSprite,
-} from './common/note-sprite'
-import { getTraceClip, playJudgmentSFX } from './common/sfx'
-import {
-    calculateTickLayout,
-    getTickLayout,
-    tickGraySprite,
-    tickYellowSprite,
-} from './common/tick-sprite'
+import { calculateNoteLayout, getNoteLayout, notePurpleSprite } from './common/note-sprite'
+import { playJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
 
-export function traceNote(isCritical: boolean): Script {
-    const bucket = isCritical ? buckets.criticalTraceNoteIndex : buckets.traceNoteIndex
-    const window = isCritical ? windows.tapNote.critical : windows.tapNote.normal
-    const noteSprite = isCritical ? noteTraceYellowSprite : noteTraceGraySprite
-    const tickSprite = isCritical ? tickYellowSprite : tickGraySprite
+export function damageNote(): Script {
+    const bucket = buckets.damageNoteIndex
+    const window = windows.tapNote.normal
+    const noteSprite = notePurpleSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
-    const tickLayout = getTickLayout(EntityMemory.to(8))
 
     const preprocess = [
-        preprocessNote(bucket, window.good.late, 0.25, Layer.NoteBody),
+        preprocessNote(bucket, window.good.late, 0.625, Layer.NoteBody),
         calculateNoteLayout(NoteData.center, NoteData.width, noteLayout),
-        calculateTickLayout(NoteData.center, NoteData.width, tickLayout),
     ]
 
     const spawnOrder = noteSpawnTime
 
     const shouldSpawn = GreaterOr(Time, noteSpawnTime)
 
-    const initialize = [initializeNoteSimLine()]
+    const initialize = [initializeNoteSimLine(), InputJudgment.set(1), InputAccuracy.set(0)]
 
     const touch = Or(
         options.isAutoplay,
         And(
             Not(bool(noteInputState)),
+            checkNoteTimeInLateWindow(window.perfect.late),
             Or(
-                And(checkNoteTimeInEarlyWindow(window.good.early), TouchStarted),
+                And(checkNoteTimeInEarlyWindow(window.great.early), TouchStarted),
                 checkNoteTimeInEarlyWindow(0)
             ),
             Not(disallowStart),
@@ -98,24 +80,16 @@ export function traceNote(isCritical: boolean): Script {
     const updateParallel = Or(
         And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
         Equal(noteInputState, InputState.Terminated),
-        Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-        [
-            updateNoteY(),
-
-            noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
-        ]
+        Less(noteBottom, -1),
+        [updateNoteY(), noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ)]
     )
 
     const terminate = [And(options.isAutoplay, [playVisualEffects(), setAutoJudge()])]
     const updateSequential = [
         // DebugLog(window.good.late),
         If(
-            Or(
-                GreaterOr(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-                And(options.isAutoplay, GreaterOr(Time, NoteData.time))
-            ),
-            [onMiss],
+            Or(And(Greater(noteBottom, 1)), Equal(noteInputState, InputState.Terminated)),
+            [currentJudge.set(0), judgeTime.set(Time)],
             []
         ),
     ]
@@ -153,19 +127,10 @@ export function traceNote(isCritical: boolean): Script {
             disallowEmpties.add(TouchId),
             disallowEnds.add(TouchId, Time),
             noteInputState.set(InputState.Terminated),
-            If(
-                TouchStarted,
-                [
-                    InputJudgment.set(1),
-                    InputAccuracy.set(Subtract(TouchST, InputOffset, NoteData.time)),
-                    InputBucket.set(bucket),
-                    InputBucketValue.set(Multiply(InputAccuracy, 1000)),
-                ],
-                [InputJudgment.set(1), InputAccuracy.set(0)]
-            ),
+            InputJudgment.set(0),
             setJudgeVariable(),
             playVisualEffects(),
-            playJudgmentSFX(isCritical, getTraceClip),
+            playJudgmentSFX(false, () => EffectClip.Good),
         ]
     }
 
@@ -173,12 +138,8 @@ export function traceNote(isCritical: boolean): Script {
         return [
             playNoteLaneEffect(),
             playNoteEffect(
-                isCritical
-                    ? ParticleEffect.NoteCircularTapYellow
-                    : ParticleEffect.NoteCircularTapNeutral,
-                isCritical
-                    ? ParticleEffect.NoteLinearTapYellow
-                    : ParticleEffect.NoteLinearTapNeutral,
+                ParticleEffect.NoteCircularTapPurple,
+                ParticleEffect.NoteLinearTapPurple,
                 0,
                 'normal'
             ),
@@ -192,7 +153,7 @@ export function traceNote(isCritical: boolean): Script {
             //     0,
             //     'tick'
             // ),
-            playSlotEffect(isCritical ? 4 : 0),
+            playSlotEffect(5),
         ]
     }
 }

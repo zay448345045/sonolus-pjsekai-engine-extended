@@ -311,4 +311,16 @@ export const buckets = defineBuckets({
             },
         ],
     },
+    damageNote: {
+        sprites: [
+            {
+                id: SkinSprite.NoteHeadPurple,
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+        ],
+    },
 })

@@ -47,6 +47,8 @@ export function fromSus(
         criticalTraceNoteIndex: number
         criticalTraceFlickIndex: number
         traceNdFlickIndex: number
+
+        damageNoteIndex: number
     }
 ): LevelData {
     const score = analyze(sus)
@@ -188,6 +190,24 @@ export function fromSus(
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
+                                ],
+                            },
+                        },
+                    })
+                    break
+                }
+                case 4: {
+                    wrappers.push({
+                        group: 0,
+                        time,
+                        entity: {
+                            archetype: archetypes.damageNoteIndex,
+                            data: {
+                                index: 0,
+                                values: [
+                                    time,
+                                    note.lane - 8 + note.width / 2 + score.request.laneOffset,
+                                    note.width / 2,
                                 ],
                             },
                         },

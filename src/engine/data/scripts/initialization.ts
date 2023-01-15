@@ -226,6 +226,7 @@ export function initialization(): Script {
                 archetypes.criticalTraceNoteIndex,
                 archetypes.criticalTraceFlickIndex,
                 archetypes.traceNdFlickIndex,
+                archetypes.damageNoteIndex,
             ].map((archetype) => ArchetypeLife.of(archetype).missLifeIncrement.set(-40)),
         ]
     }

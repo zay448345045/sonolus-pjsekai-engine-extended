@@ -122,6 +122,10 @@ export function checkNoteTimeInEarlyWindow(earlyWindow: number) {
     return LessOr(Subtract(NoteData.time, Subtract(Time, InputOffset)), earlyWindow)
 }
 
+export function checkNoteTimeInLateWindow(lateWindow: number) {
+    return LessOr(Subtract(Time, InputOffset, NoteData.time), lateWindow)
+}
+
 // Note
 
 export function approach(time: Code<number>) {
