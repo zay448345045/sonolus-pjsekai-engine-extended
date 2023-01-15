@@ -21,7 +21,7 @@ import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { Layer, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
-import { currentJudge, judgeTime, setAutoJudge, setJudgeVariable } from './common/judge'
+import { currentJudge, judgeTime, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
     checkNoteTimeInLateWindow,
@@ -77,14 +77,11 @@ export function damageNote(): Script {
         )
     )
 
-    const updateParallel = Or(
-        And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
-        Equal(noteInputState, InputState.Terminated),
-        Less(noteBottom, -1),
-        [updateNoteY(), noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ)]
-    )
+    const updateParallel = Or(Equal(noteInputState, InputState.Terminated), Less(noteBottom, -1), [
+        updateNoteY(),
+        noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
+    ])
 
-    const terminate = [And(options.isAutoplay, [playVisualEffects(), setAutoJudge()])]
     const updateSequential = [
         // DebugLog(window.good.late),
         If(
@@ -95,30 +92,13 @@ export function damageNote(): Script {
     ]
 
     return {
-        preprocess: {
-            code: preprocess,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        initialize: {
-            code: initialize,
-        },
-        touch: {
-            code: touch,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
-        terminate: {
-            code: terminate,
-        },
+        preprocess,
+        spawnOrder,
+        shouldSpawn,
+        initialize,
+        touch,
+        updateSequential,
+        updateParallel,
     }
 
     function onComplete() {

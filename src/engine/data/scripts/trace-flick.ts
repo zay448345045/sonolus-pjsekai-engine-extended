@@ -3,7 +3,6 @@ import {
     Add,
     And,
     bool,
-    DebugLog,
     Divide,
     EntityMemory,
     Equal,
@@ -30,7 +29,7 @@ import {
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { arrowRedSprite, arrowYellowSprite, getArrowLayout } from './common/arrow-sprite'
-import { Layer, minFlickVR, windows } from './common/constants'
+import { criticalTraceClip, Layer, minFlickVR, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
 import { onMiss, setJudgeVariable } from './common/judge'
 import {
@@ -41,13 +40,13 @@ import {
     InputState,
     noteBottom,
     NoteData,
-    noteHitboxR,
     noteInputState,
     noteScale,
     noteSpawnTime,
     noteTop,
     noteZ,
     preprocessNote,
+    scheduleNoteAutoSFX,
     updateNoteY,
 } from './common/note'
 import {
@@ -115,18 +114,21 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
         )
     )
 
-    const updateParallel = Or(
-        And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
-        Equal(noteInputState, InputState.Terminated),
-        Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-        [
-            updateNoteY(),
+    const updateParallel = [
+        scheduleNoteAutoSFX(getTraceFlickClip(isCritical)),
+        Or(
+            And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
+            Equal(noteInputState, InputState.Terminated),
+            Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
+            [
+                updateNoteY(),
 
-            noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
-            isNonDirectonal ? [] : [arrowSprite.draw(noteScale, arrowLayout, arrowZ)],
-        ]
-    )
+                noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
+                tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
+                isNonDirectonal ? [] : [arrowSprite.draw(noteScale, arrowLayout, arrowZ)],
+            ]
+        ),
+    ]
 
     const terminate = And(options.isAutoplay, playVisualEffects())
 
@@ -142,30 +144,14 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
         ),
     ]
     return {
-        preprocess: {
-            code: preprocess,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        initialize: {
-            code: initialize,
-        },
-        touch: {
-            code: touch,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
-        terminate: {
-            code: terminate,
-        },
+        preprocess,
+        spawnOrder,
+        shouldSpawn,
+        initialize,
+        touch,
+        updateSequential,
+        updateParallel,
+        terminate,
     }
 
     function onComplete() {

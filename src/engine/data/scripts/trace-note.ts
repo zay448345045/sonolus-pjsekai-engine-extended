@@ -41,6 +41,7 @@ import {
     noteTop,
     noteZ,
     preprocessNote,
+    scheduleNoteAutoSFX,
     updateNoteY,
 } from './common/note'
 import {
@@ -95,17 +96,20 @@ export function traceNote(isCritical: boolean): Script {
         )
     )
 
-    const updateParallel = Or(
-        And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
-        Equal(noteInputState, InputState.Terminated),
-        Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-        [
-            updateNoteY(),
+    const updateParallel = [
+        scheduleNoteAutoSFX(getTraceClip(isCritical)),
+        Or(
+            And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
+            Equal(noteInputState, InputState.Terminated),
+            Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
+            [
+                updateNoteY(),
 
-            noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-            tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
-        ]
-    )
+                noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
+                tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, Add(noteZ, 1)),
+            ]
+        ),
+    ]
 
     const terminate = [And(options.isAutoplay, [playVisualEffects(), setAutoJudge()])]
     const updateSequential = [
@@ -121,30 +125,14 @@ export function traceNote(isCritical: boolean): Script {
     ]
 
     return {
-        preprocess: {
-            code: preprocess,
-        },
-        spawnOrder: {
-            code: spawnOrder,
-        },
-        shouldSpawn: {
-            code: shouldSpawn,
-        },
-        initialize: {
-            code: initialize,
-        },
-        touch: {
-            code: touch,
-        },
-        updateSequential: {
-            code: updateSequential,
-        },
-        updateParallel: {
-            code: updateParallel,
-        },
-        terminate: {
-            code: terminate,
-        },
+        preprocess,
+        spawnOrder,
+        shouldSpawn,
+        initialize,
+        touch,
+        updateSequential,
+        updateParallel,
+        terminate,
     }
 
     function onComplete() {
