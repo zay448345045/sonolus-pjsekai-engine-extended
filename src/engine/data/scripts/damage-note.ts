@@ -51,7 +51,7 @@ export function damageNote(): Script {
     const noteLayout = getNoteLayout(EntityMemory.to(0))
 
     const preprocess = [
-        preprocessNote(bucket, window.good.late, 0.625, Layer.NoteBody),
+        preprocessNote(bucket, window.good.late, 0, Layer.NoteBody),
         calculateNoteLayout(NoteData.center, NoteData.width, noteLayout),
     ]
 
