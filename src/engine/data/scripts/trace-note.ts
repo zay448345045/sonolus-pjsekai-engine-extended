@@ -156,7 +156,7 @@ export function traceNote(isCritical: boolean): Script {
             If(
                 TouchStarted,
                 [
-                    InputJudgment.set(window.judge(Subtract(TouchST, InputOffset), NoteData.time)),
+                    InputJudgment.set(1),
                     InputAccuracy.set(Subtract(TouchST, InputOffset, NoteData.time)),
                     InputBucket.set(bucket),
                     InputBucketValue.set(Multiply(InputAccuracy, 1000)),

@@ -191,7 +191,7 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
         return [
             noteInputState.set(InputState.Terminated),
 
-            InputJudgment.set(window.judge(Subtract(TouchT, InputOffset), NoteData.time)),
+            InputJudgment.set(1),
             InputAccuracy.set(Subtract(TouchT, InputOffset, NoteData.time)),
             isNonDirectonal
                 ? []
