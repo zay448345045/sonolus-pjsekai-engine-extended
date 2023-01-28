@@ -1,4 +1,4 @@
-import { ParticleEffect, SkinSprite } from 'sonolus-core'
+import { customSkinSprite, ParticleEffect, SkinSprite } from 'sonolus-core'
 import {
     Abs,
     Add,
@@ -16,6 +16,7 @@ import {
     Greater,
     GreaterOr,
     HasParticleEffect,
+    HasSkinSprite,
     If,
     InputOffset,
     Lerp,
@@ -122,7 +123,18 @@ export function slideConnector(isCritical: boolean): Script {
     const connectionSprite = isCritical
         ? SkinSprite.NoteConnectionYellowSeamless
         : SkinSprite.NoteConnectionGreenSeamless
-    const connectionActiveSprite = isCritical ? 100314 : 100312
+    const connectionActiveSprite = isCritical
+        ? If(
+              HasSkinSprite(customSkinSprite(3, 44)),
+              customSkinSprite(3, 44),
+              customSkinSprite(3, 14)
+          )
+        : If(
+              HasSkinSprite(customSkinSprite(3, 42)),
+              customSkinSprite(3, 42),
+              customSkinSprite(3, 12)
+          )
+
     const noteSprite = isCritical ? noteYellowSprite : noteGreenSprite
     const circularEffect = isCritical
         ? ParticleEffect.NoteCircularHoldYellow

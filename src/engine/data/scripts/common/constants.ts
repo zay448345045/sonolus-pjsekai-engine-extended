@@ -19,6 +19,7 @@ import { Window } from './window'
 // Engine
 
 export const engineId = 2
+export const extEngineId = 3
 
 // Input
 

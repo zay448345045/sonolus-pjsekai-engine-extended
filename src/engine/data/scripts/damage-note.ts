@@ -38,7 +38,7 @@ import {
     preprocessNote,
     updateNoteY,
 } from './common/note'
-import { calculateNoteLayout, getNoteLayout, notePurpleSprite } from './common/note-sprite'
+import { calculateNoteLayout, getNoteLayout, noteDamageSprite } from './common/note-sprite'
 import { playJudgmentSFX } from './common/sfx'
 import { checkTouchYInHitbox } from './common/touch'
 import { disallowEmpties, disallowEnds, disallowStart } from './input'
@@ -46,7 +46,7 @@ import { disallowEmpties, disallowEnds, disallowStart } from './input'
 export function damageNote(): Script {
     const bucket = buckets.damageNoteIndex
     const window = windows.tapNote.normal
-    const noteSprite = notePurpleSprite
+    const noteSprite = noteDamageSprite
 
     const noteLayout = getNoteLayout(EntityMemory.to(0))
 

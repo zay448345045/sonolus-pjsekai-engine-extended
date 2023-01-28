@@ -14,7 +14,7 @@ import {
     Pointer,
     Subtract,
 } from 'sonolus.js'
-import { baseNote, engineId } from './constants'
+import { baseNote, engineId, extEngineId } from './constants'
 import { getLayout, Tuple } from './utils'
 
 export type NoteLayout = Tuple<Code<number>, 8>
@@ -48,10 +48,10 @@ export class NoteSprite {
     public readonly fallback: Code<number>
     public readonly exists: Code<boolean>
 
-    public constructor(color: number) {
-        this.left = customSkinSprite(engineId, 10 + color)
-        this.mid = customSkinSprite(engineId, 20 + color)
-        this.right = customSkinSprite(engineId, 30 + color)
+    public constructor(color: number, skinEngineId: number = engineId) {
+        this.left = customSkinSprite(skinEngineId, 10 + color)
+        this.mid = customSkinSprite(skinEngineId, 20 + color)
+        this.right = customSkinSprite(skinEngineId, 30 + color)
         this.fallback = SkinSprite.NoteHeadNeutral + color
         this.exists = And(...[this.left, this.mid, this.right].map(HasSkinSprite))
     }
@@ -61,7 +61,8 @@ export class NoteSprite {
         bottom: Code<number>,
         top: Code<number>,
         layout: NoteLayout,
-        z: Code<number>
+        z: Code<number>,
+        alpha: Code<number> = 1
     ) {
         return Or(
             LessOr(Abs(Subtract(layout[0], layout[1])), 0),
@@ -79,7 +80,7 @@ export class NoteSprite {
                         Multiply(layout[7], scale),
                         bottom,
                         z,
-                        1
+                        alpha
                     ),
                     Draw(
                         this.left,
@@ -92,7 +93,7 @@ export class NoteSprite {
                         Multiply(layout[6], scale),
                         bottom,
                         z,
-                        1
+                        alpha
                     ),
                     Draw(
                         this.right,
@@ -105,7 +106,7 @@ export class NoteSprite {
                         Multiply(layout[3], scale),
                         bottom,
                         z,
-                        1
+                        alpha
                     ),
                 ],
                 Draw(
@@ -119,7 +120,7 @@ export class NoteSprite {
                     Multiply(layout[3], scale),
                     bottom,
                     z,
-                    1
+                    alpha
                 )
             )
         )
@@ -130,7 +131,8 @@ export const noteRedSprite = new NoteSprite(1)
 export const noteGreenSprite = new NoteSprite(2)
 export const noteYellowSprite = new NoteSprite(4)
 export const noteCyanSprite = new NoteSprite(6)
-export const notePurpleSprite = new NoteSprite(5)
-export const noteTraceGraySprite = new NoteSprite(7)
-export const noteTraceYellowSprite = new NoteSprite(8)
-export const noteTraceRedSprite = new NoteSprite(9)
+
+export const noteTraceGraySprite = new NoteSprite(1, extEngineId)
+export const noteTraceYellowSprite = new NoteSprite(2, extEngineId)
+export const noteTraceRedSprite = new NoteSprite(3, extEngineId)
+export const noteDamageSprite = new NoteSprite(4, extEngineId)
