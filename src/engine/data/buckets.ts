@@ -323,4 +323,24 @@ export const buckets = defineBuckets({
             },
         ],
     },
+    traceSlideStart: {
+        sprites: [
+            {
+                id: SkinSprite.NoteHeadNeutral,
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+            {
+                id: SkinSprite.NoteConnectionGreen,
+                x: 0.5,
+                y: 0,
+                w: 2,
+                h: 5,
+                rotation: -90,
+            },
+        ],
+    },
 })

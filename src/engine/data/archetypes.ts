@@ -96,4 +96,8 @@ export const archetypes = defineArchetypes({
         script: scripts.damageNoteIndex,
         input: true,
     },
+    traceSlideStart: {
+        script: scripts.traceSlideStartIndex,
+        input: true,
+    },
 })

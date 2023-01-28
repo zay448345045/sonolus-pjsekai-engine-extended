@@ -1,4 +1,5 @@
 import { LevelData, LevelDataEntity } from 'sonolus-core'
+import type { archetypes as Archetypes } from '../../engine/data/archetypes'
 import { analyze, NoteObject } from './analyze'
 
 type Wrapper = {
@@ -19,37 +20,7 @@ export function fromSus(
     sus: string,
     bgmOffset: number,
     chartOffset: number,
-    archetypes: {
-        initializationIndex: number
-        stageIndex: number
-        inputIndex: number
-
-        tapNoteIndex: number
-        flickNoteIndex: number
-        slideStartIndex: number
-        slideTickIndex: number
-        slideEndIndex: number
-        slideEndFlickIndex: number
-        slideConnectorIndex: number
-
-        criticalTapNoteIndex: number
-        criticalFlickNoteIndex: number
-        criticalSlideStartIndex: number
-        criticalSlideTickIndex: number
-        criticalSlideEndIndex: number
-        criticalSlideEndFlickIndex: number
-        criticalSlideConnectorIndex: number
-
-        slideHiddenTickIndex: number
-
-        traceNoteIndex: number
-        traceFlickIndex: number
-        criticalTraceNoteIndex: number
-        criticalTraceFlickIndex: number
-        traceNdFlickIndex: number
-
-        damageNoteIndex: number
-    }
+    archetypes: typeof Archetypes
 ): LevelData {
     const score = analyze(sus)
     const ticksPerBeat = score.request.ticksPerBeat
@@ -236,6 +207,7 @@ export function fromSus(
             const key = getKey(note)
             const time = toTime(note.tick)
             const isCritical = isStartCritical || criticalMods.has(key)
+            const isTrace = tickRemoveMods.has(key)
 
             let newHead: NoteInfo | undefined
             switch (note.type) {
@@ -244,7 +216,9 @@ export function fromSus(
                         group: 0,
                         time,
                         entity: {
-                            archetype: isCritical
+                            archetype: isTrace
+                                ? archetypes.traceSlideStartIndex
+                                : isCritical
                                 ? archetypes.criticalSlideStartIndex
                                 : archetypes.slideStartIndex,
                             data: {
@@ -264,16 +238,22 @@ export function fromSus(
                         time,
                         isCritical,
                     }
+                    if (isTrace) {
+                        usedTickRemoveMods.add(key)
+                    }
                     break
                 }
                 case 2: {
                     const flickMod = flickMods.get(key)
+
                     wrappers.push({
                         group: 0,
                         time,
                         ref,
                         entity: {
-                            archetype: isCritical
+                            archetype: isTrace
+                                ? archetypes.traceNoteIndex
+                                : isCritical
                                 ? flickMod === undefined
                                     ? archetypes.criticalSlideEndIndex
                                     : archetypes.criticalSlideEndFlickIndex
@@ -297,6 +277,9 @@ export function fromSus(
                         key,
                         time,
                         isCritical,
+                    }
+                    if (isTrace) {
+                        usedTickRemoveMods.add(key)
                     }
                     break
                 }

@@ -17,6 +17,7 @@ import { stage } from './stage'
 import { tapNote } from './tap-note'
 import { traceFlick } from './trace-flick'
 import { traceNote } from './trace-note'
+import { traceSlideStart } from './trace-slide-start'
 
 export const scripts = defineScripts({
     initialization,
@@ -56,4 +57,6 @@ export const scripts = defineScripts({
     judgeRenderer: judge,
     longSfx,
     damageNote: () => damageNote(),
+
+    traceSlideStart: () => traceSlideStart(false),
 })
