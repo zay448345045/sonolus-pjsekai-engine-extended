@@ -229,7 +229,7 @@ export function preprocessNote(
     layer: number
 ) {
     return [
-        applyLevelSpeed(NoteData.time),
+        applyLevelSpeed(NoteData.time, NoteData.hispeedTime),
         applyMirrorCenters(NoteData.center),
 
         noteSpawnTime.set(getSpawnTime(NoteData.time)),

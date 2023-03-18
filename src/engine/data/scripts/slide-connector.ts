@@ -189,7 +189,12 @@ export function slideConnector(isCritical: boolean): Script {
     const postProcessDone = EntityMemory.to<boolean>(32)
 
     const preprocess = [
-        applyLevelSpeed(ConnectorData.headTime, ConnectorData.tailTime),
+        applyLevelSpeed(
+            ConnectorData.headTime,
+            ConnectorData.tailTime,
+            ConnectorData.headHispeedTime,
+            ConnectorData.tailHispeedTime
+        ),
         applyMirrorCenters(ConnectorData.headCenter, ConnectorData.tailCenter),
 
         spawnTime.set(getSpawnTime(ConnectorData.headTime)),
