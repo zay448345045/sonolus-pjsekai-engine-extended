@@ -395,7 +395,7 @@ export function slideConnector(isCritical: boolean): Script {
                     ),
 
                     And(
-                        Greater(approach(vhTime), noteFirstAppearY),
+                        Greater(approach(vhTime, ConnectorData.headHispeedGroup), noteFirstAppearY),
                         [...Array(10).keys()].map((i) => [
                             shTime.set(Lerp(vhTime, vtTime, i / 10)),
                             stTime.set(Lerp(vhTime, vtTime, (i + 1) / 10)),
@@ -418,8 +418,26 @@ export function slideConnector(isCritical: boolean): Script {
                                     )
                                 )
                             ),
-                            shYScale.set(approach(shTime)),
-                            stYScale.set(approach(stTime)),
+                            If(
+                                levelHasHispeed,
+                                [
+                                    shYScale.set(
+                                        Lerp(
+                                            approach(shTime, ConnectorData.headHispeedGroup),
+                                            approach(shTime, ConnectorData.tailHispeedGroup),
+                                            shXScale
+                                        )
+                                    ),
+                                    stYScale.set(
+                                        Lerp(
+                                            approach(stTime, ConnectorData.headHispeedGroup),
+                                            approach(stTime, ConnectorData.tailHispeedGroup),
+                                            stXScale
+                                        )
+                                    ),
+                                ],
+                                [shYScale.set(approach(shTime)), stYScale.set(approach(stTime))]
+                            ),
 
                             connectorBottom.set(Lerp(origin, lane.b, shYScale)),
                             connectorTop.set(Lerp(origin, lane.b, stYScale)),
