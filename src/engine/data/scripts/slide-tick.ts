@@ -16,6 +16,7 @@ import {
 import { options } from '../../configuration/options'
 import { Layer } from './common/constants'
 import { playNoteEffect } from './common/effect'
+import { levelHasHispeed } from './common/hispeed'
 import { onMiss, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
@@ -30,6 +31,7 @@ import {
     noteZ,
     preprocessNote,
     scheduleNoteAutoSFX,
+    shouldSpawn,
     updateNoteY,
 } from './common/note'
 import { getTickClip, playJudgmentSFX } from './common/sfx'
@@ -61,8 +63,6 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
 
     const spawnOrder = noteSpawnTime
 
-    const shouldSpawn = GreaterOr(Time, noteSpawnTime)
-
     const touch = Or(
         options.isAutoplay,
         And(
@@ -80,11 +80,16 @@ export function slideTick(isCritical: boolean, isVisible = true): Script {
             And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
             GreaterOr(Subtract(Time, NoteData.time, InputOffset), 0),
             isVisible &&
-                And(Less(Time, NoteData.time), GreaterOr(Time, noteVisibleTime), isNotHidden(), [
-                    updateNoteY(),
+                And(
+                    Less(Time, NoteData.time),
+                    Or(levelHasHispeed, GreaterOr(Time, noteVisibleTime)),
+                    isNotHidden(),
+                    [
+                        updateNoteY(),
 
-                    tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, noteZ),
-                ])
+                        tickSprite.draw(noteScale, noteBottom, noteTop, tickLayout, noteZ),
+                    ]
+                )
         ),
     ]
 

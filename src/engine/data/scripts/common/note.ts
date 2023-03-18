@@ -36,6 +36,7 @@ import { scripts } from '..'
 import { options } from '../../../configuration/options'
 import { archetypes } from '../../archetypes'
 import { baseNote, lane, minSFXDistance, noteOnScreenDuration, origin } from './constants'
+import { calculateHispeedTime, levelHasHispeed } from './hispeed'
 import { checkTouchXInHitbox } from './touch'
 
 export enum InputState {
@@ -65,6 +66,14 @@ export class NoteDataPointer extends Pointer {
 
     public get headIndex() {
         return this.to<number>(4)
+    }
+
+    public get hispeedGroup() {
+        return this.to<number>(5)
+    }
+
+    public get hispeedTime() {
+        return this.to<number>(6)
     }
 
     public get headSharedMemory() {
@@ -128,10 +137,34 @@ export function checkNoteTimeInLateWindow(lateWindow: number) {
 
 // Note
 
-export function approach(time: Code<number>) {
+export function approach(
+    time: Code<number>,
+    hispeedGroup: Code<number> = 0,
+    onScreenDuration: Code<number> = noteOnScreenDuration,
+    renderTime: Code<number> | undefined = undefined
+) {
     return Power(
         1.06,
-        Multiply(Subtract(Subtract(1, Divide(Subtract(time, Time), noteOnScreenDuration)), 1), 45)
+        Multiply(
+            Subtract(
+                Subtract(
+                    1,
+                    Divide(
+                        Subtract(
+                            time,
+                            If(
+                                levelHasHispeed,
+                                renderTime || calculateHispeedTime(hispeedGroup),
+                                Time
+                            )
+                        ),
+                        onScreenDuration
+                    )
+                ),
+                1
+            ),
+            45
+        )
     )
 }
 
@@ -256,8 +289,16 @@ export function scheduleNoteAutoSFX(clip: Code<number>) {
 
 export function updateNoteY() {
     return [
-        noteScale.set(approach(NoteData.time)),
+        noteScale.set(
+            If(
+                levelHasHispeed,
+                approach(NoteData.hispeedTime, NoteData.hispeedGroup),
+                approach(NoteData.time)
+            )
+        ),
         noteBottom.set(Lerp(origin, baseNote.b, noteScale)),
         noteTop.set(Lerp(origin, baseNote.t, noteScale)),
     ]
 }
+
+export const shouldSpawn = Or(levelHasHispeed, GreaterOr(Time, noteSpawnTime))

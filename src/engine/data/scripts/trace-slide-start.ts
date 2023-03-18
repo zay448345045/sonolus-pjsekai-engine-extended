@@ -43,6 +43,7 @@ import {
     noteZ,
     preprocessNote,
     scheduleNoteAutoSFX,
+    shouldSpawn,
     updateNoteY,
 } from './common/note'
 import {
@@ -79,8 +80,6 @@ export function traceSlideStart(isCritical: boolean): Script {
     ]
 
     const spawnOrder = noteSpawnTime
-
-    const shouldSpawn = GreaterOr(Time, noteSpawnTime)
 
     const initialize = [initializeNoteSimLine()]
 

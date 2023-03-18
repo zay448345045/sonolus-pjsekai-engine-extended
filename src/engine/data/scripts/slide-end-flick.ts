@@ -33,6 +33,7 @@ import { buckets } from '../buckets'
 import { arrowRedSprite, arrowYellowSprite, getArrowLayout } from './common/arrow-sprite'
 import { Layer, minFlickVR, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
+import { levelHasHispeed } from './common/hispeed'
 import { onMiss } from './common/judge'
 import {
     applyMirrorDirections,
@@ -52,6 +53,7 @@ import {
     noteZ,
     preprocessNote,
     scheduleNoteAutoSFX,
+    shouldSpawn,
     updateNoteY,
 } from './common/note'
 import {
@@ -101,8 +103,6 @@ export function slideEndFlick(isCritical: boolean): Script {
 
     const spawnOrder = noteSpawnTime
 
-    const shouldSpawn = GreaterOr(Time, noteSpawnTime)
-
     const initialize = initializeNoteSimLine()
 
     const touch = Or(
@@ -144,12 +144,17 @@ export function slideEndFlick(isCritical: boolean): Script {
             And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
             Equal(noteInputState, InputState.Terminated),
             Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-            And(GreaterOr(Time, noteVisibleTime), isNotHidden(), [
-                updateNoteY(),
+            And(
+                Or(levelHasHispeed, GreaterOr(Time, noteVisibleTime)),
 
-                noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-                arrowSprite.draw(noteScale, arrowLayout, arrowZ),
-            ])
+                isNotHidden(),
+                [
+                    updateNoteY(),
+
+                    noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
+                    arrowSprite.draw(noteScale, arrowLayout, arrowZ),
+                ]
+            )
         ),
     ]
 

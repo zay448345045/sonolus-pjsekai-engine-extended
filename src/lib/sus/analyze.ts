@@ -1,5 +1,6 @@
 type Line = [string, string]
 type MeasureChange = [number, number]
+type HispeedChange = [number, string]
 type RawObject = {
     tick: number
     value: string
@@ -10,6 +11,7 @@ export type NoteObject = {
     lane: number
     width: number
     type: number
+    hispeed: string
 }
 
 export type RequestInfo = {
@@ -18,10 +20,16 @@ export type RequestInfo = {
     ticksPerBeat: number
 }
 
+export type Hispeed = {
+    tick: number
+    value: number
+}
+
 export type Score = {
     tapNotes: NoteObject[]
     directionalNotes: NoteObject[]
     slides: NoteObject[][]
+    hispeeds: Map<string, Hispeed[]>
     toTime: (tick: number) => number
     request: RequestInfo
 }
@@ -32,6 +40,7 @@ export function analyze(sus: string): Score {
     const lines: Line[] = []
     const meta = new Map<string, string>()
     const measureChanges: MeasureChange[] = []
+    const hispeedChanges: HispeedChange[] = []
     const request: RequestInfo = {
         sideLane: false,
         laneOffset: 0,
@@ -56,6 +65,8 @@ export function analyze(sus: string): Score {
                 lines.push([left, right])
             } else if (left === 'MEASUREBS') {
                 measureChanges.unshift([lines.length, +right])
+            } else if (left === 'HISPEED') {
+                hispeedChanges.unshift([lines.length, right])
             } else if (left === 'REQUEST') {
                 try {
                     const content = JSON.parse(right)
@@ -72,7 +83,9 @@ export function analyze(sus: string): Score {
                             request.ticksPerBeat = value
                             break
                     }
-                } catch (e) {}
+                } catch (e) {
+                    // ignore
+                }
             } else {
                 meta.set(left, right)
             }
@@ -119,6 +132,7 @@ export function analyze(sus: string): Score {
     }
 
     const bpms = new Map<string, number>()
+    const hispeeds = new Map<string, Hispeed[]>()
     const bpmChangeObjects: RawObject[] = []
     const tapNotes: NoteObject[] = []
     const directionalNotes: NoteObject[] = []
@@ -127,6 +141,7 @@ export function analyze(sus: string): Score {
     lines.forEach((line, index) => {
         const [header, data] = line
         const measureOffset = measureChanges.find(([changeIndex]) => changeIndex <= index)?.[1] ?? 0
+        const hispeed = hispeedChanges.find(([changeIndex]) => changeIndex <= index)?.[1] ?? '00'
 
         // BPM
         if (header.length === 5 && header.startsWith('BPM')) {
@@ -140,9 +155,23 @@ export function analyze(sus: string): Score {
             return
         }
 
+        // HISPEED
+        if (header.length === 5 && header.startsWith('TIL')) {
+            const hispeedData = [...JSON.parse(data).matchAll(/(\d+)'(\d+):([\d.-]+)(?:,|$)/g)]
+                .map(([, p, q, value]) => ({
+                    tick: toTick(measureOffset + +p, 0, 1) + +q,
+                    value: +value,
+                }))
+                .sort((a, b) => a.tick - b.tick)
+            if (!hispeedData.some((hispeed) => hispeed.tick === 0)) {
+                hispeedData.unshift({ tick: 0, value: 1 })
+            }
+            hispeeds.set(header.substring(3), hispeedData)
+        }
+
         // Tap Notes
         if (header.length === 5 && header[3] === '1') {
-            tapNotes.push(...toNoteObjects(line, measureOffset, toTick))
+            tapNotes.push(...toNoteObjects(line, measureOffset, hispeed, toTick))
             return
         }
 
@@ -151,16 +180,16 @@ export function analyze(sus: string): Score {
             const channel = header[5]
             const stream = streams.get(channel)
             if (stream) {
-                stream.push(...toNoteObjects(line, measureOffset, toTick))
+                stream.push(...toNoteObjects(line, measureOffset, hispeed, toTick))
             } else {
-                streams.set(channel, toNoteObjects(line, measureOffset, toTick))
+                streams.set(channel, toNoteObjects(line, measureOffset, hispeed, toTick))
             }
             return
         }
 
         // Directional Notes
         if (header.length === 5 && header[3] === '5') {
-            directionalNotes.push(...toNoteObjects(line, measureOffset, toTick))
+            directionalNotes.push(...toNoteObjects(line, measureOffset, hispeed, toTick))
             return
         }
     })
@@ -183,7 +212,7 @@ export function analyze(sus: string): Score {
 
     const waveOffset = +(meta.get('WAVEOFFSET') || '0')
     const toTime = (tick: number) => {
-        const timing = timings.find((timing) => tick >= timing.tick)
+        const timing = timings.find((timing) => tick >= timing.tick) || timings[0]
         if (!timing) throw 'Unexpected missing timing'
 
         return (
@@ -197,6 +226,7 @@ export function analyze(sus: string): Score {
         tapNotes,
         directionalNotes,
         slides,
+        hispeeds,
         toTime,
         request,
     }
@@ -224,7 +254,7 @@ function toSlides(stream: NoteObject[]) {
     return slides
 }
 
-function toNoteObjects(line: Line, measureOffset: number, toTick: ToTick) {
+function toNoteObjects(line: Line, measureOffset: number, hispeed: string, toTick: ToTick) {
     const [header] = line
     const lane = parseInt(header[4], 36)
 
@@ -235,6 +265,7 @@ function toNoteObjects(line: Line, measureOffset: number, toTick: ToTick) {
             tick,
             lane,
             width,
+            hispeed,
             type: parseInt(value[0], 36),
         }
     })

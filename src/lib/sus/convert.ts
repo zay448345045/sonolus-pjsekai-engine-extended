@@ -14,6 +14,8 @@ type NoteInfo = {
     key: string
     time: number
     isCritical: boolean
+    hispeedGroup: number
+    hispeedTime: number
 }
 
 export function fromSus(
@@ -113,6 +115,7 @@ export function fromSus(
             if (slides.has(key)) return
 
             const time = toTime(note.tick)
+            const hispeedGroup = note.hispeed
             switch (note.type) {
                 case 1: {
                     if (taps.has(key)) break
@@ -134,6 +137,9 @@ export function fromSus(
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
+                                    0,
+                                    [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                    computeHispeedTime(hispeedGroup, note.tick),
                                 ],
                             },
                         },
@@ -161,6 +167,9 @@ export function fromSus(
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
+                                    0,
+                                    [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                    computeHispeedTime(hispeedGroup, note.tick),
                                 ],
                             },
                         },
@@ -179,6 +188,9 @@ export function fromSus(
                                     time,
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
+                                    0,
+                                    [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                    computeHispeedTime(hispeedGroup, note.tick),
                                 ],
                             },
                         },
@@ -210,6 +222,7 @@ export function fromSus(
             const isTrace = tickRemoveMods.has(key)
 
             let newHead: NoteInfo | undefined
+            const hispeedGroup = note.hispeed
             switch (note.type) {
                 case 1: {
                     wrappers.push({
@@ -227,6 +240,10 @@ export function fromSus(
                                     time,
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
+                                    0,
+                                    0,
+                                    [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                    computeHispeedTime(hispeedGroup, note.tick),
                                 ],
                             },
                         },
@@ -237,6 +254,8 @@ export function fromSus(
                         key,
                         time,
                         isCritical,
+                        hispeedGroup: [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                        hispeedTime: computeHispeedTime(hispeedGroup, note.tick),
                     }
                     if (isTrace) {
                         usedTickRemoveMods.add(key)
@@ -267,6 +286,9 @@ export function fromSus(
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     flickMod || 0,
+                                    0,
+                                    [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                    computeHispeedTime(hispeedGroup, note.tick),
                                 ],
                             },
                         },
@@ -277,6 +299,8 @@ export function fromSus(
                         key,
                         time,
                         isCritical,
+                        hispeedGroup: [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                        hispeedTime: computeHispeedTime(hispeedGroup, note.tick),
                     }
                     if (isTrace) {
                         usedTickRemoveMods.add(key)
@@ -290,6 +314,8 @@ export function fromSus(
                             key,
                             time,
                             isCritical,
+                            hispeedGroup: [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                            hispeedTime: computeHispeedTime(hispeedGroup, note.tick),
                         })
                         usedTickRemoveMods.add(key)
                         break
@@ -308,6 +334,10 @@ export function fromSus(
                                     time,
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
+                                    0,
+                                    0,
+                                    [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                    computeHispeedTime(hispeedGroup, note.tick),
                                 ],
                             },
                         },
@@ -318,6 +348,8 @@ export function fromSus(
                         key,
                         time,
                         isCritical,
+                        hispeedGroup: [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                        hispeedTime: computeHispeedTime(hispeedGroup, note.tick),
                     }
                     break
                 }
@@ -329,6 +361,8 @@ export function fromSus(
                         key,
                         time,
                         isCritical,
+                        hispeedGroup: [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                        hispeedTime: computeHispeedTime(hispeedGroup, note.tick),
                     }
                 }
             }
@@ -361,6 +395,10 @@ export function fromSus(
                                 info.time,
                                 lane - 8 + width / 2 + score.request.laneOffset,
                                 width / 2,
+                                -1,
+                                0,
+                                [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                                computeHispeedTime(hispeedGroup, note.tick),
                             ],
                         },
                     },
@@ -385,6 +423,10 @@ export function fromSus(
                             note.lane - 8 + note.width / 2 + score.request.laneOffset,
                             note.width / 2,
                             easeType,
+                            head.hispeedGroup,
+                            head.hispeedTime,
+                            [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                            computeHispeedTime(hispeedGroup, note.tick),
                         ],
                     },
                 },
@@ -451,8 +493,53 @@ export function fromSus(
             },
         })
     })
+    let groupIndex = 0
+    let firstHispeed: Wrapper | undefined = undefined
+    for (const hispeeds of score.hispeeds.values()) {
+        const hisppedAllocator: Wrapper = {
+            group: 2,
+            time: groupIndex,
+            entity: {
+                archetype: archetypes.hispeedAllocatorIndex,
+                data: {
+                    index: 0,
+                    values: [hispeeds.length],
+                },
+            },
+        }
+        if (!firstHispeed) {
+            firstHispeed = hisppedAllocator
+        }
+        wrappers.push(hisppedAllocator)
+
+        for (const hispeed of hispeeds) {
+            const hispeedEntity = {
+                group: 3,
+                time: groupIndex,
+                entity: {
+                    archetype: archetypes.hispeedIndex,
+                    data: {
+                        index: 0,
+                        values: [groupIndex, toTime(hispeed.tick), hispeed.value],
+                    },
+                },
+            }
+            wrappers.push(hispeedEntity)
+            if (!hisppedAllocator.ref) {
+                hisppedAllocator.ref = hispeedEntity
+            }
+        }
+
+        groupIndex++
+    }
 
     wrappers.sort((a, b) => a.group - b.group || a.time - b.time)
+
+    wrappers[0].entity.data = {
+        values: [score.hispeeds.size ? 1 : 0],
+        index: 0,
+    }
+    wrappers[0].ref = firstHispeed
 
     wrappers.forEach((wrapper) => {
         if (!wrapper.ref) return
@@ -468,6 +555,22 @@ export function fromSus(
 
     function toTime(tick: number) {
         return score.toTime(tick) + chartOffset
+    }
+
+    function computeHispeedTime(hispeed: string, tick: number) {
+        let retvar = 0
+        let i = 0
+        const hispeeds = score.hispeeds.get(hispeed)
+        if (!hispeeds) return toTime(tick)
+        for (const hispeedData of hispeeds) {
+            if (hispeedData.tick >= tick) {
+                break
+            }
+            const nextTick = Math.min(hispeeds[i + 1] ? hispeeds[i + 1].tick : Infinity, tick)
+            retvar += (toTime(nextTick) - toTime(hispeedData.tick)) * hispeedData.value
+            i++
+        }
+        return retvar
     }
 }
 

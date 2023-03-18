@@ -6,7 +6,9 @@ import {
     EntityMemory,
     Equal,
     GreaterOr,
+    If,
     Lerp,
+    Max,
     Multiply,
     Or,
     Script,
@@ -17,7 +19,8 @@ import {
 } from 'sonolus.js'
 import { options } from '../../configuration/options'
 import { archetypes } from '../archetypes'
-import { baseNote, lane, Layer, origin } from './common/constants'
+import { baseNote, lane, Layer, noteFirstAppearY, origin } from './common/constants'
+import { calculateHispeedTime, levelHasHispeed } from './common/hispeed'
 import { approach, getVisibleTime, getZ, isNotHidden, NoteData } from './common/note'
 import { rectByEdge } from './common/utils'
 
@@ -32,14 +35,28 @@ export function simLine(): Script {
     const lineL = EntityMemory.to<number>(4)
     const lineR = EntityMemory.to<number>(5)
 
-    const lineScale = EntityMemory.to<number>(6)
-    const lineB = EntityMemory.to<number>(7)
-    const lineT = EntityMemory.to<number>(8)
+    const lineScaleL = EntityMemory.to<number>(6)
+    const lineScaleR = EntityMemory.to<number>(7)
+    const lineBL = EntityMemory.to<number>(8)
+    const lineBR = EntityMemory.to<number>(9)
+    const lineTL = EntityMemory.to<number>(10)
+    const lineTR = EntityMemory.to<number>(11)
 
-    const z = EntityInfo.to<number>(8)
+    const z = EntityInfo.to<number>(12)
+
+    const lTime = EntityMemory.to<number>(13)
+    const rTime = EntityMemory.to<number>(14)
 
     const initialize = [
-        time.set(NoteData.of(rIndex).time),
+        If(
+            levelHasHispeed,
+            [
+                time.set(NoteData.of(lIndex).time),
+                lTime.set(NoteData.of(lIndex).hispeedTime),
+                rTime.set(NoteData.of(rIndex).hispeedTime),
+            ],
+            [time.set(NoteData.of(lIndex).time)]
+        ),
         visibleTime.set(getVisibleTime(time)),
         isSlide.set(
             Or(
@@ -66,16 +83,67 @@ export function simLine(): Script {
         And(isSlide, GreaterOr(Time, time)),
         Equal(EntityInfo.of(lIndex).state, State.Despawned),
         Equal(EntityInfo.of(rIndex).state, State.Despawned),
-        And(GreaterOr(Time, visibleTime), isNotHidden(time), [
-            lineScale.set(approach(time)),
-            lineB.set(Lerp(origin, baseNote.b, lineScale)),
-            lineT.set(Lerp(origin, baseNote.t, lineScale)),
+        And(Or(levelHasHispeed, GreaterOr(Time, visibleTime)), isNotHidden(lTime), [
+            If(
+                levelHasHispeed,
+                [
+                    lineScaleL.set(approach(lTime, NoteData.of(lIndex).hispeedGroup)),
+                    lineBL.set(Lerp(origin, baseNote.b, lineScaleL)),
+                    lineTL.set(Lerp(origin, baseNote.t, lineScaleL)),
+                    lineScaleR.set(approach(rTime, NoteData.of(rIndex).hispeedGroup)),
+                    lineBR.set(Lerp(origin, baseNote.b, lineScaleR)),
+                    lineTR.set(Lerp(origin, baseNote.t, lineScaleR)),
+                ],
+                [
+                    lineScaleL.set(approach(time)),
+                    lineBL.set(Lerp(origin, baseNote.b, lineScaleL)),
+                    lineTL.set(Lerp(origin, baseNote.t, lineScaleL)),
+                ]
+            ),
 
-            Draw(
-                SkinSprite.SimultaneousConnectionNeutral,
-                ...rectByEdge(Multiply(lineL, lineScale), Multiply(lineR, lineScale), lineB, lineT),
-                z,
-                1
+            If(
+                levelHasHispeed,
+                And(
+                    GreaterOr(lineScaleL, noteFirstAppearY),
+                    GreaterOr(lineScaleR, noteFirstAppearY),
+
+                    Draw(
+                        SkinSprite.SimultaneousConnectionNeutral,
+                        Multiply(lineL, lineScaleL),
+                        lineBL,
+                        Multiply(lineL, lineScaleL),
+                        lineTL,
+                        Multiply(lineR, lineScaleR),
+                        lineTR,
+                        Multiply(lineR, lineScaleR),
+                        lineBR,
+                        Max(
+                            getZ(
+                                Layer.SimLine,
+
+                                calculateHispeedTime(NoteData.of(lIndex).hispeedGroup, lTime),
+                                lIndex
+                            ),
+                            getZ(
+                                Layer.SimLine,
+                                calculateHispeedTime(NoteData.of(rIndex).hispeedGroup, lTime),
+                                rIndex
+                            )
+                        ),
+                        1
+                    )
+                ),
+                Draw(
+                    SkinSprite.SimultaneousConnectionNeutral,
+                    ...rectByEdge(
+                        Multiply(lineL, lineScaleL),
+                        Multiply(lineR, lineScaleL),
+                        lineBL,
+                        lineTL
+                    ),
+                    z,
+                    1
+                )
             ),
         ])
     )

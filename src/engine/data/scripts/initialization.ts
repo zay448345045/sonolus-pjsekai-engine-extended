@@ -3,6 +3,7 @@ import {
     And,
     ArchetypeLife,
     ConsecutiveGreatScore,
+    createEntityData,
     GoodMultiplier,
     GreatMultiplier,
     HasSkinSprite,
@@ -11,6 +12,7 @@ import {
     Multiply,
     Or,
     PerfectMultiplier,
+    Pointer,
     Script,
     Subtract,
     UIComboConfiguration,
@@ -31,9 +33,22 @@ import { options } from '../../configuration/options'
 import { archetypes } from '../archetypes'
 import { buckets } from '../buckets'
 import { JudgmentMissSprite, screen, stage, windows } from './common/constants'
+import { firstHispeedIndex, levelHasHispeed } from './common/hispeed'
+
+export class InitDataPointer extends Pointer {
+    public get hasHispeed() {
+        return this.to<boolean>(0)
+    }
+
+    public get firstHispeedIndex() {
+        return this.to<number>(1)
+    }
+}
+
+const InitData = createEntityData(InitDataPointer)
 
 export function initialization(): Script {
-    const preprocess = [setupUI(), setupBuckets(), setupScore(), setupLife()]
+    const preprocess = [setupUI(), setupBuckets(), setupScore(), setupLife(), setupHispeed()]
 
     const spawnOrder = -1000
 
@@ -43,6 +58,13 @@ export function initialization(): Script {
         preprocess,
         spawnOrder,
         updateSequential,
+    }
+
+    function setupHispeed() {
+        return [
+            levelHasHispeed.set(InitData.hasHispeed),
+            And(InitData.hasHispeed, firstHispeedIndex.set(InitData.firstHispeedIndex)),
+        ]
     }
 
     function setupUI() {

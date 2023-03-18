@@ -1,4 +1,4 @@
-import { Add, Code, If, Less, Mod, Multiply, Pointer, Subtract } from 'sonolus.js'
+import { Add, Code, If, Less, Max, Mod, Multiply, Pointer, Subtract } from 'sonolus.js'
 
 export type Tuple<T, L extends number, C extends readonly T[] = readonly []> = C['length'] extends L
     ? C
@@ -62,4 +62,8 @@ export function rectBySize(
 
 export function udLoop(value: Code<number>) {
     return Subtract(1, If(Less(Mod(value, 2), 1), Mod(value, 2), Subtract(1, Mod(value, 1))))
+}
+
+export function max(a: Code<number>, ...rest: Code<number>[]) {
+    return rest.reduce((acc, cur) => Max(acc, cur), a)
 }

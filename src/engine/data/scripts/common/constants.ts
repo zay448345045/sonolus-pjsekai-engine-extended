@@ -1,5 +1,6 @@
 import {
     Add,
+    Code,
     customEffectClip,
     customSkinSprite,
     Divide,
@@ -168,10 +169,15 @@ export const baseNote = {
     bw: Remap(origin, lane.b, 0, lane.w, baseNoteBottom),
 }
 
-export const noteOnScreenDuration = Divide(
-    Lerp(0.35, 4, Power(UnlerpClamped(12, 1, options.noteSpeed), 1.31)),
-    options.additionalNoteSpeed
-)
+export const calculateNoteOnScreenDuration = (hispeed: Code<number>) =>
+    Divide(
+        Lerp(0.35, 4, Power(UnlerpClamped(12, 1, Multiply(hispeed, options.noteSpeed)), 1.31)),
+        options.additionalNoteSpeed
+    )
+
+export const noteOnScreenDuration = calculateNoteOnScreenDuration(1)
+
+export const noteFirstAppearY = 0.07265007434909872
 
 // Tap Effect
 

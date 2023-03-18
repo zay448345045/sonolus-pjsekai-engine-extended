@@ -1,6 +1,7 @@
 import { defineScripts } from 'sonolus.js'
 import { damageNote } from './damage-note'
 import { flickNote } from './flick-note'
+import { hispeed } from './hispeed'
 import { initialization } from './initialization'
 import { input } from './input'
 import { judge } from './judge'
@@ -59,4 +60,7 @@ export const scripts = defineScripts({
     damageNote: () => damageNote(),
 
     traceSlideStart: () => traceSlideStart(false),
+
+    hispeedAllocator: () => hispeed(true),
+    hispeed: () => hispeed(false),
 })
