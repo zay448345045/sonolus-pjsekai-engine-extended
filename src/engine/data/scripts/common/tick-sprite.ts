@@ -1,16 +1,18 @@
 import { SkinSprite } from 'sonolus-core'
 import {
     Add,
+    And,
     Code,
     customSkinSprite,
     Draw,
+    GreaterOr,
     HasSkinSprite,
     If,
     Multiply,
     Pointer,
     Subtract,
 } from 'sonolus.js'
-import { baseNote, engineId, halfNoteHeight, lane } from './constants'
+import { baseNote, engineId, halfNoteHeight, lane, noteFirstAppearY } from './constants'
 import { getLayout, Tuple } from './utils'
 
 export type TickLayout = Tuple<Code<number>, 6>
@@ -53,33 +55,37 @@ export class TickSprite {
         layout: TickLayout,
         z: Code<number>
     ) {
-        return If(
-            this.exists,
-            Draw(
-                this.sprite,
-                Multiply(layout[4], scale),
-                bottom,
-                Multiply(layout[4], scale),
-                top,
-                Multiply(layout[5], scale),
-                top,
-                Multiply(layout[5], scale),
-                bottom,
-                z,
-                1
-            ),
-            Draw(
-                this.fallback,
-                Multiply(layout[2], scale),
-                bottom,
-                Multiply(layout[0], scale),
-                top,
-                Multiply(layout[1], scale),
-                top,
-                Multiply(layout[3], scale),
-                bottom,
-                z,
-                1
+        return And(
+            GreaterOr(scale, noteFirstAppearY),
+
+            If(
+                this.exists,
+                Draw(
+                    this.sprite,
+                    Multiply(layout[4], scale),
+                    bottom,
+                    Multiply(layout[4], scale),
+                    top,
+                    Multiply(layout[5], scale),
+                    top,
+                    Multiply(layout[5], scale),
+                    bottom,
+                    z,
+                    1
+                ),
+                Draw(
+                    this.fallback,
+                    Multiply(layout[2], scale),
+                    bottom,
+                    Multiply(layout[0], scale),
+                    top,
+                    Multiply(layout[1], scale),
+                    top,
+                    Multiply(layout[3], scale),
+                    bottom,
+                    z,
+                    1
+                )
             )
         )
     }

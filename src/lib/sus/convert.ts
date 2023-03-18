@@ -189,6 +189,7 @@ export function fromSus(
                                     note.lane - 8 + note.width / 2 + score.request.laneOffset,
                                     note.width / 2,
                                     0,
+                                    0,
                                     [...score.hispeeds.keys()].indexOf(hispeedGroup),
                                     computeHispeedTime(hispeedGroup, note.tick),
                                 ],
@@ -467,6 +468,7 @@ export function fromSus(
         if (!tickRemoveMods.has(key) || usedTickRemoveMods.has(key)) return
         const time = toTime(note.tick)
         const flickMod = flickMods.get(key)
+        const hispeedGroup = note.hispeed
 
         wrappers.push({
             group: 0,
@@ -488,6 +490,9 @@ export function fromSus(
                         note.lane - 8 + note.width / 2 + score.request.laneOffset,
                         note.width / 2,
                         flickMod || 0,
+                        0,
+                        [...score.hispeeds.keys()].indexOf(hispeedGroup),
+                        computeHispeedTime(hispeedGroup, note.tick),
                     ],
                 },
             },
