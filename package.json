@@ -8,7 +8,7 @@
     "keywords": [
         "Sonolus"
     ],
-    "main": "dist",
+    "main": "dist/lib",
     "files": [
         "dist"
     ],
