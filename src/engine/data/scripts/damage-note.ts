@@ -83,7 +83,10 @@ export function damageNote(): Script {
     const updateSequential = [
         // DebugLog(window.good.late),
         If(
-            Or(And(Greater(noteBottom, 1)), Equal(noteInputState, InputState.Terminated)),
+            Or(
+                And(Greater(Time, NoteData.time), Less(noteBottom, -1)),
+                Equal(noteInputState, InputState.Terminated)
+            ),
             [currentJudge.set(0), judgeTime.set(Time)],
             []
         ),

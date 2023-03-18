@@ -34,7 +34,7 @@ import { arrowRedSprite, arrowYellowSprite, getArrowLayout } from './common/arro
 import { Layer, minFlickVR, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
 import { levelHasHispeed } from './common/hispeed'
-import { onMiss } from './common/judge'
+import { onMiss, setJudgeVariable } from './common/judge'
 import {
     applyMirrorDirections,
     checkNoteTimeInEarlyWindow,
@@ -201,6 +201,7 @@ export function slideEndFlick(isCritical: boolean): Script {
             InputBucket.set(bucket),
             InputBucketValue.set(Multiply(InputAccuracy, 1000)),
 
+            setJudgeVariable(),
             playVisualEffects(),
             playJudgmentSFX(isCritical, getFlickClip),
         ]
