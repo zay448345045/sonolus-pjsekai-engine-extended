@@ -222,10 +222,6 @@ export function analyze(sus: string): Score {
         )
     }
 
-    if (hispeeds.size === 0) {
-        hispeeds.set('00', [{ tick: 0, value: 1 }])
-    }
-
     return {
         tapNotes,
         directionalNotes,

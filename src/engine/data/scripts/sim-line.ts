@@ -84,14 +84,22 @@ export function simLine(): Script {
         Equal(EntityInfo.of(lIndex).state, State.Despawned),
         Equal(EntityInfo.of(rIndex).state, State.Despawned),
         And(Or(levelHasHispeed, GreaterOr(Time, visibleTime)), isNotHidden(lTime), [
-            lineScaleL.set(approach(lTime, NoteData.of(lIndex).hispeedGroup)),
-            lineBL.set(Lerp(origin, baseNote.b, lineScaleL)),
-            lineTL.set(Lerp(origin, baseNote.t, lineScaleL)),
-            And(levelHasHispeed, [
-                lineScaleR.set(approach(rTime, NoteData.of(rIndex).hispeedGroup)),
-                lineBR.set(Lerp(origin, baseNote.b, lineScaleR)),
-                lineTR.set(Lerp(origin, baseNote.t, lineScaleR)),
-            ]),
+            If(
+                levelHasHispeed,
+                [
+                    lineScaleL.set(approach(lTime, NoteData.of(lIndex).hispeedGroup)),
+                    lineBL.set(Lerp(origin, baseNote.b, lineScaleL)),
+                    lineTL.set(Lerp(origin, baseNote.t, lineScaleL)),
+                    lineScaleR.set(approach(rTime, NoteData.of(rIndex).hispeedGroup)),
+                    lineBR.set(Lerp(origin, baseNote.b, lineScaleR)),
+                    lineTR.set(Lerp(origin, baseNote.t, lineScaleR)),
+                ],
+                [
+                    lineScaleL.set(approach(time)),
+                    lineBL.set(Lerp(origin, baseNote.b, lineScaleL)),
+                    lineTL.set(Lerp(origin, baseNote.t, lineScaleL)),
+                ]
+            ),
 
             If(
                 levelHasHispeed,

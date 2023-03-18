@@ -63,7 +63,7 @@ export function initialization(): Script {
     function setupHispeed() {
         return [
             levelHasHispeed.set(InitData.hasHispeed),
-            firstHispeedIndex.set(InitData.firstHispeedIndex),
+            And(InitData.hasHispeed, firstHispeedIndex.set(InitData.firstHispeedIndex)),
         ]
     }
 

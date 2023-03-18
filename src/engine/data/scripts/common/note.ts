@@ -232,10 +232,8 @@ export function preprocessNote(
         applyLevelSpeed(NoteData.time),
         applyMirrorCenters(NoteData.center),
 
-        noteSpawnTime.set(getSpawnTime(If(levelHasHispeed, NoteData.hispeedTime, NoteData.time))),
-        noteVisibleTime.set(
-            getVisibleTime(If(levelHasHispeed, NoteData.hispeedTime, NoteData.time))
-        ),
+        noteSpawnTime.set(getSpawnTime(NoteData.time)),
+        noteVisibleTime.set(getVisibleTime(NoteData.time)),
         noteZ.set(getZ(layer)),
         calculateHitbox(NoteData.center, NoteData.width, leniency, noteHitboxL, noteHitboxR),
 
@@ -292,9 +290,10 @@ export function scheduleNoteAutoSFX(clip: Code<number>) {
 export function updateNoteY() {
     return [
         noteScale.set(
-            approach(
-                If(levelHasHispeed, NoteData.hispeedTime, NoteData.time),
-                NoteData.hispeedGroup
+            If(
+                levelHasHispeed,
+                approach(NoteData.hispeedTime, NoteData.hispeedGroup),
+                approach(NoteData.time)
             )
         ),
         noteBottom.set(Lerp(origin, baseNote.b, noteScale)),

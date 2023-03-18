@@ -16,7 +16,7 @@
         "lint": "tsc -p . --noEmit && eslint --ext .ts src/",
         "serve": "nodemon --watch src --exec \"ts-node ./src/serve.ts\" --ext .ts,.sus",
         "build": "ts-node ./src/build && tsc -p ./tsconfig.lib.json",
-        "postinstall": "ts-node ./src/build && tsc -p ./tsconfig.lib.json"
+        "postinstall": "ts-node ./src/build && tsc -p ./tsconfig.lib.json || true"
     },
     "dependencies": {
         "@types/fs-extra": "^9.0.13",
