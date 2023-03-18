@@ -74,10 +74,11 @@ export function damageNote(): Script {
         )
     )
 
-    const updateParallel = Or(Equal(noteInputState, InputState.Terminated), Less(noteBottom, -1), [
-        updateNoteY(),
-        noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),
-    ])
+    const updateParallel = Or(
+        Equal(noteInputState, InputState.Terminated),
+        And(Greater(Time, NoteData.time), Less(noteBottom, -1)),
+        [updateNoteY(), noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ)]
+    )
 
     const updateSequential = [
         // DebugLog(window.good.late),
