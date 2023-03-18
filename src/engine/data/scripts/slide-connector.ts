@@ -353,9 +353,14 @@ export function slideConnector(isCritical: boolean): Script {
                 GreaterOr(Time, ConnectorData.tailTime),
                 And(Or(GreaterOr(Time, visibleTime), levelHasHispeed), [
                     vhTime.set(
-                        Max(
-                            ConnectorData.headHispeedTime,
-                            calculateHispeedTime(ConnectorData.headHispeedGroup)
+                        If(
+                            GreaterOr(Time, ConnectorData.headTime),
+
+                            Max(
+                                ConnectorData.headHispeedTime,
+                                calculateHispeedTime(ConnectorData.headHispeedGroup)
+                            ),
+                            ConnectorData.headHispeedTime
                         )
                     ),
                     vtTime.set(
