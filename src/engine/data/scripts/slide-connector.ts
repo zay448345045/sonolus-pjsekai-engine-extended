@@ -49,6 +49,7 @@ import {
     lane,
     Layer,
     linearHoldEffect,
+    noteFirstAppearY,
     noteOnScreenDuration,
     origin,
 } from './common/constants'
@@ -394,7 +395,7 @@ export function slideConnector(isCritical: boolean): Script {
                     ),
 
                     And(
-                        Or(Not(levelHasHispeed), Greater(approach(vhTime), approach(vtTime))),
+                        Greater(approach(vhTime), noteFirstAppearY),
                         [...Array(10).keys()].map((i) => [
                             shTime.set(Lerp(vhTime, vtTime, i / 10)),
                             stTime.set(Lerp(vhTime, vtTime, (i + 1) / 10)),
