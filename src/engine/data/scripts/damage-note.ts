@@ -5,7 +5,6 @@ import {
     EntityMemory,
     Equal,
     Greater,
-    GreaterOr,
     If,
     InputAccuracy,
     InputJudgment,
@@ -26,7 +25,6 @@ import {
     checkNoteTimeInEarlyWindow,
     checkNoteTimeInLateWindow,
     checkTouchXInNoteHitbox,
-    initializeNoteSimLine,
     InputState,
     noteBottom,
     NoteData,
@@ -36,6 +34,7 @@ import {
     noteTop,
     noteZ,
     preprocessNote,
+    shouldSpawn,
     updateNoteY,
 } from './common/note'
 import { calculateNoteLayout, getNoteLayout, noteDamageSprite } from './common/note-sprite'
@@ -57,9 +56,7 @@ export function damageNote(): Script {
 
     const spawnOrder = noteSpawnTime
 
-    const shouldSpawn = GreaterOr(Time, noteSpawnTime)
-
-    const initialize = [initializeNoteSimLine(), InputJudgment.set(1), InputAccuracy.set(0)]
+    const initialize = [InputJudgment.set(1), InputAccuracy.set(0)]
 
     const touch = Or(
         options.isAutoplay,

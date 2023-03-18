@@ -100,4 +100,11 @@ export const archetypes = defineArchetypes({
         script: scripts.traceSlideStartIndex,
         input: true,
     },
+
+    hispeedAllocator: {
+        script: scripts.hispeedAllocatorIndex,
+    },
+    hispeed: {
+        script: scripts.hispeedIndex,
+    },
 })

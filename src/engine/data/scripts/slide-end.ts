@@ -27,6 +27,7 @@ import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { Layer, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
+import { levelHasHispeed } from './common/hispeed'
 import { onMiss, setJudgeVariable } from './common/judge'
 import {
     checkNoteTimeInEarlyWindow,
@@ -44,6 +45,7 @@ import {
     noteZ,
     preprocessNote,
     scheduleNoteAutoSFX,
+    shouldSpawn,
     updateNoteY,
 } from './common/note'
 import {
@@ -79,8 +81,6 @@ export function slideEnd(isCritical: boolean): Script {
 
     const spawnOrder = noteSpawnTime
 
-    const shouldSpawn = GreaterOr(Time, noteSpawnTime)
-
     const initialize = initializeNoteSimLine()
 
     const touch = Or(
@@ -106,7 +106,7 @@ export function slideEnd(isCritical: boolean): Script {
             And(options.isAutoplay, GreaterOr(Time, NoteData.time)),
             Equal(noteInputState, InputState.Terminated),
             Greater(Subtract(Time, NoteData.time, InputOffset), window.good.late),
-            And(GreaterOr(Time, noteVisibleTime), isNotHidden(), [
+            And(Or(levelHasHispeed, GreaterOr(Time, noteVisibleTime)), isNotHidden(), [
                 updateNoteY(),
 
                 noteSprite.draw(noteScale, noteBottom, noteTop, noteLayout, noteZ),

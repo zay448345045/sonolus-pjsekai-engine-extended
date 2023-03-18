@@ -29,7 +29,7 @@ import {
 import { options } from '../../configuration/options'
 import { buckets } from '../buckets'
 import { arrowRedSprite, arrowYellowSprite, getArrowLayout } from './common/arrow-sprite'
-import { criticalTraceClip, Layer, minFlickVR, windows } from './common/constants'
+import { Layer, minFlickVR, windows } from './common/constants'
 import { playNoteEffect, playNoteLaneEffect, playSlotEffect } from './common/effect'
 import { onMiss, setJudgeVariable } from './common/judge'
 import {
@@ -47,6 +47,7 @@ import {
     noteZ,
     preprocessNote,
     scheduleNoteAutoSFX,
+    shouldSpawn,
     updateNoteY,
 } from './common/note'
 import {
@@ -96,8 +97,6 @@ export function traceFlick(isCritical: boolean, isNonDirectonal: boolean): Scrip
     ]
 
     const spawnOrder = noteSpawnTime
-
-    const shouldSpawn = GreaterOr(Time, noteSpawnTime)
 
     const initialize = initializeNoteSimLine()
 

@@ -6,6 +6,7 @@ import {
     Code,
     customSkinSprite,
     Draw,
+    GreaterOr,
     HasSkinSprite,
     If,
     LessOr,
@@ -13,8 +14,9 @@ import {
     Or,
     Pointer,
     Subtract,
+    Unlerp,
 } from 'sonolus.js'
-import { baseNote, engineId, extEngineId } from './constants'
+import { baseNote, engineId, extEngineId, noteFirstAppearY, origin } from './constants'
 import { getLayout, Tuple } from './utils'
 
 export type NoteLayout = Tuple<Code<number>, 8>
@@ -64,42 +66,58 @@ export class NoteSprite {
         z: Code<number>,
         alpha: Code<number> = 1
     ) {
-        return Or(
-            LessOr(Abs(Subtract(layout[0], layout[1])), 0),
-            If(
-                this.exists,
-                [
+        return And(
+            GreaterOr(Unlerp(origin, baseNote.b, bottom), noteFirstAppearY),
+            Or(
+                LessOr(Abs(Subtract(layout[0], layout[1])), 0),
+                If(
+                    this.exists,
+                    [
+                        Draw(
+                            this.mid,
+                            Multiply(layout[6], scale),
+                            bottom,
+                            Multiply(layout[4], scale),
+                            top,
+                            Multiply(layout[5], scale),
+                            top,
+                            Multiply(layout[7], scale),
+                            bottom,
+                            z,
+                            alpha
+                        ),
+                        Draw(
+                            this.left,
+                            Multiply(layout[2], scale),
+                            bottom,
+                            Multiply(layout[0], scale),
+                            top,
+                            Multiply(layout[4], scale),
+                            top,
+                            Multiply(layout[6], scale),
+                            bottom,
+                            z,
+                            alpha
+                        ),
+                        Draw(
+                            this.right,
+                            Multiply(layout[7], scale),
+                            bottom,
+                            Multiply(layout[5], scale),
+                            top,
+                            Multiply(layout[1], scale),
+                            top,
+                            Multiply(layout[3], scale),
+                            bottom,
+                            z,
+                            alpha
+                        ),
+                    ],
                     Draw(
-                        this.mid,
-                        Multiply(layout[6], scale),
-                        bottom,
-                        Multiply(layout[4], scale),
-                        top,
-                        Multiply(layout[5], scale),
-                        top,
-                        Multiply(layout[7], scale),
-                        bottom,
-                        z,
-                        alpha
-                    ),
-                    Draw(
-                        this.left,
+                        this.fallback,
                         Multiply(layout[2], scale),
                         bottom,
                         Multiply(layout[0], scale),
-                        top,
-                        Multiply(layout[4], scale),
-                        top,
-                        Multiply(layout[6], scale),
-                        bottom,
-                        z,
-                        alpha
-                    ),
-                    Draw(
-                        this.right,
-                        Multiply(layout[7], scale),
-                        bottom,
-                        Multiply(layout[5], scale),
                         top,
                         Multiply(layout[1], scale),
                         top,
@@ -107,20 +125,7 @@ export class NoteSprite {
                         bottom,
                         z,
                         alpha
-                    ),
-                ],
-                Draw(
-                    this.fallback,
-                    Multiply(layout[2], scale),
-                    bottom,
-                    Multiply(layout[0], scale),
-                    top,
-                    Multiply(layout[1], scale),
-                    top,
-                    Multiply(layout[3], scale),
-                    bottom,
-                    z,
-                    alpha
+                    )
                 )
             )
         )

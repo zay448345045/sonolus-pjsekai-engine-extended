@@ -52,6 +52,7 @@ import {
     noteOnScreenDuration,
     origin,
 } from './common/constants'
+import { calculateHispeedTime, levelHasHispeed } from './common/hispeed'
 import {
     applyLevelSpeed,
     applyMirrorCenters,
@@ -105,7 +106,23 @@ class ConnectorDataPointer extends Pointer {
     }
 
     public get headIndex() {
+        return If(Equal(this.to<number>(11), 0), this.to<number>(7), this.to<number>(11))
+    }
+
+    public get headHispeedGroup() {
         return this.to<number>(7)
+    }
+
+    public get headHispeedTime() {
+        return this.to<number>(8)
+    }
+
+    public get tailHispeedGroup() {
+        return this.to<number>(9)
+    }
+
+    public get tailHispeedTime() {
+        return this.to<number>(10)
     }
 
     public get headInfo() {
@@ -206,7 +223,7 @@ export function slideConnector(isCritical: boolean): Script {
 
     const spawnOrder = spawnTime
 
-    const shouldSpawn = GreaterOr(Time, spawnTime)
+    const shouldSpawn = Or(levelHasHispeed, GreaterOr(Time, spawnTime))
 
     const noteScale = EntityMemory.to<number>(33)
 
@@ -333,9 +350,23 @@ export function slideConnector(isCritical: boolean): Script {
         bool(
             Or(
                 GreaterOr(Time, ConnectorData.tailTime),
-                And(GreaterOr(Time, visibleTime), [
-                    vhTime.set(Max(ConnectorData.headTime, Time)),
-                    vtTime.set(Min(ConnectorData.tailTime, Add(Time, noteOnScreenDuration))),
+                And(Or(GreaterOr(Time, visibleTime), levelHasHispeed), [
+                    vhTime.set(
+                        Max(
+                            ConnectorData.headHispeedTime,
+                            calculateHispeedTime(ConnectorData.headHispeedGroup)
+                        )
+                    ),
+                    vtTime.set(
+                        Min(
+                            ConnectorData.tailHispeedTime,
+                            Add(
+                                calculateHispeedTime(ConnectorData.headHispeedGroup),
+
+                                noteOnScreenDuration
+                            )
+                        )
+                    ),
 
                     And(Greater(options.hidden, 0), [
                         vhTime.set(Max(vhTime, hiddenTime)),
@@ -362,79 +393,103 @@ export function slideConnector(isCritical: boolean): Script {
                         )
                     ),
 
-                    [...Array(10).keys()].map((i) => [
-                        shTime.set(Lerp(vhTime, vtTime, i / 10)),
-                        stTime.set(Lerp(vhTime, vtTime, (i + 1) / 10)),
+                    And(
+                        Or(Not(levelHasHispeed), Greater(approach(vhTime), approach(vtTime))),
+                        [...Array(10).keys()].map((i) => [
+                            shTime.set(Lerp(vhTime, vtTime, i / 10)),
+                            stTime.set(Lerp(vhTime, vtTime, (i + 1) / 10)),
 
-                        shXScale.set(
-                            ease(Unlerp(ConnectorData.headTime, ConnectorData.tailTime, shTime))
-                        ),
-                        stXScale.set(
-                            ease(Unlerp(ConnectorData.headTime, ConnectorData.tailTime, stTime))
-                        ),
-                        shYScale.set(approach(shTime)),
-                        stYScale.set(approach(stTime)),
+                            shXScale.set(
+                                ease(
+                                    Unlerp(
+                                        ConnectorData.headHispeedTime,
+                                        ConnectorData.tailHispeedTime,
+                                        shTime
+                                    )
+                                )
+                            ),
+                            stXScale.set(
+                                ease(
+                                    Unlerp(
+                                        ConnectorData.headHispeedTime,
+                                        ConnectorData.tailHispeedTime,
+                                        stTime
+                                    )
+                                )
+                            ),
+                            shYScale.set(approach(shTime)),
+                            stYScale.set(approach(stTime)),
 
-                        connectorBottom.set(Lerp(origin, lane.b, shYScale)),
-                        connectorTop.set(Lerp(origin, lane.b, stYScale)),
+                            connectorBottom.set(Lerp(origin, lane.b, shYScale)),
+                            connectorTop.set(Lerp(origin, lane.b, stYScale)),
 
-                        (
-                            [
-                                [connectionSprite, 1],
+                            (
                                 [
-                                    connectionActiveSprite,
-                                    Subtract(
-                                        1,
-                                        udLoop(
-                                            Multiply(
-                                                4,
-                                                Subtract(
-                                                    Time,
-                                                    ConnectorData.headSharedMemory.startTime
+                                    [connectionSprite, 1],
+                                    [
+                                        connectionActiveSprite,
+                                        Subtract(
+                                            1,
+                                            udLoop(
+                                                Multiply(
+                                                    4,
+                                                    Subtract(
+                                                        Time,
+                                                        ConnectorData.headSharedMemory.startTime
+                                                    )
                                                 )
                                             )
-                                        )
-                                    ),
-                                    And(
-                                        Not(options.lockSlide),
-                                        Or(
-                                            options.isAutoplay,
-                                            Equal(ConnectorData.headInfo.state, State.Spawned),
-                                            Equal(ConnectorData.headSharedMemory.slideTime, Time),
-                                            Less(
-                                                Subtract(
-                                                    Time,
-                                                    ConnectorData.headSharedMemory.startTime
-                                                ),
-                                                InputOffset
-                                            )
                                         ),
-                                        Not(Equal(ConnectorData.headInfo.state, State.Spawned)),
-                                        Not(isZeroWidth)
-                                    ),
-                                ],
-                            ] as const
-                        ).map(([sprite, alphaMul, cond], i) => {
-                            const draw = Draw(
-                                sprite,
-                                Multiply(Lerp(headL, tailL, shXScale), shYScale),
-                                connectorBottom,
-                                Multiply(Lerp(headL, tailL, stXScale), stYScale),
-                                connectorTop,
-                                Multiply(Lerp(headR, tailR, stXScale), stYScale),
-                                connectorTop,
-                                Multiply(Lerp(headR, tailR, shXScale), shYScale),
-                                connectorBottom,
-                                Add(connectorZ, i * 2),
-                                Multiply(alpha, alphaMul)
-                            )
-                            return cond ? And(cond, draw) : draw
-                        }),
-                    ]),
+                                        And(
+                                            Not(options.lockSlide),
+                                            Or(
+                                                options.isAutoplay,
+                                                Equal(ConnectorData.headInfo.state, State.Spawned),
+                                                Equal(
+                                                    ConnectorData.headSharedMemory.slideTime,
+                                                    Time
+                                                ),
+                                                Less(
+                                                    Subtract(
+                                                        Time,
+                                                        ConnectorData.headSharedMemory.startTime
+                                                    ),
+                                                    InputOffset
+                                                )
+                                            ),
+                                            Not(Equal(ConnectorData.headInfo.state, State.Spawned)),
+                                            Not(isZeroWidth)
+                                        ),
+                                    ],
+                                ] as const
+                            ).map(([sprite, alphaMul, cond], i) => {
+                                const draw = Draw(
+                                    sprite,
+                                    Multiply(Lerp(headL, tailL, shXScale), shYScale),
+                                    connectorBottom,
+                                    Multiply(Lerp(headL, tailL, stXScale), stYScale),
+                                    connectorTop,
+                                    Multiply(Lerp(headR, tailR, stXScale), stYScale),
+                                    connectorTop,
+                                    Multiply(Lerp(headR, tailR, shXScale), shYScale),
+                                    connectorBottom,
+                                    Add(connectorZ, i * 2),
+                                    Multiply(alpha, alphaMul)
+                                )
+                                return cond ? And(cond, draw) : draw
+                            }),
+                        ])
+                    ),
 
                     And(GreaterOr(Time, ConnectorData.headTime), [
                         noteScale.set(
-                            ease(Unlerp(ConnectorData.headTime, ConnectorData.tailTime, Time))
+                            ease(
+                                Unlerp(
+                                    ConnectorData.headHispeedTime,
+                                    ConnectorData.tailHispeedTime,
+                                    calculateHispeedTime(ConnectorData.headHispeedGroup)
+                                )
+                            )
                         ),
 
                         And(
