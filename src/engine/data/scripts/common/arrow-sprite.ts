@@ -8,6 +8,7 @@ import {
     customSkinSprite,
     Divide,
     Draw,
+    Greater,
     HasSkinSprite,
     If,
     Lerp,
@@ -22,7 +23,7 @@ import {
     TemporaryMemory,
     Time,
 } from 'sonolus.js'
-import { engineId, lane, origin } from './constants'
+import { engineId, lane, noteFirstAppearY, origin } from './constants'
 import { getLayout, Tuple } from './utils'
 
 export type ArrowLayout = Tuple<Code<number>, 10>
@@ -123,7 +124,7 @@ export class ArrowSprite {
         const tx = TemporaryMemory.to<number>(1)
         const ty = TemporaryMemory.to<number>(2)
 
-        return [
+        return And(Greater(scale, noteFirstAppearY), [
             t.set(Divide(Mod(Time, 0.5), 0.5)),
             tx.set(Multiply(dx, t)),
             ty.set(Multiply(lane.w, 2, t)),
@@ -141,7 +142,7 @@ export class ArrowSprite {
                 z,
                 Subtract(1, t)
             ),
-        ]
+        ])
     }
 }
 
