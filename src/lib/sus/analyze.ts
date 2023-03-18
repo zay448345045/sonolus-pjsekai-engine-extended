@@ -149,12 +149,6 @@ export function analyze(sus: string): Score {
             return
         }
 
-        // BPM Change
-        if (header.length === 5 && header.endsWith('08')) {
-            bpmChangeObjects.push(...toRawObjects(line, measureOffset, toTick))
-            return
-        }
-
         // HISPEED
         if (header.length === 5 && header.startsWith('TIL')) {
             const hispeedData = [...JSON.parse(data).matchAll(/(\d+)'(\d+):([\d.-]+)(?:,|$)/g)]
@@ -167,6 +161,13 @@ export function analyze(sus: string): Score {
                 hispeedData.unshift({ tick: 0, value: 1 })
             }
             hispeeds.set(header.substring(3), hispeedData)
+            return
+        }
+
+        // BPM Change
+        if (header.length === 5 && header.endsWith('08')) {
+            bpmChangeObjects.push(...toRawObjects(line, measureOffset, toTick))
+            return
         }
 
         // Tap Notes
