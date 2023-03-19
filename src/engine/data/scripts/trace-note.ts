@@ -130,15 +130,15 @@ export function traceNote(isCritical: boolean): Script {
         initialize,
         touch,
         updateSequential,
-        updateParallel,
+        updateParallel: {
+            code: updateParallel,
+            order: 1000,
+        },
         terminate,
     }
 
     function onComplete() {
         return [
-            disallowStart.set(true),
-            disallowEmpties.add(TouchId),
-            disallowEnds.add(TouchId, Time),
             noteInputState.set(InputState.Terminated),
             If(
                 TouchStarted,
@@ -147,6 +147,9 @@ export function traceNote(isCritical: boolean): Script {
                     InputAccuracy.set(Subtract(TouchST, InputOffset, NoteData.time)),
                     InputBucket.set(bucket),
                     InputBucketValue.set(Multiply(InputAccuracy, 1000)),
+                    disallowStart.set(true),
+                    disallowEmpties.add(TouchId),
+                    disallowEnds.add(TouchId, Time),
                 ],
                 [InputJudgment.set(1), InputAccuracy.set(0)]
             ),

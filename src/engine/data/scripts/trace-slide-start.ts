@@ -133,19 +133,22 @@ export function traceSlideStart(isCritical: boolean): Script {
         initialize,
         touch,
         updateSequential,
-        updateParallel,
+        updateParallel: {
+            code: updateParallel,
+            order: 1000,
+        },
         terminate,
     }
 
     function onComplete() {
         return [
-            disallowStart.set(true),
-            disallowEmpties.add(TouchId),
-            disallowEnds.add(TouchId, Time),
             noteInputState.set(InputState.Terminated),
             If(
                 TouchStarted,
                 [
+                    disallowStart.set(true),
+                    disallowEmpties.add(TouchId),
+                    disallowEnds.add(TouchId, Time),
                     InputJudgment.set(1),
                     InputAccuracy.set(Subtract(TouchST, InputOffset, NoteData.time)),
                     InputBucket.set(bucket),
