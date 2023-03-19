@@ -563,7 +563,7 @@ export function fromSus(
     }
 
     function computeHispeedTime(hispeed: string, tick: number) {
-        let retvar = 0
+        let retvar = toTime(0)
         let i = 0
         const hispeeds = score.hispeeds.get(hispeed)
         if (!hispeeds) return toTime(tick)
