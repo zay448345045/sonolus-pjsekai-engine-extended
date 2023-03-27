@@ -1,10 +1,8 @@
 import { EngineInfo, LevelData } from 'sonolus-core'
+import { archetypes } from '../engine/data/archetypes'
 import { Fannithm, fromFannithm as _fromFannithm } from './fannithm/convert'
 import { Resource } from './Resource'
 import { fromSus as _fromSus } from './sus/convert'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const archetypes = require('./archetypes')
 
 export const version = '0.2.0'
 
