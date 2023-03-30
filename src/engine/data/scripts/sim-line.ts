@@ -8,6 +8,7 @@ import {
     GreaterOr,
     If,
     Lerp,
+    Less,
     Max,
     Multiply,
     Or,
@@ -106,6 +107,8 @@ export function simLine(): Script {
                 And(
                     GreaterOr(lineScaleL, noteFirstAppearY),
                     GreaterOr(lineScaleR, noteFirstAppearY),
+                    Less(lineScaleL, 1),
+                    Less(lineScaleR, 1),
 
                     Draw(
                         SkinSprite.SimultaneousConnectionNeutral,
