@@ -1,41 +1,6 @@
-import { Add, And, createEntityData, GreaterOr, Pointer, Script, Time } from 'sonolus.js'
-import {
-    calculateHispeedTime,
-    firstHispeedIndex,
-    HispeedAllocatorSharedMemory,
-    HispeedSharedMemory,
-} from './common/hispeed'
+import { And, GreaterOr, Script, Time } from 'sonolus.js'
+import { HispeedAllocatorSharedMemory, HispeedData } from './common/hispeed'
 import { applyLevelSpeed } from './common/note'
-
-export class HispeedAllocatorDataPointer extends Pointer {
-    public get entityCount() {
-        return this.to<number>(0)
-    }
-
-    public get firstEntity() {
-        return this.to<number>(1)
-    }
-}
-const HispeedAllocatorData = createEntityData(HispeedAllocatorDataPointer)
-
-export class HispeedDataPointer extends Pointer {
-    public get group() {
-        return this.to<number>(0)
-    }
-
-    public get time() {
-        return this.to<number>(1)
-    }
-
-    public get value() {
-        return this.to<number>(2)
-    }
-
-    public get toManager() {
-        return HispeedAllocatorSharedMemory.of(Add(firstHispeedIndex, this.group))
-    }
-}
-const HispeedData = createEntityData(HispeedDataPointer)
 
 export function hispeed(isAllocator: boolean): Script {
     const spawnOrder = isAllocator ? -1000 : -900
@@ -43,28 +8,25 @@ export function hispeed(isAllocator: boolean): Script {
     if (isAllocator) {
         return {
             spawnOrder,
-            preprocess: [
-                HispeedAllocatorSharedMemory.value.set(1),
-                HispeedAllocatorSharedMemory.firstEntity.set(HispeedAllocatorData.firstEntity),
-                HispeedAllocatorSharedMemory.entityCount.set(HispeedAllocatorData.entityCount),
-            ],
+            preprocess: [HispeedAllocatorSharedMemory.value.set(1)],
             updateParallel: [],
         }
     }
 
     const preprocess = [
-        applyLevelSpeed(HispeedData.time),
-        HispeedSharedMemory.time.set(HispeedData.time),
-        HispeedSharedMemory.value.set(HispeedData.value),
+        applyLevelSpeed(HispeedData.startTime),
+        applyLevelSpeed(HispeedData.endTime),
+        applyLevelSpeed(HispeedData.startComputedTime),
+        applyLevelSpeed(HispeedData.endComputedTime),
     ]
 
     const updateSequential = [
-        And(GreaterOr(Time, HispeedData.time), [
-            HispeedData.toManager.lastEndTime.set(
-                calculateHispeedTime(HispeedData.group, HispeedData.time)
-            ),
-            HispeedData.toManager.value.set(HispeedData.value),
-            HispeedData.toManager.startTime.set(HispeedData.time),
+        And(GreaterOr(Time, HispeedData.startTime), [
+            HispeedData.toManager.startTime.set(HispeedData.startTime),
+            HispeedData.toManager.endTime.set(HispeedData.endTime),
+            HispeedData.toManager.startComputedTime.set(HispeedData.startComputedTime),
+            HispeedData.toManager.endComputedTime.set(HispeedData.endComputedTime),
+
             true,
         ]),
     ]

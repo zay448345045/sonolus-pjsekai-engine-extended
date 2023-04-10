@@ -1,12 +1,13 @@
 import {
     Add,
     Code,
+    createEntityData,
     createEntitySharedMemory,
+    GreaterOr,
     If,
     LevelMemory,
-    Multiply,
     Pointer,
-    Subtract,
+    Remap,
     Time,
 } from 'sonolus.js'
 
@@ -19,36 +20,63 @@ export class HispeedAllocatorSharedMemoryPointer extends Pointer {
         return this.to<number>(1)
     }
 
-    public get lastEndTime() {
+    public get endTime() {
         return this.to<number>(2)
     }
 
-    public get firstEntity() {
+    public get startComputedTime() {
         return this.to<number>(3)
     }
 
-    public get toFirstEntity() {
-        return HispeedSharedMemory.of(this.firstEntity)
-    }
-
-    public get entityCount() {
+    public get endComputedTime() {
         return this.to<number>(4)
     }
 }
 export const HispeedAllocatorSharedMemory = createEntitySharedMemory(
     HispeedAllocatorSharedMemoryPointer
 )
-
-export class HispeedSharedMemoryPointer extends Pointer {
-    public get value() {
+export class HispeedDataPointer extends Pointer {
+    public get group() {
         return this.to<number>(0)
     }
 
-    public get time() {
+    public get value() {
+        return this.to<number>(1)
+    }
+
+    public get startTime() {
+        return this.to<number>(2)
+    }
+
+    public get endTime() {
+        return this.to<number>(3)
+    }
+
+    public get startComputedTime() {
+        return this.to<number>(4)
+    }
+
+    public get endComputedTime() {
+        return this.to<number>(5)
+    }
+
+    public get toManager() {
+        return HispeedAllocatorSharedMemory.of(Add(firstHispeedIndex, this.group))
+    }
+}
+export const HispeedData = createEntityData(HispeedDataPointer)
+
+export class HispeedAllocatorDataPointer extends Pointer {
+    public get entityCount() {
+        return this.to<number>(0)
+    }
+
+    public get firstEntity() {
         return this.to<number>(1)
     }
 }
-export const HispeedSharedMemory = createEntitySharedMemory(HispeedSharedMemoryPointer)
+export const HispeedAllocatorData = createEntityData(HispeedAllocatorDataPointer)
+
 export const getAllocator = (group: Code<number>) =>
     HispeedAllocatorSharedMemory.of(Add(firstHispeedIndex, group))
 export const calculateHispeedTime = (group: Code<number>, time: Code<number> = Time) => {
@@ -56,7 +84,17 @@ export const calculateHispeedTime = (group: Code<number>, time: Code<number> = T
     return If(
         levelHasHispeed,
 
-        Add(hispeed.lastEndTime, Multiply(Subtract(time, hispeed.startTime), hispeed.value)),
+        If(
+            GreaterOr(time, 0),
+            Remap(
+                hispeed.startTime,
+                hispeed.endTime,
+                hispeed.startComputedTime,
+                hispeed.endComputedTime,
+                time
+            ),
+            time
+        ),
         time
     )
 }

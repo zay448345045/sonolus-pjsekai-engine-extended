@@ -37,6 +37,10 @@ export function fromSus(
 
     const slides = new Set<string>()
 
+    let lastTick = 0
+    const updateLastTick = (tick: number) => {
+        if (tick > lastTick) lastTick = tick
+    }
     score.slides.forEach((slide) => {
         slide.forEach((note) => {
             const key = getKey(note)
@@ -115,6 +119,7 @@ export function fromSus(
             if (slides.has(key)) return
 
             const time = toTime(note.tick)
+            updateLastTick(note.tick)
             const hispeedGroup = note.hispeed
             switch (note.type) {
                 case 1: {
@@ -218,6 +223,7 @@ export function fromSus(
         const connectedNotes: NoteInfo[] = []
         slide.forEach((note) => {
             const key = getKey(note)
+            updateLastTick(note.tick)
             const time = toTime(note.tick)
             const isCritical = isStartCritical || criticalMods.has(key)
             const isTrace = tickRemoveMods.has(key)
@@ -500,7 +506,7 @@ export function fromSus(
     })
     let groupIndex = 0
     let firstHispeed: Wrapper | undefined = undefined
-    for (const hispeeds of score.hispeeds.values()) {
+    for (const [group, hispeeds] of score.hispeeds.entries()) {
         const hisppedAllocator: Wrapper = {
             group: 2,
             time: groupIndex,
@@ -517,7 +523,14 @@ export function fromSus(
         }
         wrappers.push(hisppedAllocator)
 
-        for (const hispeed of hispeeds) {
+        for (const [index, hispeed] of hispeeds.entries()) {
+            const next = hispeeds[index + 1]
+            let tick
+            if (next) {
+                tick = next.tick
+            } else {
+                tick = lastTick
+            }
             const hispeedEntity = {
                 group: 3,
                 time: groupIndex,
@@ -525,7 +538,14 @@ export function fromSus(
                     archetype: archetypes.hispeedIndex,
                     data: {
                         index: 0,
-                        values: [groupIndex, toTime(hispeed.tick), hispeed.value],
+                        values: [
+                            groupIndex,
+                            hispeed.value,
+                            toTime(hispeed.tick),
+                            toTime(tick),
+                            computeHispeedTime(group, hispeed.tick),
+                            computeHispeedTime(group, tick),
+                        ],
                     },
                 },
             }
