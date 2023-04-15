@@ -8,18 +8,20 @@
     "keywords": [
         "Sonolus"
     ],
-    "main": "dist/lib/index.js",
+    "main": "dist/index.js",
     "files": [
         "dist"
     ],
     "scripts": {
         "lint": "tsc -p . --noEmit && eslint --ext .ts src/",
         "serve": "nodemon --watch src --exec \"ts-node ./src/serve.ts\" --ext .ts,.sus",
-        "build": "ts-node ./src/build && tsc -p ./tsconfig.lib.json",
-        "postinstall": "ts-node ./src/build && tsc -p ./tsconfig.lib.json || true"
+        "build": "ts-node --transpileOnly ./src/build",
+        "postinstall": "ts-node --transpileOnly ./src/build"
     },
     "dependencies": {
         "@types/fs-extra": "^9.0.13",
+        "esbuild": "^0.17.16",
+        "esbuild-node-externals": "^1.7.0",
         "fs-extra": "^10.1.0",
         "sonolus-core": "^6.0.0",
         "sonolus-express": "^5.0.0",

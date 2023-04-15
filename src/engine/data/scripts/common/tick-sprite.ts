@@ -9,9 +9,11 @@ import {
     HasSkinSprite,
     If,
     Multiply,
+    Not,
     Pointer,
     Subtract,
 } from 'sonolus.js'
+import { options } from '../../../configuration/options'
 import { baseNote, engineId, halfNoteHeight, lane, noteFirstAppearY } from './constants'
 import { getLayout, Tuple } from './utils'
 
@@ -56,6 +58,7 @@ export class TickSprite {
         z: Code<number>
     ) {
         return And(
+            Not(options.hideNotes),
             GreaterOr(scale, noteFirstAppearY),
 
             If(

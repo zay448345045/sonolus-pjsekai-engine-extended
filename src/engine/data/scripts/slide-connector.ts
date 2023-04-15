@@ -505,7 +505,7 @@ export function slideConnector(isCritical: boolean): Script {
                                     Add(connectorZ, i * 2),
                                     Multiply(alpha, alphaMul)
                                 )
-                                return cond ? And(cond, draw) : draw
+                                return Or(options.hideNotes, cond ? And(cond, draw) : draw)
                             }),
                         ])
                     ),

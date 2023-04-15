@@ -11,11 +11,13 @@ import {
     If,
     LessOr,
     Multiply,
+    Not,
     Or,
     Pointer,
     Subtract,
     Unlerp,
 } from 'sonolus.js'
+import { options } from '../../../configuration/options'
 import { baseNote, engineId, extEngineId, noteFirstAppearY, origin } from './constants'
 import { getLayout, Tuple } from './utils'
 
@@ -67,6 +69,7 @@ export class NoteSprite {
         alpha: Code<number> = 1
     ) {
         return And(
+            Not(options.hideNotes),
             GreaterOr(Unlerp(origin, baseNote.b, bottom), noteFirstAppearY),
             Or(
                 LessOr(Abs(Subtract(layout[0], layout[1])), 0),

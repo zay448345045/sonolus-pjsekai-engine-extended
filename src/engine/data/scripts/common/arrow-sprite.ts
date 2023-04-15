@@ -16,6 +16,7 @@ import {
     Min,
     Mod,
     Multiply,
+    Not,
     Pointer,
     Round,
     Subtract,
@@ -23,6 +24,7 @@ import {
     TemporaryMemory,
     Time,
 } from 'sonolus.js'
+import { options } from '../../../configuration/options'
 import { engineId, lane, noteFirstAppearY, origin } from './constants'
 import { getLayout, Tuple } from './utils'
 
@@ -55,7 +57,7 @@ export class ArrowSprite {
         const spriteSide = customSkinSprite(engineId, Add(this.base, size, 6))
 
         return If(
-            And(HasSkinSprite(spriteUp), HasSkinSprite(spriteSide)),
+            And(Not(options.hideNotes), HasSkinSprite(spriteUp), HasSkinSprite(spriteSide)),
             [
                 sprite.set(Multiply(Clamp(width, 0, 3), 0.5, SwitchInteger(direction, [1, -1], 1))),
                 x1.set(Multiply(Subtract(center, sprite), lane.w)),

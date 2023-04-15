@@ -1,3 +1,5 @@
+import { build } from 'esbuild'
+import esbuildNodeExternalsPlugin from 'esbuild-node-externals'
 import { copySync, emptyDirSync, outputFileSync, outputJsonSync } from 'fs-extra'
 import { buildOutput } from '.'
 import { archetypes } from './engine/data/archetypes'
@@ -15,3 +17,13 @@ outputJsonSync(
     `${distPath}/archetypes.json`,
     Object.fromEntries(Object.entries(archetypes).filter(([key]) => key.endsWith('Index')))
 )
+
+build({
+    entryPoints: ['src/lib/index.ts'],
+    bundle: true,
+    minify: true,
+    outdir: distPath,
+    platform: 'node',
+    treeShaking: true,
+    plugins: [esbuildNodeExternalsPlugin()],
+})
