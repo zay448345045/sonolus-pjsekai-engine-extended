@@ -33,12 +33,7 @@ build({
             setup(build) {
                 build.onEnd((result) => {
                     if (result.errors.length > 0) return
-                    execSync('tsc --declaration --emitDeclarationOnly --outDir dist', {
-                        cwd: distPath,
-                        stdio: 'inherit',
-                    })
-                    copySync(`${distPath}/dist/lib/index.d.ts`, `${distPath}/index.d.ts`)
-                    rmSync(`${distPath}/dist`, { recursive: true })
+                    copySync("./index.d.ts", `${distPath}/index.d.ts`)
                 })
             },
         },
