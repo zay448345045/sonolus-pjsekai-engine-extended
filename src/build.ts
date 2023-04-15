@@ -1,6 +1,7 @@
+import { execSync } from 'child_process'
 import { build } from 'esbuild'
 import esbuildNodeExternalsPlugin from 'esbuild-node-externals'
-import { copySync, emptyDirSync, outputFileSync, outputJsonSync } from 'fs-extra'
+import { copySync, emptyDirSync, outputFileSync, outputJsonSync, rmSync } from 'fs-extra'
 import { buildOutput } from '.'
 import { archetypes } from './engine/data/archetypes'
 
@@ -25,5 +26,21 @@ build({
     outdir: distPath,
     platform: 'node',
     treeShaking: true,
-    plugins: [esbuildNodeExternalsPlugin()],
+    plugins: [
+        esbuildNodeExternalsPlugin(),
+        {
+            name: 'TypeScriptDeclarationsPlugin',
+            setup(build) {
+                build.onEnd((result) => {
+                    if (result.errors.length > 0) return
+                    execSync('tsc --declaration --emitDeclarationOnly --outDir dist', {
+                        cwd: distPath,
+                        stdio: 'inherit',
+                    })
+                    copySync(`${distPath}/dist/lib/index.d.ts`, `${distPath}/index.d.ts`)
+                    rmSync(`${distPath}/dist`, { recursive: true })
+                })
+            },
+        },
+    ],
 })
