@@ -21,6 +21,7 @@ import {
     Min,
     Mod,
     Multiply,
+    Not,
     Or,
     PlayScheduled,
     Pointer,
@@ -255,6 +256,7 @@ export function initializeNoteSimLine() {
 
     return And(
         options.isSimLineEnabled,
+        Not(options.hideNotes),
         Equal(NoteData.time, NoteData.of(lIndex).time),
         Switch(
             EntityInfo.of(lIndex).archetype,

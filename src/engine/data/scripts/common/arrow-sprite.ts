@@ -16,7 +16,7 @@ import {
     Min,
     Mod,
     Multiply,
-    Not,
+    Or,
     Pointer,
     Round,
     Subtract,
@@ -56,48 +56,53 @@ export class ArrowSprite {
         const spriteUp = customSkinSprite(engineId, Add(this.base, size))
         const spriteSide = customSkinSprite(engineId, Add(this.base, size, 6))
 
-        return If(
-            And(Not(options.hideNotes), HasSkinSprite(spriteUp), HasSkinSprite(spriteSide)),
-            [
-                sprite.set(Multiply(Clamp(width, 0, 3), 0.5, SwitchInteger(direction, [1, -1], 1))),
-                x1.set(Multiply(Subtract(center, sprite), lane.w)),
-                y1.set(lane.b),
-                x2.set(x1),
-                y2.set(Add(lane.b, Multiply(Abs(sprite), 2, lane.w))),
-                x3.set(Multiply(Add(center, sprite), lane.w)),
-                y3.set(y2),
-                x4.set(x3),
-                y4.set(y1),
+        return Or(
+            options.hideNotes,
+            If(
+                And(HasSkinSprite(spriteUp), HasSkinSprite(spriteSide)),
+                [
+                    sprite.set(
+                        Multiply(Clamp(width, 0, 3), 0.5, SwitchInteger(direction, [1, -1], 1))
+                    ),
+                    x1.set(Multiply(Subtract(center, sprite), lane.w)),
+                    y1.set(lane.b),
+                    x2.set(x1),
+                    y2.set(Add(lane.b, Multiply(Abs(sprite), 2, lane.w))),
+                    x3.set(Multiply(Add(center, sprite), lane.w)),
+                    y3.set(y2),
+                    x4.set(x3),
+                    y4.set(y1),
 
-                sprite.set(Multiply(lane.w, 0.25, SwitchInteger(direction, [1, -1]))),
-                x1.set(Subtract(x1, sprite)),
-                x2.set(Subtract(x2, sprite)),
-                x3.set(Subtract(x3, sprite)),
-                x4.set(Subtract(x4, sprite)),
+                    sprite.set(Multiply(lane.w, 0.25, SwitchInteger(direction, [1, -1]))),
+                    x1.set(Subtract(x1, sprite)),
+                    x2.set(Subtract(x2, sprite)),
+                    x3.set(Subtract(x3, sprite)),
+                    x4.set(Subtract(x4, sprite)),
 
-                sprite.set(SwitchInteger(direction, [spriteSide, spriteSide], spriteUp)),
-                dx.set(Multiply(lane.w, SwitchInteger(direction, [-1, 1]))),
-            ],
-            [
-                sprite.set(Max(1, Min(3, width))),
-                SwitchInteger(
-                    direction,
-                    [rotate(Math.PI / 6), rotate(-Math.PI / 6)],
-                    [
-                        x1.set(Multiply(Subtract(center, sprite), lane.w)),
-                        y1.set(lane.b),
-                        x2.set(x1),
-                        y2.set(Add(lane.b, Multiply(sprite, 2, lane.w))),
-                        x3.set(Multiply(Add(center, sprite), lane.w)),
-                        y3.set(y2),
-                        x4.set(x3),
-                        y4.set(y1),
-                    ]
-                ),
+                    sprite.set(SwitchInteger(direction, [spriteSide, spriteSide], spriteUp)),
+                    dx.set(Multiply(lane.w, SwitchInteger(direction, [-1, 1]))),
+                ],
+                [
+                    sprite.set(Max(1, Min(3, width))),
+                    SwitchInteger(
+                        direction,
+                        [rotate(Math.PI / 6), rotate(-Math.PI / 6)],
+                        [
+                            x1.set(Multiply(Subtract(center, sprite), lane.w)),
+                            y1.set(lane.b),
+                            x2.set(x1),
+                            y2.set(Add(lane.b, Multiply(sprite, 2, lane.w))),
+                            x3.set(Multiply(Add(center, sprite), lane.w)),
+                            y3.set(y2),
+                            x4.set(x3),
+                            y4.set(y1),
+                        ]
+                    ),
 
-                sprite.set(this.fallback),
-                dx.set(Multiply(lane.w, SwitchInteger(direction, [-1, 1]))),
-            ]
+                    sprite.set(this.fallback),
+                    dx.set(Multiply(lane.w, SwitchInteger(direction, [-1, 1]))),
+                ]
+            )
         )
 
         function rotate(a: number) {
