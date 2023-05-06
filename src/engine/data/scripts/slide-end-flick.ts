@@ -13,6 +13,7 @@ import {
     InputBucketValue,
     InputJudgment,
     InputOffset,
+    LessOr,
     Multiply,
     Not,
     NotEqual,
@@ -113,7 +114,7 @@ export function slideEndFlick(isCritical: boolean): Script {
             GreaterOr(TouchVR, minFlickVR),
             checkTouchYInHitbox(Subtract(TouchY, TouchDY)),
             If(
-                checkNoteTimeInEarlyWindow(0),
+                checkNoteTimeInEarlyWindow(window.great.early),
                 checkTouchXInNoteHitbox(Subtract(TouchX, TouchDX)),
                 And(
                     checkTouchXInHitbox(
@@ -192,7 +193,13 @@ export function slideEndFlick(isCritical: boolean): Script {
         return [
             noteInputState.set(InputState.Terminated),
 
-            InputJudgment.set(window.judge(Subtract(TouchT, InputOffset), NoteData.time)),
+            InputJudgment.set(
+                If(
+                    LessOr(Subtract(TouchT, InputOffset), NoteData.time),
+                    1,
+                    window.judge(Subtract(TouchT, InputOffset), NoteData.time)
+                )
+            ),
             InputAccuracy.set(Subtract(TouchT, InputOffset, NoteData.time)),
             Or(NotEqual(InputJudgment, 1), checkDirection(TouchDX, TouchDY, NoteData.direction), [
                 InputJudgment.set(2),
