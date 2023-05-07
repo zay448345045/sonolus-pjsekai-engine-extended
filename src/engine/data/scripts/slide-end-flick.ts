@@ -114,7 +114,7 @@ export function slideEndFlick(isCritical: boolean): Script {
             GreaterOr(TouchVR, minFlickVR),
             checkTouchYInHitbox(Subtract(TouchY, TouchDY)),
             If(
-                checkNoteTimeInEarlyWindow(window.great.early),
+                checkNoteTimeInEarlyWindow(window.perfect.early),
                 checkTouchXInNoteHitbox(Subtract(TouchX, TouchDX)),
                 And(
                     checkTouchXInHitbox(
