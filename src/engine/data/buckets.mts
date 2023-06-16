@@ -213,4 +213,18 @@ export const buckets = defineBuckets({
         ],
         unit: UnitText.Millisecond,
     },
+    // Extended
+    normalTraceNote: {
+        sprites: [
+            {
+                id: skin.sprites.normalTraceNoteFallback.id,
+                x: 0,
+                y: 0,
+                w: 2,
+                h: 2,
+                rotation: -90,
+            },
+        ],
+        unit: UnitText.Millisecond,
+    },
 })

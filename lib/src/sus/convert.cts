@@ -87,7 +87,7 @@ export const susToUSC = (sus: string): USC => {
 
     for (const note of score.tapNotes) {
         if (note.lane <= 1 || note.lane >= 14) continue
-        if (note.type !== 1 && note.type !== 2) continue
+        if (![1, 2, 3].includes(note.type)) continue
 
         const key = getKey(note)
         if (preventSingles.has(key)) continue
@@ -95,12 +95,15 @@ export const susToUSC = (sus: string): USC => {
         if (dedupeSingles.has(key)) continue
         dedupeSingles.add(key)
 
+        if (note.type === 2 && tickRemoveMods.has(key)) continue
+
         const object: USCObject = {
             type: 'single',
             beat: note.tick / score.ticksPerBeat,
             lane: note.lane - 8 + note.width / 2,
             size: note.width / 2,
-            critical: note.type === 2,
+            critical: criticalMods.has(key),
+            trace: note.type === 3,
         }
 
         const flickMod = flickMods.get(key)

@@ -15,12 +15,24 @@ import {
 import { Note } from '../Note.mjs'
 
 export abstract class FlatNote extends Note {
-    abstract sprites: {
-        left: SkinSprite
-        middle: SkinSprite
-        right: SkinSprite
-        fallback: SkinSprite
-    }
+    abstract sprites:
+        | {
+              left: SkinSprite
+              middle: SkinSprite
+              right: SkinSprite
+              fallback: SkinSprite
+          }
+        | {
+              left: SkinSprite
+              middle: SkinSprite
+              right: SkinSprite
+              primaryFallback: {
+                  left: SkinSprite
+                  middle: SkinSprite
+                  right: SkinSprite
+              }
+              secondaryFallback: SkinSprite
+          }
 
     abstract clips: {
         perfect: EffectClip
@@ -166,6 +178,16 @@ export abstract class FlatNote extends Note {
         )
     }
 
+    get useSecondaryFallbackSprites() {
+        return (
+            this.useFallbackSprites &&
+            'secondaryFallback' in this.sprites &&
+            (!this.sprites.primaryFallback.left.exists ||
+                !this.sprites.primaryFallback.middle.exists ||
+                !this.sprites.primaryFallback.right.exists)
+        )
+    }
+
     get useFallbackClip() {
         return (
             !this.clips.perfect.exists ||
@@ -187,8 +209,28 @@ export abstract class FlatNote extends Note {
     render() {
         this.y = Note.approach(this.visualTime.min, this.visualTime.max, time.scaled)
 
-        if (this.useFallbackSprites) {
-            this.sprites.fallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)
+        if ('secondaryFallback' in this.sprites && this.useSecondaryFallbackSprites) {
+            this.sprites.secondaryFallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)
+        } else if (this.useFallbackSprites) {
+            if ('primaryFallback' in this.sprites) {
+                this.sprites.primaryFallback.left.draw(
+                    this.spriteLayouts.left.mul(this.y),
+                    this.z,
+                    1,
+                )
+                this.sprites.primaryFallback.middle.draw(
+                    this.spriteLayouts.middle.mul(this.y),
+                    this.z,
+                    1,
+                )
+                this.sprites.primaryFallback.right.draw(
+                    this.spriteLayouts.right.mul(this.y),
+                    this.z,
+                    1,
+                )
+            } else {
+                this.sprites.fallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)
+            }
         } else {
             this.sprites.left.draw(this.spriteLayouts.left.mul(this.y), this.z, 1)
             this.sprites.middle.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)

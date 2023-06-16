@@ -20,6 +20,7 @@ type NoteBase = ObjectBase & {
 export type Single = NoteBase & {
     type: 'single'
     critical: boolean
+    trace: boolean
     direction?: 'left' | 'up' | 'right'
 }
 

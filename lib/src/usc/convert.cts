@@ -158,10 +158,13 @@ const single: Handler<Single> = (object, append) => {
         },
         sim: true,
     }
-
-    if (object.direction) {
-        intermediate.archetype = object.critical ? 'CriticalFlickNote' : 'NormalFlickNote'
-        intermediate.data.direction = directions[object.direction]
+    if (object.trace) {
+        intermediate.archetype = object.critical ? 'CriticalTraceNote' : 'NormalTraceNote'
+    } else {
+        if (object.direction) {
+            intermediate.archetype = object.critical ? 'CriticalFlickNote' : 'NormalFlickNote'
+            intermediate.data.direction = directions[object.direction]
+        }
     }
 
     append(intermediate)

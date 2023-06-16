@@ -22,6 +22,14 @@
                 "@typescript-eslint/explicit-module-boundary-types": "error",
                 "@typescript-eslint/no-empty-function": "error"
             }
+        },
+        {
+            "files": [
+                "sonolus-cli.config.mjs"
+            ],
+            "env": {
+              "node": true
+            }
         }
     ]
 }

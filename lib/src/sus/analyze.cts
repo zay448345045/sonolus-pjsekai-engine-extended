@@ -2,7 +2,7 @@ type Line = [string, string]
 
 type MeasureChange = [number, number]
 
-type Meta = Map<string, string>
+type Meta = Map<string, string[]>
 
 type BarLengthObject = {
     measure: number
@@ -152,7 +152,8 @@ const parse = (
             } else if (left === 'MEASUREBS') {
                 measureChanges.unshift([lines.length, +right])
             } else {
-                meta.set(left, right)
+                if (!meta.has(left)) meta.set(left, [])
+                meta.get(left)?.push(right)
             }
         })
 
@@ -163,13 +164,14 @@ const parse = (
     }
 }
 
-const getTicksPerBeat = (meta: Map<string, string>) => {
+const getTicksPerBeat = (meta: Map<string, string[]>) => {
     const request = meta.get('REQUEST')
     if (!request) return
 
-    if (!request.startsWith('"ticks_per_beat ') || !request.endsWith('"')) return
+    const tpbRequest = request.find((r) => JSON.parse(r).startsWith('ticks_per_beat'))
+    if (!tpbRequest) return
 
-    return +request.slice(16, -1)
+    return +JSON.parse(tpbRequest).split(' ')[1]
 }
 
 const getBarLengths = (lines: Line[], measureChanges: MeasureChange[]) => {

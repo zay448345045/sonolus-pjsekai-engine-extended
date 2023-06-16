@@ -27,5 +27,10 @@ export const particle = defineParticle({
 
         criticalSlideConnectorCircular: ParticleEffectName.NoteCircularHoldYellow,
         criticalSlideConnectorLinear: ParticleEffectName.NoteLinearHoldYellow,
+
+        // Extended
+
+        normalTraceNoteCircular: ParticleEffectName.NoteCircularTapNeutral,
+        normalTraceNoteLinear: ParticleEffectName.NoteLinearTapNeutral,
     },
 })

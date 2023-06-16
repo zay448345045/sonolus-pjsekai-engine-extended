@@ -23,5 +23,11 @@ export const effect = defineEffect({
         criticalHold: 'Sekai Critical Hold',
 
         criticalTick: 'Sekai Critical Tick',
+
+        // Extended
+
+        normalTrace: 'Sekai+ Trace',
+        criticalTrace: 'Sekai+ Critical Trace',
+        traceFlick: 'Sekai+ Trace Flick',
     },
 })

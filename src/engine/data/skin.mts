@@ -87,5 +87,28 @@ export const skin = defineSkin({
         criticalArrowLeft5: 'Sekai Critical Flick Arrow Left 5',
         criticalArrowLeft6: 'Sekai Critical Flick Arrow Left 6',
         criticalArrowFallback: SkinSpriteName.DirectionalMarkerYellow,
+
+        // Extended
+
+        normalTraceNoteLeft: 'Sekai+ Note Slim Gray Left',
+        normalTraceNoteMiddle: 'Sekai+ Note Slim Gray Middle',
+        normalTraceNoteRight: 'Sekai+ Note Slim Gray Right',
+        normalTraceNoteFallbackLeft: 'Sekai Note Gray Left',
+        normalTraceNoteFallbackMiddle: 'Sekai Note Gray Middle',
+        normalTraceNoteFallbackRight: 'Sekai Note Gray Right',
+        normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadNeutral,
+
+        criticalTraceNoteLeft: 'Sekai+ Note Slim Yellow Left',
+        criticalTraceNoteMiddle: 'Sekai+ Note Slim Yellow Middle',
+        criticalTraceNoteRight: 'Sekai+ Note Slim Yellow Right',
+        criticalTraceNoteFallback: SkinSpriteName.NoteHeadYellow,
+
+        flickTraceNoteLeft: 'Sekai+ Note Slim Red Left',
+        flickTraceNoteMiddle: 'Sekai+ Note Slim Red Middle',
+        flickTraceNoteRight: 'Sekai+ Note Slim Red Right',
+        flickTraceNoteFallback: SkinSpriteName.NoteHeadRed,
+
+        normalTraceSlotGlow: 'Sekai+ Slot Glow Gray',
+        normalTraceSlot: 'Sekai+ Slot Gray',
     },
 })
