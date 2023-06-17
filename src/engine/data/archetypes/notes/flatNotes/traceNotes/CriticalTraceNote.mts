@@ -11,7 +11,12 @@ export class CriticalTraceNote extends TraceNote {
         left: skin.sprites.criticalTraceNoteLeft,
         middle: skin.sprites.criticalTraceNoteMiddle,
         right: skin.sprites.criticalTraceNoteRight,
-        fallback: skin.sprites.criticalNoteFallback,
+        primaryFallback: {
+            left: skin.sprites.criticalNoteLeft,
+            middle: skin.sprites.criticalNoteMiddle,
+            right: skin.sprites.criticalNoteRight,
+        },
+        secondaryFallback: skin.sprites.criticalNoteFallback,
     }
 
     clips = {

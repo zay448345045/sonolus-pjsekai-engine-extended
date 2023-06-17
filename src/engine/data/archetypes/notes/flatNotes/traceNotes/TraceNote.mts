@@ -1,13 +1,8 @@
 import { options } from '~/engine/configuration/options.mjs'
-import {
-    canStart,
-    disallowEmpty,
-    disallowEnd,
-    disallowStart,
-} from '~/engine/data/archetypes/InputManager.mjs'
-import { FlatNote } from '../FlatNote.mjs'
+import { canStart } from '~/engine/data/archetypes/InputManager.mjs'
+import { SlimNote } from '../SlimNote.mjs'
 
-export abstract class TraceNote extends FlatNote {
+export abstract class TraceNote extends SlimNote {
     leniency = 0.75
 
     touch() {

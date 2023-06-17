@@ -93,9 +93,9 @@ export const skin = defineSkin({
         normalTraceNoteLeft: 'Sekai+ Note Slim Gray Left',
         normalTraceNoteMiddle: 'Sekai+ Note Slim Gray Middle',
         normalTraceNoteRight: 'Sekai+ Note Slim Gray Right',
-        normalTraceNoteFallbackLeft: 'Sekai Note Gray Left',
-        normalTraceNoteFallbackMiddle: 'Sekai Note Gray Middle',
-        normalTraceNoteFallbackRight: 'Sekai Note Gray Right',
+        normalTraceNoteFallbackLeft: 'Sekai Note Neutral Left',
+        normalTraceNoteFallbackMiddle: 'Sekai Note Neutral Middle',
+        normalTraceNoteFallbackRight: 'Sekai Note Neutral Right',
         normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadNeutral,
 
         criticalTraceNoteLeft: 'Sekai+ Note Slim Yellow Left',

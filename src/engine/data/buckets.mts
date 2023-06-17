@@ -217,7 +217,7 @@ export const buckets = defineBuckets({
     normalTraceNote: {
         sprites: [
             {
-                id: skin.sprites.normalTraceNoteFallback.id,
+                id: skin.sprites.normalNoteFallback.id,
                 x: 0,
                 y: 0,
                 w: 2,

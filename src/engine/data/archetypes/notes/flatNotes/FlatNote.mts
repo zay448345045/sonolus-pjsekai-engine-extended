@@ -118,19 +118,7 @@ export abstract class FlatNote extends Note {
 
         getHitbox({ l, r, leniency: this.leniency }).copyTo(this.hitbox)
 
-        const b = 1 + note.h
-        const t = 1 - note.h
-
-        if (this.useFallbackSprites) {
-            perspectiveLayout({ l, r, b, t }).copyTo(this.spriteLayouts.middle)
-        } else {
-            const ml = l + 0.25
-            const mr = r - 0.25
-
-            perspectiveLayout({ l, r: ml, b, t }).copyTo(this.spriteLayouts.left)
-            perspectiveLayout({ l: ml, r: mr, b, t }).copyTo(this.spriteLayouts.middle)
-            perspectiveLayout({ l: mr, r, b, t }).copyTo(this.spriteLayouts.right)
-        }
+        this.setLayout({ l, r })
 
         this.z = getZ(layer.note.body, this.targetTime, this.data.lane)
 
@@ -140,6 +128,22 @@ export abstract class FlatNote extends Note {
             this.result.bucket.index = this.bucket.index
         } else {
             this.result.accuracy = this.windows.good.max
+        }
+    }
+
+    setLayout({ l, r }: { l: number; r: number }) {
+        const b = 1 + note.h
+        const t = 1 - note.h
+
+        if (this.useSingleFallbackSprites) {
+            perspectiveLayout({ l, r, b, t }).copyTo(this.spriteLayouts.middle)
+        } else {
+            const ml = l + 0.25
+            const mr = r - 0.25
+
+            perspectiveLayout({ l, r: ml, b, t }).copyTo(this.spriteLayouts.left)
+            perspectiveLayout({ l: ml, r: mr, b, t }).copyTo(this.spriteLayouts.middle)
+            perspectiveLayout({ l: mr, r, b, t }).copyTo(this.spriteLayouts.right)
         }
     }
 
@@ -188,6 +192,13 @@ export abstract class FlatNote extends Note {
         )
     }
 
+    get useSingleFallbackSprites() {
+        return (
+            ('secondaryFallback' in this.sprites && this.useSecondaryFallbackSprites) ||
+            ('fallback' in this.sprites && this.useFallbackSprites)
+        )
+    }
+
     get useFallbackClip() {
         return (
             !this.clips.perfect.exists ||
@@ -209,10 +220,14 @@ export abstract class FlatNote extends Note {
     render() {
         this.y = Note.approach(this.visualTime.min, this.visualTime.max, time.scaled)
 
-        if ('secondaryFallback' in this.sprites && this.useSecondaryFallbackSprites) {
-            this.sprites.secondaryFallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)
-        } else if (this.useFallbackSprites) {
-            if ('primaryFallback' in this.sprites) {
+        if (this.useFallbackSprites) {
+            if ('secondaryFallback' in this.sprites && this.useSecondaryFallbackSprites) {
+                this.sprites.secondaryFallback.draw(
+                    this.spriteLayouts.middle.mul(this.y),
+                    this.z,
+                    1,
+                )
+            } else if ('primaryFallback' in this.sprites) {
                 this.sprites.primaryFallback.left.draw(
                     this.spriteLayouts.left.mul(this.y),
                     this.z,
@@ -237,7 +252,6 @@ export abstract class FlatNote extends Note {
             this.sprites.right.draw(this.spriteLayouts.right.mul(this.y), this.z, 1)
         }
     }
-
     playHitEffects(hitTime: number) {
         if (this.shouldPlaySFX) this.playSFX()
         if (options.noteEffectEnabled) this.playNoteEffects()

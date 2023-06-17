@@ -95,15 +95,13 @@ export const susToUSC = (sus: string): USC => {
         if (dedupeSingles.has(key)) continue
         dedupeSingles.add(key)
 
-        if (note.type === 2 && tickRemoveMods.has(key)) continue
-
         const object: USCObject = {
             type: 'single',
             beat: note.tick / score.ticksPerBeat,
             lane: note.lane - 8 + note.width / 2,
             size: note.width / 2,
-            critical: criticalMods.has(key),
-            trace: note.type === 3,
+            critical: note.type === 2,
+            trace: note.type === 3 || tickRemoveMods.has(key),
         }
 
         const flickMod = flickMods.get(key)
