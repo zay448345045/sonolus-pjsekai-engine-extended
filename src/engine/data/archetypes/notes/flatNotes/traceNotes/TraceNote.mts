@@ -1,5 +1,9 @@
 import { options } from '~/engine/configuration/options.mjs'
-import { canStart } from '~/engine/data/archetypes/InputManager.mjs'
+import {
+    canTraceStart,
+    disallowEmpty,
+    disallowTraceStart,
+} from '~/engine/data/archetypes/InputManager.mjs'
 import { SlimNote } from '../SlimNote.mjs'
 
 export abstract class TraceNote extends SlimNote {
@@ -11,7 +15,7 @@ export abstract class TraceNote extends SlimNote {
         for (const touch of touches) {
             if (touch.started && time.now < this.inputTime.min) continue
             if (!touch.started && time.now < this.targetTime) continue
-            if (touch.started && !canStart(touch)) continue
+            if (touch.started && !canTraceStart(touch)) continue
             if (!this.hitbox.contains(touch.position)) continue
 
             this.complete(touch)
@@ -20,8 +24,8 @@ export abstract class TraceNote extends SlimNote {
     }
 
     complete(touch: Touch) {
-        // disallowEmpty(touch)
-        // disallowStart(touch)
+        disallowEmpty(touch)
+        disallowTraceStart(touch)
         // disallowEnd(touch, this.inputTime.max)
 
         this.result.judgment = Judgment.Perfect

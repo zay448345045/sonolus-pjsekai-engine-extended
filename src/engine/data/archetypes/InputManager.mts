@@ -15,6 +15,12 @@ export const canStart = (touch: Touch) => !disallowedStarts.has(touch.id)
 
 export const disallowStart = (touch: Touch) => disallowedStarts.add(touch.id)
 
+const disallowedTraceStarts = levelMemory(Collection(16, TouchId))
+
+export const canTraceStart = (touch: Touch) => !disallowedTraceStarts.has(touch.id)
+
+export const disallowTraceStart = (touch: Touch) => disallowedTraceStarts.add(touch.id)
+
 const disallowedEnds = levelMemory({
     old: Dictionary(16, TouchId, Number),
     now: Dictionary(16, TouchId, Number),
@@ -53,6 +59,7 @@ export class InputManager extends Archetype {
         if (options.autoplay) return
 
         disallowedStarts.clear()
+        disallowedTraceStarts.clear()
 
         for (const touch of touches) {
             if (disallowedEmpties.old.has(touch.id)) disallowedEmpties.now.add(touch.id)
