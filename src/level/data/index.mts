@@ -5,6 +5,6 @@ import { uscToLevelData } from '~lib/src/usc/convert.cjs'
 // import chart from './expert.json'
 
 export const data: LevelData = await fs
-    .readFile('./src/level/data/interrobang.sus', 'utf-8')
+    .readFile('./src/level/data/ainov.sus', 'utf-8')
     .then(susToUSC)
     .then(uscToLevelData)

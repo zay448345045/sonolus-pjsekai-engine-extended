@@ -29,9 +29,12 @@ import { FlickSlotGlowEffect } from './slotGlowEffects/FlickSlotGlowEffect.mjs'
 import { NormalSlotGlowEffect } from './slotGlowEffects/NormalSlotGlowEffect.mjs'
 import { SlideSlotGlowEffect } from './slotGlowEffects/SlideSlotGlowEffect.mjs'
 
+import { DamageNote } from './notes/flatNotes/damageNotes/DamageNote.mjs'
 import { CriticalTraceNote } from './notes/flatNotes/traceNotes/CriticalTraceNote.mjs'
 import { NormalTraceNote } from './notes/flatNotes/traceNotes/NormalTraceNote.mjs'
+import { DamageSlotEffect } from './slotEffects/DamageSlotEffect.mjs'
 import { NormalTraceSlotEffect } from './slotEffects/NormalTraceSlotEffect.mjs'
+import { DamageSlotGlowEffect } from './slotGlowEffects/DamageSlotGlowEffect.mjs'
 import { NormalTraceSlotGlowEffect } from './slotGlowEffects/NormalTraceSlotGlowEffect.mjs'
 
 export const archetypes = defineArchetypes({
@@ -85,4 +88,9 @@ export const archetypes = defineArchetypes({
 
     NormalTraceSlotEffect,
     NormalTraceSlotGlowEffect,
+
+    DamageNote,
+
+    DamageSlotEffect,
+    DamageSlotGlowEffect,
 })

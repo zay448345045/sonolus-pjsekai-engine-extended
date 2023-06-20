@@ -39,6 +39,7 @@ export type Score = {
     tapNotes: NoteObject[]
     directionalNotes: NoteObject[]
     slides: NoteObject[][]
+    meta: Meta
 }
 
 type ToTick = (measure: number, p: number, q: number) => number
@@ -46,7 +47,7 @@ type ToTick = (measure: number, p: number, q: number) => number
 export const analyze = (sus: string): Score => {
     const { lines, measureChanges, meta } = parse(sus)
 
-    const offset = -+(meta.get('WAVEOFFSET') || '0')
+    const offset = -+(meta.get('WAVEOFFSET')?.[0] || '0')
     if (Number.isNaN(offset)) throw 'Unexpected offset'
 
     const ticksPerBeat = getTicksPerBeat(meta)
@@ -121,6 +122,7 @@ export const analyze = (sus: string): Score => {
         tapNotes,
         directionalNotes,
         slides,
+        meta,
     }
 }
 
@@ -247,8 +249,9 @@ const toTimeScaleChanges = ([, data]: Line, toTick: ToTick) => {
             const tick = +m
             const timeScale = +r
 
-            if (Number.isNaN(measure) || Number.isNaN(tick) || Number.isNaN(timeScale))
+            if (Number.isNaN(measure) || Number.isNaN(tick) || Number.isNaN(timeScale)) {
                 throw 'Unexpected time scale change'
+            }
 
             return {
                 tick: toTick(measure, 0, 1) + tick,

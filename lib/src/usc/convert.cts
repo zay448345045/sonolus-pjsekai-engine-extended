@@ -7,6 +7,7 @@ import {
 import {
     USC,
     USCBpmChange,
+    USCDamageNote,
     USCObject,
     USCSingleNote,
     USCSlideNote,
@@ -177,6 +178,20 @@ const single: Handler<USCSingleNote> = (object, append) => {
     append(intermediate)
 }
 
+const damage: Handler<USCDamageNote> = (object, append) => {
+    const intermediate: Intermediate = {
+        archetype: 'DamageNote',
+        data: {
+            [EngineArchetypeDataName.Beat]: object.beat,
+            lane: object.lane,
+            size: object.size,
+        },
+        sim: true,
+    }
+
+    append(intermediate)
+}
+
 const slide: Handler<USCSlideNote> = (object, append) => {
     type ConnectionIntermediate = Intermediate & {
         ease?: 'out' | 'linear' | 'in'
@@ -190,7 +205,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
     const connections = getConnections(object)
     for (const [i, connection] of connections.entries()) {
         if (i === 0) {
-            if (connection.type !== 'start') throw 'Unexpected slide start'
+            if (connection.type !== 'start') continue
 
             const ci: ConnectionIntermediate = {
                 archetype: connection.critical ? 'CriticalSlideStartNote' : 'NormalSlideStartNote',
@@ -209,7 +224,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
         }
 
         if (i === connections.length - 1) {
-            if (connection.type !== 'end') throw 'Unexpected slide end'
+            if (connection.type !== 'end') continue
 
             const ci: ConnectionIntermediate = {
                 archetype: connection.critical ? 'CriticalSlideEndNote' : 'NormalSlideEndNote',
@@ -330,6 +345,7 @@ const handlers: {
     single,
     timeScale,
     slide,
+    damage,
 }
 
 const getConnections = (object: USCSlideNote) => {

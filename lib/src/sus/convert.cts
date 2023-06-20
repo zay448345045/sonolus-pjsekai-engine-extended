@@ -21,6 +21,29 @@ export const susToUSC = (sus: string): USC => {
     const dedupeSingles = new Set<string>()
     const dedupeSlides = new Map<string, USCSlideNote>()
 
+    const requests = {
+        sideLane: false,
+        laneOffset: 0,
+    }
+    const requestsRaw = score.meta.get('REQUEST')
+    if (requestsRaw) {
+        for (const request of requestsRaw) {
+            try {
+                const [key, value] = JSON.parse(request).split(' ', 2)
+                switch (key) {
+                    case 'side_lane':
+                        requests.sideLane = value === 'true'
+                        break
+                    case 'lane_offset':
+                        requests.laneOffset = Number(value)
+                        break
+                }
+            } catch (e) {
+                // Noop
+            }
+        }
+    }
+
     for (const slide of score.slides) {
         for (const note of slide) {
             const key = getKey(note)
@@ -86,26 +109,42 @@ export const susToUSC = (sus: string): USC => {
     }
 
     for (const note of score.tapNotes) {
-        if (note.lane <= 1 || note.lane >= 14) continue
-        if (![1, 2, 3].includes(note.type)) continue
+        if (!requests.sideLane && (note.lane <= 1 || note.lane >= 14)) continue
 
         const key = getKey(note)
         if (preventSingles.has(key)) continue
 
         if (dedupeSingles.has(key)) continue
         dedupeSingles.add(key)
+        let object: USCObject
+        switch (note.type) {
+            case 1:
+            case 2:
+            case 3: {
+                object = {
+                    type: 'single',
+                    beat: note.tick / score.ticksPerBeat,
+                    lane: note.lane - 8 + note.width / 2,
+                    size: note.width / 2,
+                    critical: note.type === 2,
+                    trace: note.type === 3 || tickRemoveMods.has(key),
+                }
 
-        const object: USCObject = {
-            type: 'single',
-            beat: note.tick / score.ticksPerBeat,
-            lane: note.lane - 8 + note.width / 2,
-            size: note.width / 2,
-            critical: note.type === 2,
-            trace: note.type === 3 || tickRemoveMods.has(key),
+                const flickMod = flickMods.get(key)
+                if (flickMod) object.direction = flickMod
+                break
+            }
+            case 4:
+                object = {
+                    type: 'damage',
+                    beat: note.tick / score.ticksPerBeat,
+                    lane: note.lane - 8 + note.width / 2,
+                    size: note.width / 2,
+                }
+                break
+            default:
+                continue
         }
-
-        const flickMod = flickMods.get(key)
-        if (flickMod) object.direction = flickMod
 
         objects.push(object)
     }

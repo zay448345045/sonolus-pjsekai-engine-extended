@@ -18,6 +18,10 @@ export class CriticalTraceNote extends TraceNote {
         },
         secondaryFallback: skin.sprites.criticalNoteFallback,
     }
+    tickSprites = {
+        tick: skin.sprites.criticalSlideTickNote,
+        fallback: skin.sprites.criticalSlideTickNoteFallback,
+    }
 
     clips = {
         perfect: effect.clips.criticalTap,

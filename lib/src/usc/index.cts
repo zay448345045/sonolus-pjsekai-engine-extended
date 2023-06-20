@@ -3,7 +3,12 @@ export type USC = {
     objects: USCObject[]
 }
 
-export type USCObject = USCBpmChange | USCTimeScaleChange | USCSingleNote | USCSlideNote
+export type USCObject =
+    | USCBpmChange
+    | USCTimeScaleChange
+    | USCSingleNote
+    | USCSlideNote
+    | USCDamageNote
 
 type BaseUSCObject = {
     beat: number
@@ -29,6 +34,10 @@ export type USCSingleNote = BaseUSCNote & {
     critical: boolean
     trace: boolean
     direction?: 'left' | 'up' | 'right'
+}
+
+export type USCDamageNote = BaseUSCNote & {
+    type: 'damage'
 }
 
 export type USCConnectionStartNote = BaseUSCNote & {

@@ -19,6 +19,11 @@ export class NormalTraceNote extends TraceNote {
         secondaryFallback: skin.sprites.normalTraceNoteSecondaryFallback,
     }
 
+    tickSprites = {
+        tick: skin.sprites.normalTraceNoteTickNote,
+        fallback: skin.sprites.normalTraceNoteTickNote,
+    }
+
     clips = {
         perfect: effect.clips.normalTrace,
         fallback: effect.clips.normalPerfect,
@@ -34,10 +39,10 @@ export class NormalTraceNote extends TraceNote {
     bucket = buckets.normalTraceNote
 
     get slotEffect() {
-        return archetypes.NormalSlotEffect
+        return archetypes.NormalTraceSlotEffect
     }
 
     get slotGlowEffect() {
-        return archetypes.NormalSlotGlowEffect
+        return archetypes.NormalTraceSlotGlowEffect
     }
 }

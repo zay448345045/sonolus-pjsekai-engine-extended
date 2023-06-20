@@ -90,25 +90,37 @@ export const skin = defineSkin({
 
         // Extended
 
-        normalTraceNoteLeft: 'Sekai+ Note Slim Gray Left',
-        normalTraceNoteMiddle: 'Sekai+ Note Slim Gray Middle',
-        normalTraceNoteRight: 'Sekai+ Note Slim Gray Right',
+        normalTraceNoteLeft: 'Sekai+ Slim Note Gray Left',
+        normalTraceNoteMiddle: 'Sekai+ Slim Note Gray Middle',
+        normalTraceNoteRight: 'Sekai+ Slim Note Gray Right',
         normalTraceNoteFallbackLeft: 'Sekai Note Neutral Left',
         normalTraceNoteFallbackMiddle: 'Sekai Note Neutral Middle',
         normalTraceNoteFallbackRight: 'Sekai Note Neutral Right',
         normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadNeutral,
+        normalTraceNoteTickNote: 'Sekai Diamond Neutral',
+        normalTraceNoteTickNoteFallback: SkinSpriteName.NoteTickNeutral,
 
-        criticalTraceNoteLeft: 'Sekai+ Note Slim Yellow Left',
-        criticalTraceNoteMiddle: 'Sekai+ Note Slim Yellow Middle',
-        criticalTraceNoteRight: 'Sekai+ Note Slim Yellow Right',
+        criticalTraceNoteLeft: 'Sekai+ Slim Note Yellow Left',
+        criticalTraceNoteMiddle: 'Sekai+ Slim Note Yellow Middle',
+        criticalTraceNoteRight: 'Sekai+ Slim Note Yellow Right',
         criticalTraceNoteFallback: SkinSpriteName.NoteHeadYellow,
 
-        flickTraceNoteLeft: 'Sekai+ Note Slim Red Left',
-        flickTraceNoteMiddle: 'Sekai+ Note Slim Red Middle',
-        flickTraceNoteRight: 'Sekai+ Note Slim Red Right',
+        flickTraceNoteLeft: 'Sekai+ Slim Note Red Left',
+        flickTraceNoteMiddle: 'Sekai+ Slim Note Red Middle',
+        flickTraceNoteRight: 'Sekai+ Slim Note Red Right',
         flickTraceNoteFallback: SkinSpriteName.NoteHeadRed,
 
-        normalTraceSlotGlow: 'Sekai+ Slot Glow Gray',
-        normalTraceSlot: 'Sekai+ Slot Gray',
+        normalTraceSlotGlow: 'Sekai+ Slot Glow Neutral',
+        normalTraceSlot: 'Sekai+ Slot Neutral',
+
+        damageNoteLeft: 'Sekai+ Slim Note Purple Left',
+        damageNoteMiddle: 'Sekai+ Slim Note Purple Middle',
+        damageNoteRight: 'Sekai+ Slim Note Purple Right',
+        damageNoteFallbackLeft: 'Sekai Note Purple Left',
+        damageNoteFallbackMiddle: 'Sekai Note Purple Middle',
+        damageNoteFallbackRight: 'Sekai Note Purple Right',
+        damageNoteSecondaryFallback: SkinSpriteName.NoteHeadPurple,
+        damageSlotGlow: 'Sekai+ Slot Glow Purple',
+        damageSlot: 'Sekai+ Slot Purple',
     },
 })
