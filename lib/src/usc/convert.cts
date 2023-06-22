@@ -199,7 +199,7 @@ const damage: Handler<USCDamageNote> = (object, append) => {
             lane: object.lane,
             size: object.size,
         },
-        sim: true,
+        sim: false,
     }
 
     append(intermediate)
