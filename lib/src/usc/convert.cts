@@ -221,7 +221,11 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.type !== 'start') continue
 
             const ci: ConnectionIntermediate = {
-                archetype: connection.critical ? 'CriticalSlideStartNote' : 'NormalSlideStartNote',
+                archetype: connection.trace
+                    ? 'TraceSlideStartNote'
+                    : connection.critical
+                    ? 'CriticalSlideStartNote'
+                    : 'NormalSlideStartNote',
                 data: {
                     [EngineArchetypeDataName.Beat]: connection.beat,
                     lane: connection.lane,
@@ -240,7 +244,11 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.type !== 'end') continue
 
             const ci: ConnectionIntermediate = {
-                archetype: connection.critical ? 'CriticalSlideEndNote' : 'NormalSlideEndNote',
+                archetype: connection.trace
+                    ? 'TraceSlideEndNote'
+                    : connection.critical
+                    ? 'CriticalSlideEndNote'
+                    : 'NormalSlideEndNote',
                 data: {
                     [EngineArchetypeDataName.Beat]: connection.beat,
                     lane: connection.lane,

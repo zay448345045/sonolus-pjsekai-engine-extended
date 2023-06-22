@@ -178,6 +178,7 @@ export const susToUSC = (sus: string): USC => {
                         size,
                         critical,
                         ease: easeMods.get(key) ?? 'linear',
+                        trace: tickRemoveMods.has(key),
                     }
 
                     object.connections.push(connection)
@@ -190,6 +191,7 @@ export const susToUSC = (sus: string): USC => {
                         lane,
                         size,
                         critical,
+                        trace: tickRemoveMods.has(key),
                     }
 
                     const flickMod = flickMods.get(key)

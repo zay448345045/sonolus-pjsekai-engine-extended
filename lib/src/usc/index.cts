@@ -44,6 +44,7 @@ export type USCConnectionStartNote = BaseUSCNote & {
     type: 'start'
     critical: boolean
     ease: 'out' | 'linear' | 'in'
+    trace: boolean
 }
 
 export type USCConnectionTickNote = BaseUSCNote & {
@@ -61,6 +62,7 @@ export type USCConnectionEndNote = BaseUSCNote & {
     type: 'end'
     critical: boolean
     direction?: 'left' | 'up' | 'right'
+    trace: boolean
 }
 
 export type USCSlideNote = {
