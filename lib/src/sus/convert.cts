@@ -124,7 +124,7 @@ export const susToUSC = (sus: string): USC => {
                 object = {
                     type: 'single',
                     beat: note.tick / score.ticksPerBeat,
-                    lane: note.lane - 8 + note.width / 2,
+                    lane: note.lane - 8 + note.width / 2 + requests.laneOffset,
                     size: note.width / 2,
                     critical: note.type === 2,
                     trace: note.type === 3 || tickRemoveMods.has(key),
@@ -139,7 +139,7 @@ export const susToUSC = (sus: string): USC => {
                 object = {
                     type: 'damage',
                     beat: note.tick / score.ticksPerBeat,
-                    lane: note.lane - 8 + note.width / 2,
+                    lane: note.lane - 8 + note.width / 2 + requests.laneOffset,
                     size: note.width / 2,
                 }
                 break
@@ -164,7 +164,7 @@ export const susToUSC = (sus: string): USC => {
             const key = getKey(note)
 
             const beat = note.tick / score.ticksPerBeat
-            const lane = note.lane - 8 + note.width / 2
+            const lane = note.lane - 8 + note.width / 2 + requests.laneOffset
             const size = note.width / 2
             const critical = object.critical || criticalMods.has(key)
             const ease = easeMods.get(key) ?? 'linear'

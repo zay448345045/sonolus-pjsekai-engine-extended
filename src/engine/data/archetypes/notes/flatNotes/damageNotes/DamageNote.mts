@@ -96,4 +96,16 @@ export class DamageNote extends SlimNote {
     playSFX() {
         effect.clips.normalGood.play(minSFXDistance)
     }
+
+    get shouldScheduleSFX() {
+        return false
+    }
+
+    get shouldPlaySFX() {
+        return false
+    }
+
+    terminate() {
+        // Noop
+    }
 }
