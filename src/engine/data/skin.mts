@@ -105,10 +105,9 @@ export const skin = defineSkin({
         criticalTraceNoteRight: 'Sekai+ Slim Note Yellow Right',
         criticalTraceNoteFallback: SkinSpriteName.NoteHeadYellow,
 
-        flickTraceNoteLeft: 'Sekai+ Slim Note Red Left',
-        flickTraceNoteMiddle: 'Sekai+ Slim Note Red Middle',
-        flickTraceNoteRight: 'Sekai+ Slim Note Red Right',
-        flickTraceNoteFallback: SkinSpriteName.NoteHeadRed,
+        traceFlickNoteLeft: 'Sekai+ Slim Note Red Left',
+        traceFlickNoteMiddle: 'Sekai+ Slim Note Red Middle',
+        traceFlickNoteRight: 'Sekai+ Slim Note Red Right',
 
         normalTraceSlotGlow: 'Sekai+ Slot Glow Neutral',
         normalTraceSlot: 'Sekai+ Slot Neutral',

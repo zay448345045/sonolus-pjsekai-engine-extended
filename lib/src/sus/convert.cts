@@ -132,6 +132,7 @@ export const susToUSC = (sus: string): USC => {
 
                 const flickMod = flickMods.get(key)
                 if (flickMod) object.direction = flickMod
+                if (easeMods.has(key)) object.direction = 'none'
                 break
             }
             case 4:

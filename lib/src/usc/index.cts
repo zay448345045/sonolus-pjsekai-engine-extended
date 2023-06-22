@@ -33,7 +33,7 @@ export type USCSingleNote = BaseUSCNote & {
     type: 'single'
     critical: boolean
     trace: boolean
-    direction?: 'left' | 'up' | 'right'
+    direction?: 'left' | 'up' | 'right' | 'none'
 }
 
 export type USCDamageNote = BaseUSCNote & {

@@ -168,9 +168,22 @@ const single: Handler<USCSingleNote> = (object, append) => {
     }
     if (object.trace) {
         intermediate.archetype = object.critical ? 'CriticalTraceNote' : 'NormalTraceNote'
+        if (object.direction) {
+            if (object.direction === 'none') {
+                intermediate.archetype = 'NonDirectionalTraceFlickNote'
+            } else {
+                intermediate.archetype = object.critical
+                    ? 'CriticalTraceFlickNote'
+                    : 'NormalTraceFlickNote'
+                intermediate.data.direction = directions[object.direction]
+            }
+        }
     } else {
         if (object.direction) {
             intermediate.archetype = object.critical ? 'CriticalFlickNote' : 'NormalFlickNote'
+            if (object.direction === 'none') {
+                throw 'Unexpected flick direction'
+            }
             intermediate.data.direction = directions[object.direction]
         }
     }

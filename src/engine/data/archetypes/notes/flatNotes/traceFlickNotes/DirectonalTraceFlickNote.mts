@@ -3,10 +3,10 @@ import { skin } from '../../../../skin.mjs'
 import { layer } from '../../../layer.mjs'
 import { scaledScreen } from '../../../shared.mjs'
 import { getZ, linearEffectLayout } from '../../../utils.mjs'
-import { FlatNote } from '../FlatNote.mjs'
-import { FlickDirection } from './FlickDirection.mjs'
+import { FlickDirection } from '../flickNotes/FlickDirection.mjs'
+import { TraceFlickNote } from './TraceFlickNote.mjs'
 
-export abstract class FlickNote extends FlatNote {
+export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
     leniency = 1
 
     abstract arrowSprites: {
@@ -94,25 +94,6 @@ export abstract class FlickNote extends FlatNote {
         this.arrow.z = getZ(layer.note.arrow, this.targetTime, this.data.lane)
     }
 
-    complete(touch: Touch) {
-        this.result.judgment = input.judge(touch.time, this.targetTime, this.windows)
-        this.result.accuracy = touch.time - this.targetTime
-
-        // if (!this.isCorrectDirection(touch)) {
-        //     if (this.result.judgment === Judgment.Perfect) this.result.judgment = Judgment.Great
-
-        //     if (this.result.accuracy < this.windows.perfect.max)
-        //         this.result.accuracy = this.windows.perfect.max
-        // }
-
-        this.result.bucket.index = this.bucket.index
-        this.result.bucket.value = this.result.accuracy * 1000
-
-        this.playHitEffects(touch.time)
-
-        this.despawn = true
-    }
-
     render() {
         super.render()
 
@@ -145,12 +126,5 @@ export abstract class FlickNote extends FlatNote {
             0.32,
             false,
         )
-    }
-
-    isCorrectDirection(touch: Touch) {
-        if (this.flickData.direction === FlickDirection.Up) return true
-
-        const a = Math.PI / 2 - this.flickData.direction
-        return touch.dx * Math.cos(a) + touch.dy * Math.sin(a) > 0
     }
 }
