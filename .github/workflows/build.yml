@@ -26,6 +26,7 @@ jobs:
 
       - name: Deploy
         run: |
+          sed -i '/dist/d' .gitignore
           git add -A
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
