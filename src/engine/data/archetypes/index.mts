@@ -41,6 +41,8 @@ import { DamageSlotEffect } from './slotEffects/DamageSlotEffect.mjs'
 import { NormalTraceSlotEffect } from './slotEffects/NormalTraceSlotEffect.mjs'
 import { DamageSlotGlowEffect } from './slotGlowEffects/DamageSlotGlowEffect.mjs'
 import { NormalTraceSlotGlowEffect } from './slotGlowEffects/NormalTraceSlotGlowEffect.mjs'
+import { TimeScaleChange } from './timeScale/TimeScaleChange.mjs'
+import { TimeScaleGroup } from './timeScale/TimeScaleGroup.mjs'
 
 export const archetypes = defineArchetypes({
     Initialization,
@@ -105,4 +107,7 @@ export const archetypes = defineArchetypes({
 
     TraceSlideStartNote,
     TraceSlideEndNote,
+
+    TimeScaleGroup,
+    TimeScaleChange,
 })

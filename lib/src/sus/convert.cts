@@ -92,11 +92,13 @@ export const susToUSC = (sus: string): USC => {
 
     const objects: USCObject[] = []
 
-    for (const timeScaleChange of score.timeScaleChanges) {
+    for (const timeScaleChanges of score.timeScaleChanges) {
         objects.push({
-            type: 'timeScale',
-            beat: timeScaleChange.tick / score.ticksPerBeat,
-            timeScale: timeScaleChange.timeScale,
+            type: 'timeScaleGroup',
+            changes: timeScaleChanges.map((timeScaleChange) => ({
+                beat: timeScaleChange.tick / score.ticksPerBeat,
+                timeScale: timeScaleChange.timeScale,
+            })),
         })
     }
 
@@ -128,6 +130,8 @@ export const susToUSC = (sus: string): USC => {
                     size: note.width / 2,
                     critical: note.type === 2,
                     trace: note.type === 3 || tickRemoveMods.has(key),
+
+                    timeScaleGroup: note.timeScaleGroup,
                 }
 
                 const flickMod = flickMods.get(key)
@@ -141,6 +145,8 @@ export const susToUSC = (sus: string): USC => {
                     beat: note.tick / score.ticksPerBeat,
                     lane: note.lane - 8 + note.width / 2 + requests.laneOffset,
                     size: note.width / 2,
+
+                    timeScaleGroup: note.timeScaleGroup,
                 }
                 break
             default:
@@ -166,6 +172,7 @@ export const susToUSC = (sus: string): USC => {
             const beat = note.tick / score.ticksPerBeat
             const lane = note.lane - 8 + note.width / 2 + requests.laneOffset
             const size = note.width / 2
+            const timeScaleGroup = note.timeScaleGroup
             const critical = object.critical || criticalMods.has(key)
             const ease = easeMods.get(key) ?? 'linear'
 
@@ -179,6 +186,8 @@ export const susToUSC = (sus: string): USC => {
                         critical,
                         ease: easeMods.get(key) ?? 'linear',
                         trace: tickRemoveMods.has(key),
+
+                        timeScaleGroup,
                     }
 
                     object.connections.push(connection)
@@ -192,6 +201,8 @@ export const susToUSC = (sus: string): USC => {
                         size,
                         critical,
                         trace: tickRemoveMods.has(key),
+
+                        timeScaleGroup,
                     }
 
                     const flickMod = flickMods.get(key)
@@ -217,6 +228,8 @@ export const susToUSC = (sus: string): USC => {
                             size,
                             critical,
                             ease,
+
+                            timeScaleGroup,
                         }
 
                         object.connections.push(connection)
@@ -232,6 +245,8 @@ export const susToUSC = (sus: string): USC => {
                         lane,
                         size,
                         ease,
+
+                        timeScaleGroup,
                     }
 
                     object.connections.push(connection)

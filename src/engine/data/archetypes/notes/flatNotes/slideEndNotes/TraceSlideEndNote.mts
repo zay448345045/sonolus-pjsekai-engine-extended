@@ -51,6 +51,7 @@ export class TraceSlideEndNote extends SlimNote {
     get slotGlowEffect() {
         return archetypes.NormalTraceSlotGlowEffect
     }
+
     tickSpriteLayout = this.entityMemory(Quad)
 
     setLayout({ l, r }: { l: number; r: number }): void {

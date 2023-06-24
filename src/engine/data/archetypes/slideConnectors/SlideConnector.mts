@@ -13,6 +13,8 @@ import {
     getZ,
     linearEffectLayout,
     perspectiveLayout,
+    scaledTimeToEarliestTime,
+    timeToScaledTime,
 } from '../utils.mjs'
 import { EaseType, ease } from './EaseType.mjs'
 
@@ -108,15 +110,20 @@ export abstract class SlideConnector extends Archetype {
 
     preprocess() {
         this.head.time = bpmChanges.at(this.headData.beat).time
-        this.head.scaledTime = timeScaleChanges.at(this.head.time).scaledTime
+        this.head.scaledTime = timeToScaledTime(this.head.time, this.headData.timeScaleGroup)
 
         this.scheduleSFXTime = getScheduleSFXTime(this.head.time)
 
         this.visualTime.min = this.head.scaledTime - Note.duration
 
-        this.spawnTime = Math.min(
+        const spawnTime = Math.min(
             this.visualTime.min,
-            timeScaleChanges.at(this.scheduleSFXTime).scaledTime,
+            timeToScaledTime(this.scheduleSFXTime, this.headData.timeScaleGroup),
+        )
+
+        this.spawnTime = Math.min(
+            scaledTimeToEarliestTime(spawnTime, this.headData.timeScaleGroup),
+            scaledTimeToEarliestTime(spawnTime, this.tailData.timeScaleGroup),
         )
     }
 
@@ -125,7 +132,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     shouldSpawn() {
-        return time.scaled >= this.spawnTime
+        return time.now >= this.spawnTime
     }
 
     initialize() {
@@ -137,7 +144,7 @@ export abstract class SlideConnector extends Archetype {
 
         this.tail.time = bpmChanges.at(this.tailData.beat).time
         this.tail.lane = this.tailData.lane
-        this.tail.scaledTime = timeScaleChanges.at(this.tail.time).scaledTime
+        this.tail.scaledTime = timeToScaledTime(this.tail.time, this.tailData.timeScaleGroup)
         this.tail.l = this.tail.lane - this.tailData.size
         this.tail.r = this.tail.lane + this.tailData.size
 
@@ -154,7 +161,9 @@ export abstract class SlideConnector extends Archetype {
 
         if (time.now < this.head.time) return
 
-        const s = this.getScale(timeScaleChanges.at(time.now - input.offset).scaledTime)
+        const s = this.getScale(
+            timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup),
+        )
 
         const hitbox = getHitbox({
             l: this.getL(s),
@@ -198,11 +207,14 @@ export abstract class SlideConnector extends Archetype {
         if (this.shouldScheduleSFX && !this.hasSFXScheduled && time.now >= this.scheduleSFXTime)
             this.scheduleSFX()
 
-        if (time.scaled < this.visualTime.min) return
+        if (timeToScaledTime(time.now, this.headData.timeScaleGroup) < this.visualTime.min) return
 
         this.renderConnector()
 
-        if (time.now < this.head.time) return
+        const s = this.getScale(
+            timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup),
+        )
+        if (time.now <= this.head.time || Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
 
         if (this.shouldScheduleCircularEffect && !this.effectInstanceIds.circular)
             this.spawnCircularEffect()
@@ -323,7 +335,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     updateCircularEffect() {
-        const s = this.getScale(time.scaled)
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
 
         particle.effects.move(
@@ -346,7 +358,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     updateLinearEffect() {
-        const s = this.getScale(time.scaled)
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
 
         particle.effects.move(
@@ -364,7 +376,11 @@ export abstract class SlideConnector extends Archetype {
     }
 
     renderConnector() {
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        if (
+            options.hidden > 0 &&
+            timeToScaledTime(time.now, this.headData.timeScaleGroup) > this.visualTime.hidden
+        )
+            return
 
         const visual = options.autoplay
             ? time.now >= this.start.time
@@ -379,8 +395,17 @@ export abstract class SlideConnector extends Archetype {
         const hiddenDuration = options.hidden > 0 ? Note.duration * options.hidden : 0
 
         const visibleTime = {
-            min: Math.max(this.head.scaledTime, time.scaled + hiddenDuration),
-            max: Math.min(this.tail.scaledTime, time.scaled + Note.duration),
+            min: Math.max(
+                this.head.scaledTime,
+                time.now > this.head.time
+                    ? timeToScaledTime(time.now, this.headData.timeScaleGroup) + hiddenDuration
+                    : timeToScaledTime(time.now, this.headData.timeScaleGroup) -
+                          Note.duration * 1.5,
+            ),
+            max: Math.min(
+                this.tail.scaledTime,
+                timeToScaledTime(time.now, this.headData.timeScaleGroup) + Note.duration,
+            ),
         }
 
         for (let i = 0; i < 10; i++) {
@@ -395,8 +420,16 @@ export abstract class SlideConnector extends Archetype {
             }
 
             const y = {
-                min: Note.approach(scaledTime.min - Note.duration, scaledTime.min, time.scaled),
-                max: Note.approach(scaledTime.max - Note.duration, scaledTime.max, time.scaled),
+                min: Note.approach(
+                    scaledTime.min - Note.duration,
+                    scaledTime.min,
+                    timeToScaledTime(time.now, this.headData.timeScaleGroup),
+                ),
+                max: Note.approach(
+                    scaledTime.max - Note.duration,
+                    scaledTime.max,
+                    timeToScaledTime(time.now, this.headData.timeScaleGroup),
+                ),
             }
 
             const layout = {
@@ -440,10 +473,14 @@ export abstract class SlideConnector extends Archetype {
     }
 
     renderSlide() {
-        const s = this.getScale(time.scaled)
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
 
         const l = this.getL(s)
         const r = this.getR(s)
+
+        if (Math.abs(l - r) < 0.25) {
+            return
+        }
 
         const b = 1 + note.h
         const t = 1 - note.h

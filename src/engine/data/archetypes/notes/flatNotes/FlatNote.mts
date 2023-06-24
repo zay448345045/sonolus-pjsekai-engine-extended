@@ -11,6 +11,8 @@ import {
     getZ,
     linearEffectLayout,
     perspectiveLayout,
+    scaledTimeToEarliestTime,
+    timeToScaledTime,
 } from '../../utils.mjs'
 import { Note } from '../Note.mjs'
 
@@ -97,12 +99,16 @@ export abstract class FlatNote extends Note {
 
         this.scheduleSFXTime = getScheduleSFXTime(this.targetTime)
 
-        this.visualTime.max = timeScaleChanges.at(this.targetTime).scaledTime
+        this.visualTime.max = timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
         this.visualTime.min = this.visualTime.max - Note.duration
 
-        this.spawnTime = Math.min(
-            this.visualTime.min,
-            timeScaleChanges.at(this.scheduleSFXTime).scaledTime,
+        this.spawnTime = scaledTimeToEarliestTime(
+            Math.min(
+                this.visualTime.min,
+                this.visualTime.max,
+                timeToScaledTime(this.scheduleSFXTime, this.data.timeScaleGroup),
+            ),
+            this.data.timeScaleGroup,
         )
     }
 
@@ -156,8 +162,9 @@ export abstract class FlatNote extends Note {
         if (this.shouldScheduleSFX && !this.hasSFXScheduled && time.now >= this.scheduleSFXTime)
             this.scheduleSFX()
 
-        if (time.scaled < this.visualTime.min) return
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
+        if (scaledTime < this.visualTime.min) return
+        if (options.hidden > 0 && scaledTime > this.visualTime.hidden) return
 
         this.render()
     }
@@ -220,7 +227,12 @@ export abstract class FlatNote extends Note {
     }
 
     render() {
-        this.y = Note.approach(this.visualTime.min, this.visualTime.max, time.scaled)
+        if (this.data.size < 0.25) return
+        this.y = Note.approach(
+            this.visualTime.min,
+            this.visualTime.max,
+            timeToScaledTime(time.now, this.data.timeScaleGroup),
+        )
 
         if (this.useFallbackSprites) {
             if ('secondaryFallback' in this.sprites && this.useSecondaryFallbackSprites) {

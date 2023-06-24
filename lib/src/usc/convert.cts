@@ -18,6 +18,7 @@ type Intermediate = {
     archetype: string
     data: Record<string, number | Intermediate>
     sim: boolean
+    timeScaleGroup?: number
 }
 
 type Append = (intermediate: Intermediate) => void
@@ -83,6 +84,12 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
                 })
             }
         }
+        if (intermediate.timeScaleGroup !== undefined) {
+            entity.data.push({
+                name: `timeScaleGroup`,
+                ref: `tsg:${intermediate.timeScaleGroup}`,
+            })
+        }
     }
 
     append({
@@ -100,6 +107,98 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
         data: {},
         sim: false,
     })
+    let tsGroupIndex = -1
+    const tsGroupEntities: LevelDataEntity[] = []
+    const tsChangeEntities: LevelDataEntity[] = []
+    for (const tsGroup of usc.objects) {
+        if (tsGroup.type !== 'timeScaleGroup') continue
+        tsGroupIndex++
+        for (const [index, change] of Object.entries(tsGroup.changes)) {
+            tsChangeEntities.push({
+                archetype: 'TimeScaleChange',
+                data: [
+                    {
+                        name: EngineArchetypeDataName.Beat,
+                        value: change.beat,
+                    },
+                    {
+                        name: 'timeScale',
+                        value: change.timeScale,
+                    },
+                    tsGroup.changes[+index + 1] === undefined
+                        ? {
+                              name: 'next',
+                              value: -1,
+                          }
+                        : {
+                              name: 'next',
+                              ref: `tsc:${tsGroupIndex}:${+index + 1}`,
+                          },
+                ],
+                ref: `tsc:${tsGroupIndex}:${index}`,
+            })
+        }
+        tsGroupEntities.push({
+            archetype: 'TimeScaleGroup',
+            data: [
+                {
+                    name: 'first',
+                    ref: `tsc:${tsGroupIndex}:0`,
+                },
+                {
+                    name: 'length',
+                    value: tsGroup.changes.length,
+                },
+                tsGroupIndex === tsGroup.changes.length - 1
+                    ? {
+                          name: 'next',
+                          value: -1,
+                      }
+                    : {
+                          name: 'next',
+                          ref: `tsg:${tsGroupIndex + 1}`,
+                      },
+            ],
+            ref: `tsg:${tsGroupIndex}`,
+        })
+    }
+    if (tsGroupIndex === -1) {
+        entities.push({
+            archetype: 'TimeScaleGroup',
+            data: [
+                {
+                    name: 'first',
+                    ref: `tsc:0:0`,
+                },
+                {
+                    name: 'length',
+                    value: 0,
+                },
+            ],
+            ref: `tsg:0`,
+        })
+        entities.push({
+            archetype: 'TimeScaleChange',
+            data: [
+                {
+                    name: EngineArchetypeDataName.Beat,
+                    value: 0,
+                },
+                {
+                    name: 'timeScale',
+                    value: 1,
+                },
+                {
+                    name: `timeScaleGroup`,
+                    ref: 'trg:0',
+                },
+            ],
+            ref: 'tsc:0:0',
+        })
+    } else {
+        entities.push(...tsGroupEntities)
+        entities.push(...tsChangeEntities)
+    }
 
     for (const object of usc.objects) {
         handlers[object.type](object as never, append)
@@ -146,15 +245,7 @@ const bpm: Handler<USCBpmChange> = (object, append) =>
         sim: false,
     })
 
-const timeScale: Handler<USCTimeScaleChange> = (object, append) =>
-    append({
-        archetype: EngineArchetypeName.TimeScaleChange,
-        data: {
-            [EngineArchetypeDataName.Beat]: object.beat,
-            [EngineArchetypeDataName.TimeScale]: object.timeScale,
-        },
-        sim: false,
-    })
+const timeScaleGroup: Handler<USCTimeScaleChange> = () => undefined
 
 const single: Handler<USCSingleNote> = (object, append) => {
     const intermediate: Intermediate = {
@@ -164,6 +255,7 @@ const single: Handler<USCSingleNote> = (object, append) => {
             lane: object.lane,
             size: object.size,
         },
+        timeScaleGroup: object.timeScaleGroup,
         sim: true,
     }
     if (object.trace) {
@@ -233,6 +325,8 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                 },
                 sim: true,
                 ease: connection.ease,
+
+                timeScaleGroup: connection.timeScaleGroup,
             }
 
             cis.push(ci)
@@ -255,6 +349,8 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                     size: connection.size,
                 },
                 sim: true,
+
+                timeScaleGroup: connection.timeScaleGroup,
             }
 
             if ('direction' in connection) {
@@ -282,6 +378,8 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                     },
                     sim: false,
                     ease: connection.ease,
+
+                    timeScaleGroup: connection.timeScaleGroup,
                 }
 
                 if ('critical' in connection)
@@ -364,7 +462,7 @@ const handlers: {
 } = {
     bpm,
     single,
-    timeScale,
+    timeScaleGroup,
     slide,
     damage,
 }

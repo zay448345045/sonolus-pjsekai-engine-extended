@@ -6,3 +6,6 @@ src/level/bgm.mp3
 .dev
 dist
 src/level/data/*.sus
+src/level/data/*.json
+!src/level/data/expert.json
+

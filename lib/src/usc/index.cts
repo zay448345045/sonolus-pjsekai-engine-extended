@@ -12,16 +12,20 @@ export type USCObject =
 
 type BaseUSCObject = {
     beat: number
+    timeScaleGroup: number
 }
 
-export type USCBpmChange = BaseUSCObject & {
+export type USCBpmChange = Omit<BaseUSCObject, 'timeScaleGroup'> & {
     type: 'bpm'
     bpm: number
 }
 
-export type USCTimeScaleChange = BaseUSCObject & {
-    type: 'timeScale'
-    timeScale: number
+export type USCTimeScaleChange = {
+    type: 'timeScaleGroup'
+    changes: {
+        beat: number
+        timeScale: number
+    }[]
 }
 
 type BaseUSCNote = BaseUSCObject & {
@@ -53,7 +57,7 @@ export type USCConnectionTickNote = BaseUSCNote & {
     ease: 'out' | 'linear' | 'in'
 }
 
-export type USCConnectionAttachNote = BaseUSCObject & {
+export type USCConnectionAttachNote = Omit<BaseUSCObject, 'timeScaleGroup'> & {
     type: 'attach'
     critical?: boolean
 }

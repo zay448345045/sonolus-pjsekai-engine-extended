@@ -6,7 +6,7 @@ import { canEmpty } from './InputManager.mjs'
 import { lane, minSFXDistance, note } from './constants.mjs'
 import { layer } from './layer.mjs'
 import { scaledScreen } from './shared.mjs'
-import { perspectiveLayout } from './utils.mjs'
+import { perspectiveLayout, timeToScaledTime } from './utils.mjs'
 
 export class Stage extends Archetype {
     hitbox = this.entityMemory(Rect)
@@ -41,6 +41,8 @@ export class Stage extends Archetype {
         } else {
             this.drawSekaiStage()
         }
+
+        // debug.log(timeToScaledTime(time.now, 3))
 
         this.drawStageCover()
     }

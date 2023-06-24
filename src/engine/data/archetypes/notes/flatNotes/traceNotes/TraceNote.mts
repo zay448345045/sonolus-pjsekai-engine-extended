@@ -1,6 +1,7 @@
 import { options } from '~/engine/configuration/options.mjs'
 import {
     canTraceStart,
+    claimStart,
     disallowEmpty,
     disallowTraceStart,
 } from '~/engine/data/archetypes/InputManager.mjs'
@@ -17,6 +18,13 @@ export abstract class TraceNote extends SlimNote {
     }
     tickSpriteLayout = this.entityMemory(Quad)
 
+    updateSequential() {
+        if (options.autoplay) return
+
+        if (time.now < this.inputTime.min) return
+
+        claimStart(this.info.index, this.targetTime, this.hitbox, this.fullHitbox)
+    }
     setLayout({ l, r }: { l: number; r: number }): void {
         super.setLayout({ l, r })
 

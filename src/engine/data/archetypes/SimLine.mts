@@ -4,7 +4,7 @@ import { note } from './constants.mjs'
 import { archetypes } from './index.mjs'
 import { layer } from './layer.mjs'
 import { Note } from './notes/Note.mjs'
-import { getZ, perspectiveLayout } from './utils.mjs'
+import { getZ, perspectiveLayout, scaledTimeToEarliestTime, timeToScaledTime } from './utils.mjs'
 
 export class SimLine extends Archetype {
     data = this.defineData({
@@ -12,9 +12,19 @@ export class SimLine extends Archetype {
         bRef: { name: 'b', type: Number },
     })
 
-    targetTime = this.entityMemory(Number)
+    leftTargetTime = this.entityMemory(Number)
+    leftTimeScaleGroup = this.entityMemory(Number)
 
-    visualTime = this.entityMemory({
+    leftVisualTime = this.entityMemory({
+        min: Number,
+        max: Number,
+        hidden: Number,
+    })
+
+    rightTargetTime = this.entityMemory(Number)
+    rightTimeScaleGroup = this.entityMemory(Number)
+
+    rightVisualTime = this.entityMemory({
         min: Number,
         max: Number,
         hidden: Number,
@@ -23,36 +33,57 @@ export class SimLine extends Archetype {
     spawnTime = this.entityMemory(Number)
 
     spriteLayout = this.entityMemory(Quad)
-    z = this.entityMemory(Number)
 
-    y = this.entityMemory(Number)
+    z = this.entityMemory(Number)
 
     preprocess() {
         if (!options.simLineEnabled) return
 
-        this.targetTime = bpmChanges.at(this.aData.beat).time
+        const l = this.aData
+        const r = this.bData
+        if (l.lane > r.lane) {
+            this.leftTargetTime = bpmChanges.at(r.beat).time
+            this.rightTargetTime = bpmChanges.at(l.beat).time
+            this.leftTimeScaleGroup = r.timeScaleGroup
+            this.rightTimeScaleGroup = l.timeScaleGroup
+        } else {
+            this.leftTargetTime = bpmChanges.at(l.beat).time
+            this.rightTargetTime = bpmChanges.at(r.beat).time
+            this.leftTimeScaleGroup = l.timeScaleGroup
+            this.rightTimeScaleGroup = r.timeScaleGroup
+        }
 
-        this.visualTime.max = timeScaleChanges.at(this.targetTime).scaledTime
-        this.visualTime.min = this.visualTime.max - Note.duration
+        this.leftVisualTime.max = timeToScaledTime(this.leftTargetTime, this.leftTimeScaleGroup)
+        this.leftVisualTime.min = this.leftVisualTime.max - Note.duration
 
-        this.spawnTime = this.visualTime.min
+        this.rightVisualTime.max = timeToScaledTime(this.rightTargetTime, this.rightTimeScaleGroup)
+        this.rightVisualTime.min = this.rightVisualTime.max - Note.duration
+
+        this.spawnTime = Math.max(
+            scaledTimeToEarliestTime(this.leftVisualTime.min, this.leftTimeScaleGroup),
+            scaledTimeToEarliestTime(this.rightVisualTime.min, this.rightTimeScaleGroup),
+        )
     }
 
     spawnOrder() {
-        if (!options.simLineEnabled) return 100000
+        if (!options.simLineEnabled) return 0
 
         return 1000 + this.spawnTime
     }
 
     shouldSpawn() {
-        if (!options.simLineEnabled) return false
+        if (!options.simLineEnabled) return true
 
         return time.scaled >= this.spawnTime
     }
 
     initialize() {
+        if (!options.simLineEnabled) {
+            this.despawn = true
+            return
+        }
         if (options.hidden > 0)
-            this.visualTime.hidden = this.visualTime.max - Note.duration * options.hidden
+            this.leftVisualTime.hidden = this.leftVisualTime.max - Note.duration * options.hidden
 
         let l = this.aData.lane
         let r = this.bData.lane
@@ -63,12 +94,12 @@ export class SimLine extends Archetype {
 
         perspectiveLayout({ l, r, b, t }).copyTo(this.spriteLayout)
 
-        this.z = getZ(layer.simLine, this.targetTime, l)
+        this.z = getZ(layer.simLine, this.leftTargetTime, l)
     }
 
     updateParallel() {
         if (options.autoplay) {
-            if (time.now >= this.targetTime) this.despawn = true
+            if (time.now >= this.leftTargetTime) this.despawn = true
         } else {
             if (
                 this.aInfo.state === EntityState.Despawned ||
@@ -78,7 +109,7 @@ export class SimLine extends Archetype {
         }
         if (this.despawn) return
 
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        if (options.hidden > 0 && time.scaled > this.leftVisualTime.hidden) return
 
         this.render()
     }
@@ -100,8 +131,33 @@ export class SimLine extends Archetype {
     }
 
     render() {
-        this.y = Note.approach(this.visualTime.min, this.visualTime.max, time.scaled)
+        const leftY = Note.approach(
+            this.leftVisualTime.min,
+            this.leftVisualTime.max,
+            timeToScaledTime(time.now, this.leftTimeScaleGroup),
+        )
+        const rightY = Note.approach(
+            this.rightVisualTime.min,
+            this.rightVisualTime.max,
+            timeToScaledTime(time.now, this.rightTimeScaleGroup),
+        )
+        if (leftY > 1 || rightY > 1 || leftY < 0 || rightY < 0) return
+        const leftLayout = this.spriteLayout.mul(leftY)
+        const rightLayout = this.spriteLayout.mul(rightY)
 
-        skin.sprites.simLine.draw(this.spriteLayout.mul(this.y), this.z, 1)
+        skin.sprites.simLine.draw(
+            {
+                x1: leftLayout.x1,
+                y1: leftLayout.y1,
+                x2: leftLayout.x2,
+                y2: leftLayout.y2,
+                x3: rightLayout.x3,
+                y3: rightLayout.y3,
+                x4: rightLayout.x4,
+                y4: rightLayout.y4,
+            },
+            this.z,
+            1,
+        )
     }
 }

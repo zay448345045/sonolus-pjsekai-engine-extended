@@ -1,6 +1,7 @@
 type Line = [string, string]
 
 type MeasureChange = [number, number]
+type TimeScaleGroupChange = [number, string]
 
 type Meta = Map<string, string[]>
 
@@ -29,12 +30,13 @@ export type NoteObject = {
     lane: number
     width: number
     type: number
+    timeScaleGroup: number
 }
 
 export type Score = {
     offset: number
     ticksPerBeat: number
-    timeScaleChanges: TimeScaleChangeObject[]
+    timeScaleChanges: TimeScaleChangeObject[][]
     bpmChanges: BpmChangeObject[]
     tapNotes: NoteObject[]
     directionalNotes: NoteObject[]
@@ -45,7 +47,7 @@ export type Score = {
 type ToTick = (measure: number, p: number, q: number) => number
 
 export const analyze = (sus: string): Score => {
-    const { lines, measureChanges, meta } = parse(sus)
+    const { lines, measureChanges, timeScaleGroupChanges, meta } = parse(sus)
 
     const offset = -+(meta.get('WAVEOFFSET')?.[0] || '0')
     if (Number.isNaN(offset)) throw 'Unexpected offset'
@@ -59,18 +61,42 @@ export const analyze = (sus: string): Score => {
 
     const bpms = new Map<string, number>()
     const bpmChanges: BpmChangeObject[] = []
-    const timeScaleChanges: TimeScaleChangeObject[] = []
+    const timeScaleGroups = new Map<string, number>()
+    const timeScaleChanges: TimeScaleChangeObject[][] = []
     const tapNotes: NoteObject[] = []
     const directionalNotes: NoteObject[] = []
     const streams = new Map<string, NoteObject[]>()
 
+    for (const [, timeScaleGroup] of timeScaleGroupChanges) {
+        if (timeScaleGroups.has(timeScaleGroup)) continue
+        timeScaleGroups.set(timeScaleGroup, timeScaleGroups.size)
+        timeScaleChanges.push([])
+    }
+
+    // Time Scale Changes
+    for (const line of lines) {
+        const [header] = line
+        if (header.length === 5 && header.startsWith('TIL')) {
+            const timeScaleGroup = header.substring(3, 5)
+            const timeScaleIndex = timeScaleGroups.get(timeScaleGroup)
+            if (timeScaleIndex === undefined) {
+                throw `Unexpected time scale group ${timeScaleGroup}`
+            }
+            timeScaleChanges[timeScaleIndex].push(...toTimeScaleChanges(line, toTick))
+        }
+    }
     lines.forEach((line, index) => {
         const [header, data] = line
         const measureOffset = measureChanges.find(([changeIndex]) => changeIndex <= index)?.[1] ?? 0
+        const timeScaleGroupName =
+            timeScaleGroupChanges.find(([changeIndex]) => changeIndex <= index)?.[1] ?? '00'
+        const timeScaleGroup = timeScaleGroups.get(timeScaleGroupName)
+        if (timeScaleGroup === undefined) {
+            throw `Unexpected time scale group ${timeScaleGroupName}`
+        }
 
-        // Time Scale Changes
+        // Hispeed definitions
         if (header.length === 5 && header.startsWith('TIL')) {
-            timeScaleChanges.push(...toTimeScaleChanges(line, toTick))
             return
         }
 
@@ -88,7 +114,7 @@ export const analyze = (sus: string): Score => {
 
         // Tap Notes
         if (header.length === 5 && header[3] === '1') {
-            tapNotes.push(...toNotes(line, measureOffset, toTick))
+            tapNotes.push(...toNotes(line, measureOffset, timeScaleGroup, toTick))
             return
         }
 
@@ -98,16 +124,16 @@ export const analyze = (sus: string): Score => {
             const stream = streams.get(channel)
 
             if (stream) {
-                stream.push(...toNotes(line, measureOffset, toTick))
+                stream.push(...toNotes(line, measureOffset, timeScaleGroup, toTick))
             } else {
-                streams.set(channel, toNotes(line, measureOffset, toTick))
+                streams.set(channel, toNotes(line, measureOffset, timeScaleGroup, toTick))
             }
             return
         }
 
         // Directional Notes
         if (header.length === 5 && header[3] === '5') {
-            directionalNotes.push(...toNotes(line, measureOffset, toTick))
+            directionalNotes.push(...toNotes(line, measureOffset, timeScaleGroup, toTick))
             return
         }
     })
@@ -131,10 +157,12 @@ const parse = (
 ): {
     lines: Line[]
     measureChanges: MeasureChange[]
+    timeScaleGroupChanges: TimeScaleGroupChange[]
     meta: Meta
 } => {
     const lines: Line[] = []
     const measureChanges: MeasureChange[] = []
+    const timeScaleGroupChanges: TimeScaleGroupChange[] = []
     const meta: Meta = new Map()
 
     sus.split('\n')
@@ -153,6 +181,8 @@ const parse = (
                 lines.push([left, right])
             } else if (left === 'MEASUREBS') {
                 measureChanges.unshift([lines.length, +right])
+            } else if (left === 'HISPEED') {
+                timeScaleGroupChanges.unshift([lines.length, right])
             } else {
                 if (!meta.has(left)) meta.set(left, [])
                 meta.get(left)?.push(right)
@@ -162,6 +192,7 @@ const parse = (
     return {
         lines,
         measureChanges,
+        timeScaleGroupChanges,
         meta,
     }
 }
@@ -261,7 +292,7 @@ const toTimeScaleChanges = ([, data]: Line, toTick: ToTick) => {
         .sort((a, b) => a.tick - b.tick)
 }
 
-const toNotes = (line: Line, measureOffset: number, toTick: ToTick) => {
+const toNotes = (line: Line, measureOffset: number, timeScaleGroup: number, toTick: ToTick) => {
     const [header] = line
     const lane = parseInt(header[4], 36)
 
@@ -273,6 +304,7 @@ const toNotes = (line: Line, measureOffset: number, toTick: ToTick) => {
             lane,
             width,
             type: parseInt(value[0], 36),
+            timeScaleGroup,
         }
     })
 }
