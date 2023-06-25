@@ -8,7 +8,7 @@ export const layer = {
         tick: 101,
         body: 100,
         slide: 99,
-        connector: 98,
+        connector: 97,
     },
 
     simLine: 90,
