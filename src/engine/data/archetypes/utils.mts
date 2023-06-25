@@ -79,8 +79,11 @@ export const timeToScaledTime = (time: number, tsGroup: number): number => {
     for (let i = 0; i < tsGroupEntity.length; i++) {
         const tsChangeStart = archetypes.TimeScaleChange.data.get(nextRef)
         const tsChangeStartTime = bpmChanges.at(tsChangeStart.beat).time
-        if (i === 0 && time < tsChangeStartTime) {
-            return time
+        if (i === 0) {
+            if (time < tsChangeStartTime) {
+                return time
+            }
+            ret = tsChangeStartTime
         }
         if (i === tsGroupEntity.length - 1) {
             return ret + (time - tsChangeStartTime) * tsChangeStart.timeScale
@@ -108,8 +111,11 @@ export const scaledTimeToEarliestTime = (time: number, tsGroup: number): number 
     for (let i = 0; i < tsGroupEntity.length; i++) {
         const tsChangeStart = archetypes.TimeScaleChange.data.get(nextRef)
         const tsChangeStartTime = bpmChanges.at(tsChangeStart.beat).time
-        if (i === 0 && time < tsChangeStartTime) {
-            return time
+        if (i === 0) {
+            if (time < tsChangeStartTime) {
+                return time
+            }
+            currentTime = tsChangeStartTime
         }
         if (i === tsGroupEntity.length - 1) {
             return tsChangeStartTime + (time - currentTime) / tsChangeStart.timeScale
