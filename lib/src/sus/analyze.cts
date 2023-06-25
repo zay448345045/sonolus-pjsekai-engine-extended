@@ -90,9 +90,11 @@ export const analyze = (sus: string): Score => {
         const measureOffset = measureChanges.find(([changeIndex]) => changeIndex <= index)?.[1] ?? 0
         const timeScaleGroupName =
             timeScaleGroupChanges.find(([changeIndex]) => changeIndex <= index)?.[1] ?? '00'
-        const timeScaleGroup = timeScaleGroups.get(timeScaleGroupName)
+        let timeScaleGroup = timeScaleGroups.get(timeScaleGroupName)
         if (timeScaleGroup === undefined) {
-            throw `Unexpected time scale group ${timeScaleGroupName}`
+            timeScaleGroup = timeScaleGroups.size
+            timeScaleGroups.set(timeScaleGroupName, timeScaleGroups.size)
+            timeScaleChanges.push([])
         }
 
         // Hispeed definitions
