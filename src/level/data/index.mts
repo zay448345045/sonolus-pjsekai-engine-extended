@@ -5,7 +5,7 @@ import { uscToLevelData } from '~lib/src/usc/convert.cjs'
 import expert from './expert.json'
 
 export const data: LevelData = await fs
-    .readFile('./src/level/data/test.sus', 'utf-8')
+    .readFile('./src/level/data/n2u.sus', 'utf-8')
     .then(susToUSC)
     .then(uscToLevelData)
     .catch((error) => {

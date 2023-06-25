@@ -408,6 +408,8 @@ export abstract class SlideConnector extends Archetype {
             ),
         }
 
+        timeToScaledTime(time.now, this.headData.timeScaleGroup)
+
         for (let i = 0; i < 10; i++) {
             const scaledTime = {
                 min: Math.lerp(visibleTime.min, visibleTime.max, i / 10),

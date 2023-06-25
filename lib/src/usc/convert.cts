@@ -292,6 +292,8 @@ const damage: Handler<USCDamageNote> = (object, append) => {
             size: object.size,
         },
         sim: false,
+
+        timeScaleGroup: object.timeScaleGroup,
     }
 
     append(intermediate)
