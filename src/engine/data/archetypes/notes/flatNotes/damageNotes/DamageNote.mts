@@ -96,6 +96,10 @@ export class DamageNote extends SlimNote {
     playSFX() {
         effect.clips.normalGood.play(minSFXDistance)
     }
+    playHitEffects(hitTime: number) {
+        if (options.sfxEnabled && !options.autoplay && !options.autoSFX) this.playSFX()
+        super.playHitEffects(hitTime)
+    }
 
     get shouldScheduleSFX() {
         return false
