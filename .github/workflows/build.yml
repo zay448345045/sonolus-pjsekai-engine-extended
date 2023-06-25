@@ -21,8 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build lib
+        run: |
+          npm run build:lib
 
       - name: Deploy
         run: |
@@ -31,7 +32,19 @@ jobs:
           git add -A
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git commit -m "Deploy: $GITHUB_SHA"
+          git commit -m "Deploy (lib): $GITHUB_SHA"
+
+          git push origin build -f
+
+      - name: Build All
+        run: npm run build
+
+      - name: Deploy
+        run: |
+          git add -A
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git commit -m "Deploy (all): $GITHUB_SHA"
 
           git push origin build -f
 
