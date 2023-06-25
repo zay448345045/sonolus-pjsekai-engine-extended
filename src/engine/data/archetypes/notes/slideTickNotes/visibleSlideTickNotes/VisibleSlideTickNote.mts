@@ -2,7 +2,13 @@ import { options } from '../../../../../configuration/options.mjs'
 import { minSFXDistance, note } from '../../../constants.mjs'
 import { layer } from '../../../layer.mjs'
 import { scaledScreen } from '../../../shared.mjs'
-import { getScheduleSFXTime, getZ, perspectiveLayout } from '../../../utils.mjs'
+import {
+    getScheduleSFXTime,
+    getZ,
+    perspectiveLayout,
+    scaledTimeToEarliestTime,
+    timeToScaledTime,
+} from '../../../utils.mjs'
 import { Note } from '../../Note.mjs'
 import { SlideTickNote } from '../SlideTickNote.mjs'
 
@@ -43,12 +49,15 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
 
         this.scheduleSFXTime = getScheduleSFXTime(this.targetTime)
 
-        this.visualTime.max = timeScaleChanges.at(this.targetTime).scaledTime
+        this.visualTime.max = timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
         this.visualTime.min = this.visualTime.max - Note.duration
 
-        this.spawnTime = Math.min(
-            this.visualTime.min,
-            timeScaleChanges.at(this.scheduleSFXTime).scaledTime,
+        this.spawnTime = scaledTimeToEarliestTime(
+            Math.min(
+                this.visualTime.min,
+                timeToScaledTime(this.scheduleSFXTime, this.data.timeScaleGroup),
+            ),
+            this.data.timeScaleGroup,
         )
     }
 
@@ -89,8 +98,9 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
         if (this.shouldScheduleSFX && !this.hasSFXScheduled && time.now >= this.scheduleSFXTime)
             this.scheduleSFX()
 
-        if (time.scaled < this.visualTime.min) return
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
+        if (scaledTime < this.visualTime.min) return
+        if (options.hidden > 0 && scaledTime > this.visualTime.hidden) return
 
         this.render()
     }
@@ -128,7 +138,11 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     }
 
     render() {
-        this.y = Note.approach(this.visualTime.min, this.visualTime.max, time.scaled)
+        this.y = Note.approach(
+            this.visualTime.min,
+            this.visualTime.max,
+            timeToScaledTime(time.now, this.data.timeScaleGroup),
+        )
 
         if (this.useFallbackSprite) {
             this.sprites.fallback.draw(this.spriteLayout.mul(this.y), this.z, 1)

@@ -74,7 +74,7 @@ export class SimLine extends Archetype {
     shouldSpawn() {
         if (!options.simLineEnabled) return true
 
-        return time.scaled >= this.spawnTime
+        return time.now >= this.spawnTime
     }
 
     initialize() {
@@ -109,7 +109,7 @@ export class SimLine extends Archetype {
         }
         if (this.despawn) return
 
-        if (options.hidden > 0 && time.scaled > this.leftVisualTime.hidden) return
+        if (options.hidden > 0 && time.now > this.leftVisualTime.hidden) return
 
         this.render()
     }

@@ -405,6 +405,8 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                         ? 'CriticalAttachedSlideTickNote'
                         : 'NormalAttachedSlideTickNote'
 
+                if ('timeScaleGroup' in connection) ci.timeScaleGroup = connection.timeScaleGroup
+
                 cis.push(ci)
                 attaches.push(ci)
                 break

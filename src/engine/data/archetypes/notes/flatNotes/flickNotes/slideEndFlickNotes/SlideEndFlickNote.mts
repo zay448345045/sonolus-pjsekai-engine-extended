@@ -2,7 +2,7 @@ import { options } from '../../../../../../configuration/options.mjs'
 import { minFlickVR } from '../../../../constants.mjs'
 import { archetypes } from '../../../../index.mjs'
 import { ease } from '../../../../slideConnectors/EaseType.mjs'
-import { getHitbox } from '../../../../utils.mjs'
+import { getHitbox, timeToScaledTime } from '../../../../utils.mjs'
 import { FlickNote } from '../FlickNote.mjs'
 
 export abstract class SlideEndFlickNote extends FlickNote {
@@ -33,12 +33,12 @@ export abstract class SlideEndFlickNote extends FlickNote {
         this.earlyInputTime = this.targetTime + input.offset
 
         this.head.time = bpmChanges.at(this.headData.beat).time
-        this.head.scaledTime = timeScaleChanges.at(this.head.time).scaledTime
+        this.head.scaledTime = timeToScaledTime(this.head.time, this.headData.timeScaleGroup)
         this.head.l = this.headData.lane - this.headData.size
         this.head.r = this.headData.lane + this.headData.size
 
         this.tail.time = bpmChanges.at(this.tailData.beat).time
-        this.tail.scaledTime = timeScaleChanges.at(this.tail.time).scaledTime
+        this.tail.scaledTime = timeToScaledTime(this.tail.time, this.tailData.timeScaleGroup)
         this.tail.l = this.tailData.lane - this.tailData.size
         this.tail.r = this.tailData.lane + this.tailData.size
     }
@@ -79,7 +79,7 @@ export abstract class SlideEndFlickNote extends FlickNote {
             Math.unlerpClamped(
                 this.head.scaledTime,
                 this.tail.scaledTime,
-                timeScaleChanges.at(time.now - input.offset).scaledTime,
+                timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup),
             ),
         )
 

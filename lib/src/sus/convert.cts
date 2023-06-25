@@ -217,6 +217,7 @@ export const susToUSC = (sus: string): USC => {
                             type: 'attach',
                             beat,
                             critical,
+                            timeScaleGroup,
                         }
 
                         object.connections.push(connection)

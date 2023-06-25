@@ -1,5 +1,6 @@
 import { archetypes } from '../../index.mjs'
 import { ease } from '../../slideConnectors/EaseType.mjs'
+import { timeToScaledTime } from '../../utils.mjs'
 
 export const getAttached = (ref: number, targetTime: number) => {
     const attachData = archetypes.NormalSlideConnector.data.get(ref)
@@ -15,9 +16,9 @@ export const getAttached = (ref: number, targetTime: number) => {
     }
 
     const st = {
-        min: timeScaleChanges.at(t.min).scaledTime,
-        max: timeScaleChanges.at(t.max).scaledTime,
-        tick: timeScaleChanges.at(targetTime).scaledTime,
+        min: timeToScaledTime(t.min, data.head.timeScaleGroup),
+        max: timeToScaledTime(t.max, data.tail.timeScaleGroup),
+        tick: timeToScaledTime(targetTime, data.head.timeScaleGroup),
     }
 
     const s = ease(attachData.ease, Math.unlerpClamped(st.min, st.max, st.tick))

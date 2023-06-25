@@ -60,6 +60,7 @@ export type USCConnectionTickNote = BaseUSCNote & {
 export type USCConnectionAttachNote = Omit<BaseUSCObject, 'timeScaleGroup'> & {
     type: 'attach'
     critical?: boolean
+    timeScaleGroup?: number
 }
 
 export type USCConnectionEndNote = BaseUSCNote & {

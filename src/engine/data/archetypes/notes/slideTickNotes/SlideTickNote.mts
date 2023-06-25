@@ -1,6 +1,6 @@
 import { options } from '../../../../configuration/options.mjs'
 import { disallowEmpty } from '../../InputManager.mjs'
-import { getHitbox } from '../../utils.mjs'
+import { getHitbox, scaledTimeToEarliestTime, timeToScaledTime } from '../../utils.mjs'
 import { Note } from '../Note.mjs'
 
 export abstract class SlideTickNote extends Note {
@@ -13,7 +13,10 @@ export abstract class SlideTickNote extends Note {
 
         this.inputTime = this.targetTime + input.offset
 
-        this.spawnTime = timeScaleChanges.at(this.inputTime).scaledTime
+        this.spawnTime = scaledTimeToEarliestTime(
+            timeToScaledTime(this.inputTime, this.data.timeScaleGroup),
+            this.data.timeScaleGroup,
+        )
     }
 
     initialize() {
