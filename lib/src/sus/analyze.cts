@@ -52,7 +52,7 @@ export const analyze = (sus: string): Score => {
     const offset = -+(meta.get('WAVEOFFSET')?.[0] || '0')
     if (Number.isNaN(offset)) throw 'Unexpected offset'
 
-    const ticksPerBeat = getTicksPerBeat(meta)
+    const ticksPerBeat = getTicksPerBeat(meta) ?? 480
     if (!ticksPerBeat) throw 'Missing or unexpected ticks per beat'
 
     const barLengths = getBarLengths(lines, measureChanges)
