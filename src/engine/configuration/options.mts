@@ -120,6 +120,16 @@ export const options = defineOptions({
         step: 0.05,
         unit: UnitText.Percentage,
     },
+    backgroundBrightness: {
+        name: 'Background brightness',
+        scope: 'Sekai+',
+        type: 'slider',
+        def: 1,
+        min: 0,
+        max: 1,
+        step: 0.05,
+        unit: UnitText.Percentage,
+    },
     lockStageAspectRatio: {
         name: NameText.LockStageAspectRatio,
         scope: 'Sekai',

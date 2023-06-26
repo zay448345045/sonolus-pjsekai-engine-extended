@@ -42,9 +42,8 @@ export class Stage extends Archetype {
             this.drawSekaiStage()
         }
 
-        // debug.log(timeToScaledTime(time.now, 3))
-
         this.drawStageCover()
+        this.drawBackgroundDim()
     }
 
     get useFallbackStage() {
@@ -132,6 +131,26 @@ export class Stage extends Archetype {
             }),
             layer.cover,
             1,
+        )
+    }
+
+    drawBackgroundDim() {
+        if (options.backgroundBrightness == 1) return
+
+        const background = skin.sprites.backgroundDim.exists
+            ? skin.sprites.backgroundDim.id
+            : skin.sprites.cover.id
+
+        skin.sprites.draw(
+            background,
+            new Rect({
+                l: scaledScreen.l,
+                r: scaledScreen.r,
+                t: -2,
+                b: 2,
+            }),
+            layer.stage - 1,
+            1 - options.backgroundBrightness,
         )
     }
 }

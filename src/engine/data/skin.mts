@@ -121,5 +121,7 @@ export const skin = defineSkin({
         damageNoteSecondaryFallback: SkinSpriteName.NoteHeadPurple,
         damageSlotGlow: 'Sekai+ Slot Glow Purple',
         damageSlot: 'Sekai+ Slot Purple',
+
+        backgroundDim: 'Sekai+ Black Background',
     },
 })
