@@ -80,7 +80,7 @@ export const analyze = (sus: string): Score => {
             const timeScaleGroup = header.substring(3, 5)
             const timeScaleIndex = timeScaleGroups.get(timeScaleGroup)
             if (timeScaleIndex === undefined) {
-                throw `Unexpected time scale group ${timeScaleGroup}`
+                continue
             }
             timeScaleChanges[timeScaleIndex].push(...toTimeScaleChanges(line, toTick))
         }
