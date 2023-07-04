@@ -24,7 +24,7 @@ export class CriticalTraceNote extends TraceNote {
     }
 
     clips = {
-        perfect: effect.clips.criticalTap,
+        perfect: effect.clips.criticalTrace,
         fallback: effect.clips.normalPerfect,
     }
 
