@@ -69,11 +69,11 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
         }
         const uscEndNote: USCConnectionEndNote = {
             type: 'end',
-            beat: hold.start.tick / ticksPerBeat,
+            beat: hold.end.tick / ticksPerBeat,
             timeScaleGroup: 0,
-            critical: hold.critical,
-            lane: laneToUSCLane(hold.start),
-            size: hold.start.width / 2,
+            critical: hold.end.critical || hold.critical,
+            lane: laneToUSCLane(hold.end),
+            size: hold.end.width / 2,
             trace: false,
         }
         if (hold.end.flickType !== 'none') {
@@ -93,6 +93,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
                         return {
                             type: 'attach',
                             beat,
+                            critical: hold.critical,
                             timeScaleGroup: 0,
                         } satisfies USCConnectionAttachNote
                     } else {
@@ -106,7 +107,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
                             ease: mmwsEaseToUSCEase[step.ease],
                         }
                         if (step.type === 'visible') {
-                            uscStep.critical = false
+                            uscStep.critical = hold.critical
                         }
 
                         return uscStep

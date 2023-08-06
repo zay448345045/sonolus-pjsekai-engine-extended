@@ -1,6 +1,6 @@
 import StreamBuffer from 'streambuf'
 
-const flickType = ['none', 'up', 'right', 'left'] as const
+const flickType = ['none', 'up', 'left', 'right'] as const
 type FlickType = (typeof flickType)[number]
 const stepType = ['visible', 'hidden', 'ignored'] as const
 type StepType = (typeof stepType)[number]
@@ -155,16 +155,16 @@ export const analyze = (mmws: Buffer): Score => {
         const startTick = buffer.readInt32LE()
         const startLane = buffer.readInt32LE()
         const startWidth = buffer.readInt32LE()
-        const startEase = easeType[buffer.readInt32LE() as 0 | 1 | 2]
         const critical = buffer.readInt32LE() === 0 ? false : true
+        const startEase = easeType[buffer.readInt32LE() as 0 | 1 | 2]
         const stepsCount = buffer.readInt32LE()
         const steps: Score['holds'][0]['steps'] = []
         for (let j = 0; j < stepsCount; j++) {
             const tick = buffer.readInt32LE()
             const lane = buffer.readInt32LE()
             const width = buffer.readInt32LE()
-            const type = stepType[buffer.readInt32LE() as 0 | 1 | 2]
             buffer.readInt32LE() // unused critical
+            const type = stepType[buffer.readInt32LE() as 0 | 1 | 2]
             const ease = easeType[buffer.readInt32LE() as 0 | 1 | 2]
             steps.push({
                 tick,
@@ -177,8 +177,8 @@ export const analyze = (mmws: Buffer): Score => {
         const endTick = buffer.readInt32LE()
         const endLane = buffer.readInt32LE()
         const endWidth = buffer.readInt32LE()
-        const endCritical = buffer.readInt32LE() === 0 ? false : true
         const endFlickType = flickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
+        const endCritical = buffer.readInt32LE() === 0 ? false : true
         holds.push({
             critical,
             start: {
