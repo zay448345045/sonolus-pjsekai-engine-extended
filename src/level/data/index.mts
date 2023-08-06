@@ -5,7 +5,7 @@ import { uscToLevelData } from '~lib/src/usc/convert.cjs'
 import expert from './expert.json'
 
 export const data: LevelData = await fs
-    .readFile('./src/level/data/rip.mmws')
+    .readFile('./src/level/data/engazer.mmws')
     .then(mmwsToUSC)
     .then(uscToLevelData)
     .catch((error) => {

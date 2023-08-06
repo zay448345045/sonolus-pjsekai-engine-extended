@@ -23,7 +23,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
     const score = analyze(mmws)
     const usc: USC = {
         objects: [],
-        offset: score.metadata.musicOffset / 1000,
+        offset: score.metadata.musicOffset / -1000,
     }
 
     for (const bpmChange of score.events.bpmChanges) {
