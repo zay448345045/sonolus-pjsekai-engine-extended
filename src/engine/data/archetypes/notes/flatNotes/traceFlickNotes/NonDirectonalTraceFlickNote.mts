@@ -20,9 +20,7 @@ export class NonDirectionalTraceFlickNote extends TraceFlickNote {
     }
 
     clips = {
-        perfect: effect.clips.flickPerfect,
-        great: effect.clips.flickGreat,
-        good: effect.clips.flickGood,
+        perfect: effect.clips.normalTraceFlick,
     }
 
     effects = {
