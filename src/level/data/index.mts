@@ -1,12 +1,12 @@
 import fs from 'fs/promises'
 import { LevelData } from 'sonolus-core'
-import { susToUSC } from '~lib/src/sus/convert.cjs'
+import { mmwsToUSC } from '~lib/src/mmws/convert.cjs'
 import { uscToLevelData } from '~lib/src/usc/convert.cjs'
 import expert from './expert.json'
 
 export const data: LevelData = await fs
-    .readFile('./src/level/data/n2u.sus', 'utf-8')
-    .then(susToUSC)
+    .readFile('./src/level/data/rip.mmws')
+    .then(mmwsToUSC)
     .then(uscToLevelData)
     .catch((error) => {
         console.error(error)

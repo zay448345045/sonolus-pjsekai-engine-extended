@@ -19,7 +19,8 @@
         "build": "tsc -p ./lib/tsconfig.json && sonolus-cli --build && node ./lib/build.mjs"
     },
     "dependencies": {
-        "sonolus-core": "~7.0.0"
+        "sonolus-core": "~7.0.0",
+        "streambuf": "github:sevenc-nanashi/node-streambuf"
     },
     "devDependencies": {
         "@types/node": "^16.18.36",

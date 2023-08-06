@@ -487,5 +487,13 @@ const getConnections = (object: USCSlideNote) => {
         })
     }
 
-    return connections.sort((a, b) => a.beat - b.beat)
+    const startStep = connections.find(({ type }) => type === 'start')
+    const endStep = connections.find(({ type }) => type === 'end')
+    const steps = connections.filter(({ type }) => type === 'tick' || type === 'attach')
+    steps.sort((a, b) => a.beat - b.beat)
+
+    if (!startStep) throw 'Missing start'
+    if (!endStep) throw 'Missing end'
+
+    return [startStep, ...steps, endStep]
 }

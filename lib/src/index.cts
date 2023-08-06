@@ -1,6 +1,7 @@
 import { EngineInfo } from 'sonolus-core'
 import { Resource } from './Resource.cjs'
 
+export { mmwsToUSC } from './mmws/convert.cjs'
 export { susToUSC } from './sus/convert.cjs'
 export { uscToLevelData } from './usc/convert.cjs'
 export * from './usc/index.cjs'
