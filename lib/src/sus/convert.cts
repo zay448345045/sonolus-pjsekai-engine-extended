@@ -7,11 +7,11 @@ import {
     USCObject,
     USCSlideNote,
 } from '../usc/index.cjs'
-import { NoteObject, analyze } from './analyze.cjs'
+import { NoteObject, Score, analyze } from './analyze.cjs'
 
-export const susToUSC = (sus: string): USC => {
-    const score = analyze(sus)
+export const susToUSC = (sus: string): USC => chsLikeToUSC(analyze(sus))
 
+export const chsLikeToUSC = (score: Score): USC => {
     const flickMods = new Map<string, 'left' | 'up' | 'right'>()
     const criticalMods = new Set<string>()
     const tickRemoveMods = new Set<string>()

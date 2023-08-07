@@ -274,7 +274,7 @@ const single: Handler<USCSingleNote> = (object, append) => {
         if (object.direction) {
             intermediate.archetype = object.critical ? 'CriticalFlickNote' : 'NormalFlickNote'
             if (object.direction === 'none') {
-                throw 'Unexpected flick direction'
+                return
             }
             intermediate.data.direction = directions[object.direction]
         }
