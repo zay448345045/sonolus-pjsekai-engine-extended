@@ -56,6 +56,7 @@ const analyze = (chs: Buffer): Score => {
             bpm: bpmChange.bpm,
         })
     }
+    bpmChanges.sort((a, b) => a.tick - b.tick)
     for (const hispeedChange of parsedChs.score.events.highSpeedChangeEvents) {
         timeScaleChanges[0].push({
             tick: hispeedChange.tick,
