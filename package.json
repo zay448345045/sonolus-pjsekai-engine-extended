@@ -13,13 +13,14 @@
         "dist"
     ],
     "scripts": {
-        "dev": "sonolus-cli --dev",
+        "dev:play": "sonolus-cli --dev ./play/sonolus-cli.config.mjs",
+        "dev:tutorial": "sonolus-cli --dev ./tutorial/sonolus-cli.config.mjs",
         "prebuild": "tsc -p . --noEmit && eslint --ext .mts ./src && eslint --ext .cts ./lib",
         "build:lib": "tsc -p ./lib/tsconfig.json",
         "build": "tsc -p ./lib/tsconfig.json && sonolus-cli --build && node ./lib/build.mjs"
     },
     "dependencies": {
-        "sonolus-core": "~7.0.0",
+        "sonolus-core": "~7.2.0-beta.0",
         "streambuf": "github:sevenc-nanashi/node-streambuf"
     },
     "devDependencies": {
@@ -31,7 +32,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "prettier": "^2.8.8",
         "prettier-plugin-organize-imports": "^3.2.2",
-        "sonolus.js": "~9.0.2",
+        "sonolus.js": "~9.1.0-beta.2",
         "ts-node": "^10.9.1",
         "typescript": "~5.1.3"
     }

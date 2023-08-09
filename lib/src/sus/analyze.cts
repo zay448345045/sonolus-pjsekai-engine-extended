@@ -155,7 +155,7 @@ export const analyze = (sus: string): Score => {
 }
 
 const parse = (
-    sus: string,
+    sus: string
 ): {
     lines: Line[]
     measureChanges: MeasureChange[]
@@ -234,8 +234,8 @@ const getToTick = (barLengths: BarLengthObject[], ticksPerBeat: number): ToTick 
     const bars = barLengths
         .sort((a, b) => a.measure - b.measure)
         .map(({ measure, length }, i, values) => {
-            const prev = values[i - 1]
-            if (prev) {
+            if (i) {
+                const prev = values[i - 1]
                 ticks += (measure - prev.measure) * prev.length * ticksPerBeat
             }
 
@@ -245,7 +245,7 @@ const getToTick = (barLengths: BarLengthObject[], ticksPerBeat: number): ToTick 
 
     return (measure, p, q) => {
         const bar = bars.find((bar) => measure >= bar.measure)
-        if (!bar) throw 'Unexpected missing bar'
+        if (!bar) throw new Error('Unexpected missing bar')
 
         return (
             bar.ticks +
@@ -259,15 +259,16 @@ const toBpmChanges = (
     line: Line,
     measureOffset: number,
     bpms: Map<string, number>,
-    toTick: ToTick,
+    toTick: ToTick
 ) =>
     toRaws(line, measureOffset, toTick).map(({ tick, value }) => ({
         tick,
-        bpm: bpms.get(value) || 0,
+        bpm: bpms.get(value) ?? 0,
     }))
 
 const toTimeScaleChanges = ([, data]: Line, toTick: ToTick) => {
-    if (!data.startsWith('"') || !data.endsWith('"')) throw 'Unexpected time scale changes'
+    if (!data.startsWith('"') || !data.endsWith('"'))
+        throw new Error('Unexpected time scale changes')
 
     return data
         .slice(1, -1)
@@ -282,9 +283,8 @@ const toTimeScaleChanges = ([, data]: Line, toTick: ToTick) => {
             const tick = +m
             const timeScale = +r
 
-            if (Number.isNaN(measure) || Number.isNaN(tick) || Number.isNaN(timeScale)) {
-                throw 'Unexpected time scale change'
-            }
+            if (Number.isNaN(measure) || Number.isNaN(tick) || Number.isNaN(timeScale))
+                throw new Error('Unexpected time scale change')
 
             return {
                 tick: toTick(measure, 0, 1) + tick,
@@ -335,13 +335,13 @@ const toSlides = (stream: NoteObject[]) => {
 
 const toRaws = ([header, data]: Line, measureOffset: number, toTick: ToTick) => {
     const measure = +header.substring(0, 3) + measureOffset
-    return (data.match(/.{2}/g) || [])
+    return (data.match(/.{2}/g) ?? [])
         .map(
             (value, i, values) =>
                 value !== '00' && {
                     tick: toTick(measure, i, values.length),
                     value,
-                },
+                }
         )
         .filter((object): object is RawObject => !!object)
 }
