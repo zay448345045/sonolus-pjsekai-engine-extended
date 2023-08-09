@@ -37,7 +37,7 @@ export default {
                             async (args) => {
                                 const path = args.path.startsWith('~lib/')
                                     ? './lib/' + args.path.slice(5).replace('.cjs', '.cts')
-                                    : './src/' + args.path.slice(2).replace('.mjs', '.mts')
+                                    : './play/src/' + args.path.slice(2).replace('.mjs', '.mts')
 
                                 return {
                                     path: resolve(process.cwd(), path),

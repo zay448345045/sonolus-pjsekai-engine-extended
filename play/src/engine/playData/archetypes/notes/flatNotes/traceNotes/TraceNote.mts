@@ -4,10 +4,10 @@ import {
     claimStart,
     disallowEmpty,
     disallowTraceStart,
-} from '~/engine/data/archetypes/InputManager.mjs'
-import { note } from '~/engine/data/archetypes/constants.mjs'
-import { scaledScreen } from '~/engine/data/archetypes/shared.mjs'
-import { perspectiveLayout } from '~/engine/data/archetypes/utils.mjs'
+} from '~/engine/playData/archetypes/InputManager.mjs'
+import { note } from '~/engine/playData/archetypes/constants.mjs'
+import { scaledScreen } from '~/engine/playData/archetypes/shared.mjs'
+import { perspectiveLayout } from '~/engine/playData/archetypes/utils.mjs'
 import { SlimNote } from '../SlimNote.mjs'
 
 export abstract class TraceNote extends SlimNote {

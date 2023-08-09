@@ -5,7 +5,7 @@ import { uscToLevelData } from '~lib/src/usc/convert.cjs'
 import expert from './expert.json'
 
 export const data: LevelData = await fs
-    .readFile('./src/level/data/ched3.chs')
+    .readFile('./play/src/level/data/ched3.chs')
     .then(chsToUSC)
     .then(uscToLevelData)
     .catch((error) => {
@@ -13,4 +13,4 @@ export const data: LevelData = await fs
         return expert
     })
 
-await fs.writeFile('./src/level/data/test.json', JSON.stringify(data, null, 4))
+await fs.writeFile('./play/src/level/data/test.json', JSON.stringify(data, null, 4))

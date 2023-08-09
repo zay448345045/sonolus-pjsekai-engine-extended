@@ -1,9 +1,9 @@
-import { archetypes } from '~/engine/data/archetypes/index.mjs'
-import { windows } from '~/engine/data/archetypes/windows.mjs'
-import { buckets } from '~/engine/data/buckets.mjs'
-import { effect } from '~/engine/data/effect.mjs'
-import { particle } from '~/engine/data/particle.mjs'
-import { skin } from '~/engine/data/skin.mjs'
+import { archetypes } from '~/engine/playData/archetypes/index.mjs'
+import { windows } from '~/engine/playData/archetypes/windows.mjs'
+import { buckets } from '~/engine/playData/buckets.mjs'
+import { effect } from '~/engine/playData/effect.mjs'
+import { particle } from '~/engine/playData/particle.mjs'
+import { skin } from '~/engine/playData/skin.mjs'
 import { TraceNote } from './TraceNote.mjs'
 
 export class NormalTraceNote extends TraceNote {

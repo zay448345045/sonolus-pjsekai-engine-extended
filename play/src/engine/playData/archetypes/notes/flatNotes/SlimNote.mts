@@ -1,5 +1,5 @@
-import { note } from '~/engine/data/archetypes/constants.mjs'
-import { perspectiveLayout } from '~/engine/data/archetypes/utils.mjs'
+import { note } from '~/engine/playData/archetypes/constants.mjs'
+import { perspectiveLayout } from '~/engine/playData/archetypes/utils.mjs'
 import { FlatNote } from './FlatNote.mjs'
 
 export abstract class SlimNote extends FlatNote {
