@@ -66,7 +66,7 @@ const analyze = (chs: Buffer): Score => {
     timeScaleChanges[0].sort((a, b) => a.tick - b.tick)
 
     for (const [noteType, note] of tapLikeNotes.flatMap((key) =>
-        parsedChs.score.notes[key].map((note) => [key, note] as const),
+        parsedChs.score.notes[key].map((note) => [key, note] as const)
     )) {
         const susType = noteTypeToSusType[noteType]
         tapNotes.push({
@@ -79,7 +79,7 @@ const analyze = (chs: Buffer): Score => {
     }
 
     const notes = Object.values(parsedChs.score.notes).flatMap((notes) =>
-        typeof notes === 'string' ? [] : notes,
+        typeof notes === 'string' ? [] : notes
     ) as {
         $id: string
         tick: number
@@ -107,7 +107,7 @@ const analyze = (chs: Buffer): Score => {
                 timeScaleGroup: 0,
             })
             notes.push({
-                $id: step['$id'],
+                $id: step.$id,
                 tick: slide.startTick + step.tickOffset,
                 laneIndex: slide.startLaneIndex + step.laneIndexOffset,
                 width: slide.startWidth + step.widthChange,
@@ -118,7 +118,7 @@ const analyze = (chs: Buffer): Score => {
     }
 
     for (const note of parsedChs.score.notes.airs) {
-        const refNote = notes.find((n) => n['$id'] === note.parentNote['$ref'])
+        const refNote = notes.find((n) => n.$id === note.parentNote.$ref)
         if (!refNote) {
             continue
         }

@@ -104,7 +104,7 @@ export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
                 this.arrow.sprite,
                 this.arrow.layout.add(this.arrow.animation.mul(s)).mul(this.y),
                 this.arrow.z,
-                1 - Math.ease('In', 'Cubic', s),
+                1 - Math.ease('In', 'Cubic', s)
             )
         } else {
             skin.sprites.draw(this.arrow.sprite, this.arrow.layout.mul(this.y), this.arrow.z, 1)
@@ -124,7 +124,7 @@ export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
                 shear: this.flickData.direction,
             }),
             0.32,
-            false,
+            false
         )
     }
 }

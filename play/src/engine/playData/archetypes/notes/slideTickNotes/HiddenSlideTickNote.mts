@@ -15,7 +15,7 @@ export class HiddenSlideTickNote extends SlideTickNote {
         super.preprocess()
         ;({ lane: this.data.lane, size: this.data.size } = getAttached(
             this.attachedSlideTickData.attachRef,
-            this.targetTime,
+            this.targetTime
         ))
     }
 }

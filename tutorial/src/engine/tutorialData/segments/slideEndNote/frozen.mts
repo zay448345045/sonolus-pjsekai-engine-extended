@@ -14,7 +14,7 @@ export const slideEndNoteFrozen = {
         drawHand(
             Math.remapClamped(0.25, 0.75, Math.PI / 3, Math.PI / 6, segment.time % 1),
             0,
-            Math.unlerpClamped(1, 0.75, segment.time % 1),
+            Math.unlerpClamped(1, 0.75, segment.time % 1)
         )
     },
 

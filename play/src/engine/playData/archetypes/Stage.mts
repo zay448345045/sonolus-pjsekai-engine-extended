@@ -79,7 +79,7 @@ export class Stage extends Archetype {
         particle.effects.lane.spawn(
             perspectiveLayout({ l, r: l + 1, b: lane.b, t: lane.t }),
             0.3,
-            false,
+            false
         )
     }
 
@@ -96,26 +96,26 @@ export class Stage extends Archetype {
         skin.sprites.stageLeftBorder.draw(
             perspectiveLayout({ l: -6.5, r: -6, b: lane.b, t: lane.t }),
             layer.stage,
-            1,
+            1
         )
         skin.sprites.stageRightBorder.draw(
             perspectiveLayout({ l: 6, r: 6.5, b: lane.b, t: lane.t }),
             layer.stage,
-            1,
+            1
         )
 
         for (let i = 0; i < 6; i++) {
             skin.sprites.lane.draw(
                 perspectiveLayout({ l: i * 2 - 6, r: i * 2 - 4, b: lane.b, t: lane.t }),
                 layer.stage,
-                1,
+                1
             )
         }
 
         skin.sprites.judgmentLine.draw(
             perspectiveLayout({ l: -6, r: 6, b: 1 + note.h, t: 1 - note.h }),
             layer.judgmentLine,
-            1,
+            1
         )
     }
 
@@ -130,7 +130,7 @@ export class Stage extends Archetype {
                 b: Math.lerp(lane.t, 1, options.stageCover),
             }),
             layer.cover,
-            1,
+            1
         )
     }
 
@@ -150,7 +150,7 @@ export class Stage extends Archetype {
                 b: 2,
             }),
             layer.stage - 1,
-            1 - options.backgroundBrightness,
+            1 - options.backgroundBrightness
         )
     }
 }

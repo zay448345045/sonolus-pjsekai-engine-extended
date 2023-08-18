@@ -10,9 +10,9 @@
         "skipLibCheck": true,
         "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
-        "rootDir": "./",
+        "rootDir": "../",
         "paths": {
-            "~/*": ["./tutorial/src/*"],
+            "~/*": ["./src/*"],
             "~lib/*": ["./lib/*"]
         }
     }

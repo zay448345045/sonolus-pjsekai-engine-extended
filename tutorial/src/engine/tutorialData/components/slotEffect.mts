@@ -25,7 +25,7 @@ export const slotEffect = {
                 id,
                 perspectiveLayout({ l: i - 2, r: i - 1, b: 1 + note.h, t: 1 - note.h }),
                 layer.slotEffect,
-                a,
+                a
             )
         }
     },

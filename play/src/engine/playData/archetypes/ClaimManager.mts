@@ -5,7 +5,7 @@ export class ClaimManager {
             time: Number,
             hitbox: Rect,
             fullHitbox: Rect,
-        }),
+        })
     )
 
     claim(
@@ -13,7 +13,7 @@ export class ClaimManager {
         time: number,
         hitbox: Rect,
         fullHitbox: Rect,
-        checkTouch: (touch: Touch) => boolean,
+        checkTouch: (touch: Touch) => boolean
     ) {
         // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
         while (true) {
@@ -63,7 +63,7 @@ export class ClaimManager {
         time: number,
         hitbox: Rect,
         fullHitbox: Rect,
-        checkTouch: (touch: Touch) => boolean,
+        checkTouch: (touch: Touch) => boolean
     ) {
         const x = (hitbox.l + hitbox.r) / 2
 

@@ -40,26 +40,26 @@ export const stage = {
         sprites.fallback.leftBorder.draw(
             perspectiveLayout({ l: -6.5, r: -6, b: lane.b, t: lane.t }),
             layer.stage,
-            1,
+            1
         )
         sprites.fallback.rightBorder.draw(
             perspectiveLayout({ l: 6, r: 6.5, b: lane.b, t: lane.t }),
             layer.stage,
-            1,
+            1
         )
 
         for (let i = 0; i < 6; i++) {
             sprites.fallback.lane.draw(
                 perspectiveLayout({ l: i * 2 - 6, r: i * 2 - 4, b: lane.b, t: lane.t }),
                 layer.stage,
-                1,
+                1
             )
         }
 
         sprites.fallback.judgmentLine.draw(
             perspectiveLayout({ l: -6, r: 6, b: 1 + note.h, t: 1 - note.h }),
             layer.judgmentLine,
-            1,
+            1
         )
     },
 }

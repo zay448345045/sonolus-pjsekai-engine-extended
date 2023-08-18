@@ -118,12 +118,12 @@ export abstract class SlideConnector extends Archetype {
 
         const spawnTime = Math.min(
             this.visualTime.min,
-            timeToScaledTime(this.scheduleSFXTime, this.headData.timeScaleGroup),
+            timeToScaledTime(this.scheduleSFXTime, this.headData.timeScaleGroup)
         )
 
         this.spawnTime = Math.min(
             scaledTimeToEarliestTime(spawnTime, this.headData.timeScaleGroup),
-            scaledTimeToEarliestTime(spawnTime, this.tailData.timeScaleGroup),
+            scaledTimeToEarliestTime(spawnTime, this.tailData.timeScaleGroup)
         )
     }
 
@@ -163,7 +163,7 @@ export abstract class SlideConnector extends Archetype {
         if (time.now < this.head.time) return
 
         const s = this.getScale(
-            timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup),
+            timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup)
         )
 
         const hitbox = getHitbox({
@@ -213,7 +213,7 @@ export abstract class SlideConnector extends Archetype {
         this.renderConnector()
 
         const s = this.getScale(
-            timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup),
+            timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup)
         )
         if (time.now <= this.head.time || Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
 
@@ -345,7 +345,7 @@ export abstract class SlideConnector extends Archetype {
                 lane,
                 w: 3.5,
                 h: 2.1,
-            }),
+            })
         )
     }
 
@@ -367,7 +367,7 @@ export abstract class SlideConnector extends Archetype {
             linearEffectLayout({
                 lane,
                 shear: 0,
-            }),
+            })
         )
     }
 
@@ -400,12 +400,11 @@ export abstract class SlideConnector extends Archetype {
                 this.head.scaledTime,
                 time.now > this.head.time
                     ? timeToScaledTime(time.now, this.headData.timeScaleGroup) + hiddenDuration
-                    : timeToScaledTime(time.now, this.headData.timeScaleGroup) -
-                          Note.duration * 1.5,
+                    : timeToScaledTime(time.now, this.headData.timeScaleGroup) - Note.duration * 1.5
             ),
             max: Math.min(
                 this.tail.scaledTime,
-                timeToScaledTime(time.now, this.headData.timeScaleGroup) + Note.duration,
+                timeToScaledTime(time.now, this.headData.timeScaleGroup) + Note.duration
             ),
         }
 
@@ -426,12 +425,12 @@ export abstract class SlideConnector extends Archetype {
                 min: Note.approach(
                     scaledTime.min - Note.duration,
                     scaledTime.min,
-                    timeToScaledTime(time.now, this.headData.timeScaleGroup),
+                    timeToScaledTime(time.now, this.headData.timeScaleGroup)
                 ),
                 max: Note.approach(
                     scaledTime.max - Note.duration,
                     scaledTime.max,
-                    timeToScaledTime(time.now, this.headData.timeScaleGroup),
+                    timeToScaledTime(time.now, this.headData.timeScaleGroup)
                 ),
             }
 
@@ -450,7 +449,7 @@ export abstract class SlideConnector extends Archetype {
                 this.sprites.connector.fallback.draw(
                     layout,
                     this.connector.z,
-                    visual === VisualType.NotActivated ? 0.5 : 1,
+                    visual === VisualType.NotActivated ? 0.5 : 1
                 )
             } else if (options.connectorAnimation && visual === VisualType.Activated) {
                 const activeA = (Math.sin(time.now * 2 * Math.PI) + 1) / 2
@@ -458,18 +457,18 @@ export abstract class SlideConnector extends Archetype {
                 this.sprites.connector.active.draw(
                     layout,
                     this.connector.z,
-                    Math.ease('Out', 'Cubic', activeA),
+                    Math.ease('Out', 'Cubic', activeA)
                 )
                 this.sprites.connector.normal.draw(
                     layout,
                     this.connector.z + 1,
-                    Math.ease('Out', 'Cubic', 1 - activeA),
+                    Math.ease('Out', 'Cubic', 1 - activeA)
                 )
             } else {
                 this.sprites.connector.normal.draw(
                     layout,
                     this.connector.z,
-                    visual === VisualType.NotActivated ? 0.5 : 1,
+                    visual === VisualType.NotActivated ? 0.5 : 1
                 )
             }
         }
@@ -498,7 +497,7 @@ export abstract class SlideConnector extends Archetype {
             this.sprites.slide.middle.draw(
                 perspectiveLayout({ l: ml, r: mr, b, t }),
                 this.slide.z,
-                1,
+                1
             )
             this.sprites.slide.right.draw(perspectiveLayout({ l: mr, r, b, t }), this.slide.z, 1)
         }

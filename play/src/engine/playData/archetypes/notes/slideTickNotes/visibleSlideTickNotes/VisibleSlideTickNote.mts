@@ -55,9 +55,9 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
         this.spawnTime = scaledTimeToEarliestTime(
             Math.min(
                 this.visualTime.min,
-                timeToScaledTime(this.scheduleSFXTime, this.data.timeScaleGroup),
+                timeToScaledTime(this.scheduleSFXTime, this.data.timeScaleGroup)
             ),
-            this.data.timeScaleGroup,
+            this.data.timeScaleGroup
         )
     }
 
@@ -141,7 +141,7 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
         this.y = Note.approach(
             this.visualTime.min,
             this.visualTime.max,
-            timeToScaledTime(time.now, this.data.timeScaleGroup),
+            timeToScaledTime(time.now, this.data.timeScaleGroup)
         )
 
         if (this.useFallbackSprite) {
@@ -176,7 +176,7 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
                 t: 1 - h,
             }),
             0.6,
-            false,
+            false
         )
     }
 }

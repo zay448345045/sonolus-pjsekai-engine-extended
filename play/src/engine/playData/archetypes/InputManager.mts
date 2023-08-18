@@ -24,14 +24,14 @@ export const claimEnd = (
     time: number,
     hitbox: Rect,
     fullHitbox: Rect,
-    targetTime: number,
+    targetTime: number
 ) =>
     claimEndManager.claim(
         index,
         time,
         hitbox,
         fullHitbox,
-        (touch) => touch.ended && canEnd(touch, targetTime),
+        (touch) => touch.ended && canEnd(touch, targetTime)
     )
 
 export const getClaimedEnd = (index: number) => claimEndManager.getClaimedTouchIndex(index)

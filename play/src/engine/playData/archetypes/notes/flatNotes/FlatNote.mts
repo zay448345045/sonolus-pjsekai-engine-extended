@@ -106,9 +106,9 @@ export abstract class FlatNote extends Note {
             Math.min(
                 this.visualTime.min,
                 this.visualTime.max,
-                timeToScaledTime(this.scheduleSFXTime, this.data.timeScaleGroup),
+                timeToScaledTime(this.scheduleSFXTime, this.data.timeScaleGroup)
             ),
-            this.data.timeScaleGroup,
+            this.data.timeScaleGroup
         )
     }
 
@@ -231,7 +231,7 @@ export abstract class FlatNote extends Note {
         this.y = Note.approach(
             this.visualTime.min,
             this.visualTime.max,
-            timeToScaledTime(time.now, this.data.timeScaleGroup),
+            timeToScaledTime(time.now, this.data.timeScaleGroup)
         )
 
         if (this.useFallbackSprites) {
@@ -239,23 +239,23 @@ export abstract class FlatNote extends Note {
                 this.sprites.secondaryFallback.draw(
                     this.spriteLayouts.middle.mul(this.y),
                     this.z,
-                    1,
+                    1
                 )
             } else if ('primaryFallback' in this.sprites) {
                 this.sprites.primaryFallback.left.draw(
                     this.spriteLayouts.left.mul(this.y),
                     this.z,
-                    1,
+                    1
                 )
                 this.sprites.primaryFallback.middle.draw(
                     this.spriteLayouts.middle.mul(this.y),
                     this.z,
-                    1,
+                    1
                 )
                 this.sprites.primaryFallback.right.draw(
                     this.spriteLayouts.right.mul(this.y),
                     this.z,
-                    1,
+                    1
                 )
             } else {
                 this.sprites.fallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)
@@ -301,7 +301,7 @@ export abstract class FlatNote extends Note {
                 shear: 0,
             }),
             0.5,
-            false,
+            false
         )
     }
 
@@ -313,7 +313,7 @@ export abstract class FlatNote extends Note {
                 h: 1.05,
             }),
             0.6,
-            false,
+            false
         )
     }
 
@@ -344,7 +344,7 @@ export abstract class FlatNote extends Note {
                 t: lane.t,
             }),
             0.3,
-            false,
+            false
         )
     }
 

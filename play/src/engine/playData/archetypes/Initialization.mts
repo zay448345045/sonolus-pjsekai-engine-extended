@@ -82,7 +82,7 @@ export class Initialization extends Archetype {
         })
         ui.metric.primary.value.set({
             anchor: uiRect.lt.add(
-                new Vec(0.715, -0.035).mul(ui.configuration.metric.primary.scale),
+                new Vec(0.715, -0.035).mul(ui.configuration.metric.primary.scale)
             ),
             pivot: { x: 1, y: 1 },
             size: new Vec(0, 0.08).mul(ui.configuration.metric.primary.scale),

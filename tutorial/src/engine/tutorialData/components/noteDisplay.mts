@@ -92,26 +92,26 @@ export const noteDisplay = {
                     ids.fallback,
                     perspectiveLayout({ l, r, t, b }).mul(y),
                     layer.note.body,
-                    1,
+                    1
                 )
             } else {
                 skin.sprites.draw(
                     ids.left,
                     perspectiveLayout({ l, r: ml, t, b }).mul(y),
                     layer.note.body,
-                    1,
+                    1
                 )
                 skin.sprites.draw(
                     ids.middle,
                     perspectiveLayout({ l: ml, r: mr, t, b }).mul(y),
                     layer.note.body,
-                    1,
+                    1
                 )
                 skin.sprites.draw(
                     ids.right,
                     perspectiveLayout({ l: mr, r, t, b }).mul(y),
                     layer.note.body,
-                    1,
+                    1
                 )
             }
         }

@@ -10,9 +10,9 @@
         "skipLibCheck": true,
         "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
-        "rootDir": "./",
+        "rootDir": "../",
         "paths": {
-            "~/*": ["./play/src/*"],
+            "~/*": ["./src/*"],
             "~lib/*": ["./lib/*"]
         }
     }

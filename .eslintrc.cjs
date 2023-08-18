@@ -8,18 +8,23 @@ module.exports = {
     plugins: ['@typescript-eslint', 'prettier'],
     extends: [
         'eslint:recommended',
-        'plugin:@typescript-eslint/strict-type-checked',
+        // 'plugin:@typescript-eslint/strict-type-checked',
         'plugin:@typescript-eslint/stylistic-type-checked',
         'prettier',
     ],
     rules: {
         'prettier/prettier': 'error',
         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+        // False positive: Function type
+        'no-unused-vars': 'off',
+        '@typescript-eslint/class-literal-property-style': 'off',
     },
-    overrides: {
-        files: ['sonolus-cli.config.mjs'],
-        env: {
-            node: true,
+    overrides: [
+        {
+            files: ['sonolus-cli.config.mjs'],
+            env: {
+                node: true,
+            },
         },
-    },
+    ],
 }

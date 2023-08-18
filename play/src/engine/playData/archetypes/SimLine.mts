@@ -61,7 +61,7 @@ export class SimLine extends Archetype {
 
         this.spawnTime = Math.max(
             scaledTimeToEarliestTime(this.leftVisualTime.min, this.leftTimeScaleGroup),
-            scaledTimeToEarliestTime(this.rightVisualTime.min, this.rightTimeScaleGroup),
+            scaledTimeToEarliestTime(this.rightVisualTime.min, this.rightTimeScaleGroup)
         )
     }
 
@@ -140,12 +140,12 @@ export class SimLine extends Archetype {
         const leftY = Note.approach(
             this.leftVisualTime.min,
             this.leftVisualTime.max,
-            timeToScaledTime(time.now, this.leftTimeScaleGroup),
+            timeToScaledTime(time.now, this.leftTimeScaleGroup)
         )
         const rightY = Note.approach(
             this.rightVisualTime.min,
             this.rightVisualTime.max,
-            timeToScaledTime(time.now, this.rightTimeScaleGroup),
+            timeToScaledTime(time.now, this.rightTimeScaleGroup)
         )
         if (leftY > 1 || rightY > 1 || leftY < 0 || rightY < 0) return
         const leftLayout = this.spriteLayout.mul(leftY)
@@ -163,7 +163,7 @@ export class SimLine extends Archetype {
                 y4: rightLayout.y4,
             },
             this.z,
-            1,
+            1
         )
     }
 }

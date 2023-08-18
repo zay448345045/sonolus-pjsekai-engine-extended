@@ -50,14 +50,14 @@ export const playLaneEffects = () =>
     particle.effects.lane.spawn(
         perspectiveLayout({ l: -2, r: 2, b: lane.b, t: lane.t }),
         0.3,
-        false,
+        false
     )
 
 export const spawnCircularHoldEffect = () =>
     particle.effects.normalSlideConnectorCircular.spawn(
         circularEffectLayout({ w: 3.5, h: 2.1 }),
         1,
-        true,
+        true
     )
 
 export const spawnLinearHoldEffect = () =>
@@ -73,5 +73,5 @@ export const drawHand = (angle: number, y: number, a: number) =>
         0.25 * ui.configuration.instruction.scale,
         (180 * angle) / Math.PI,
         0,
-        a * ui.configuration.instruction.alpha,
+        a * ui.configuration.instruction.alpha
     )

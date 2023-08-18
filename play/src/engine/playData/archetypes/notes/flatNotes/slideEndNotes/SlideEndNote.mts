@@ -22,7 +22,7 @@ export abstract class SlideEndNote extends FlatNote {
             this.targetTime,
             this.hitbox,
             this.fullHitbox,
-            this.startSharedMemory.lastActiveTime === time.now ? this.targetTime : 99999,
+            this.startSharedMemory.lastActiveTime === time.now ? this.targetTime : 99999
         )
     }
 

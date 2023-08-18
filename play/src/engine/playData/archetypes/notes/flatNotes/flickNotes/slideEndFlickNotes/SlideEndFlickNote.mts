@@ -85,8 +85,8 @@ export abstract class SlideEndFlickNote extends FlickNote {
             Math.unlerpClamped(
                 this.head.scaledTime,
                 this.tail.scaledTime,
-                timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup),
-            ),
+                timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup)
+            )
         )
 
         const hitbox = getHitbox({

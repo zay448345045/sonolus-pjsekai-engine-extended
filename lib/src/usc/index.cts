@@ -76,6 +76,6 @@ export type USCSlideNote = {
     connections: [
         USCConnectionStartNote,
         ...(USCConnectionTickNote | USCConnectionAttachNote)[],
-        USCConnectionEndNote,
+        USCConnectionEndNote
     ]
 }

@@ -1,4 +1,3 @@
-import { Bucket } from 'sonolus.js-compiler'
 import { options } from '~/engine/configuration/options.mjs'
 import { effect } from '~/engine/playData/effect.mjs'
 import { particle } from '~/engine/playData/particle.mjs'

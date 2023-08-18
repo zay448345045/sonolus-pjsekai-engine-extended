@@ -49,7 +49,7 @@ type ToTick = (measure: number, p: number, q: number) => number
 export const analyze = (sus: string): Score => {
     const { lines, measureChanges, timeScaleGroupChanges, meta } = parse(sus)
 
-    const offset = -+(meta.get('WAVEOFFSET')?.[0] || '0')
+    const offset = -+(meta.get('WAVEOFFSET')?.[0] ?? '0')
     if (Number.isNaN(offset)) throw 'Unexpected offset'
 
     const ticksPerBeat = getTicksPerBeat(meta) ?? 480

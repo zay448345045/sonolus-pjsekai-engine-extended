@@ -15,7 +15,7 @@ export abstract class SlideTickNote extends Note {
 
         this.spawnTime = scaledTimeToEarliestTime(
             timeToScaledTime(this.inputTime, this.data.timeScaleGroup),
-            this.data.timeScaleGroup,
+            this.data.timeScaleGroup
         )
     }
 

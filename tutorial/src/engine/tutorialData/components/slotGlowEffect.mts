@@ -34,7 +34,7 @@ export const slotGlowEffect = {
                 y4: 1,
             },
             layer.slotGlowEffect,
-            a,
+            a
         )
     },
 

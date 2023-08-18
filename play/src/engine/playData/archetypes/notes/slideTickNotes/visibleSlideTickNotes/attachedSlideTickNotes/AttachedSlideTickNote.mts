@@ -13,7 +13,7 @@ export abstract class AttachedSlideTickNote extends VisibleSlideTickNote {
         super.preprocess()
         ;({ lane: this.data.lane, size: this.data.size } = getAttached(
             this.attachedSlideTickData.attachRef,
-            this.targetTime,
+            this.targetTime
         ))
     }
 }

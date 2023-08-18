@@ -55,7 +55,7 @@ export const flickArrow = {
                 sprites.fallback.draw(
                     new Rect({ l, r, b, t }).translate(0, -h * s).mul(y),
                     layer.note.arrow,
-                    1 - Math.ease('In', 'Cubic', s),
+                    1 - Math.ease('In', 'Cubic', s)
                 )
             } else {
                 const l = -1
@@ -69,7 +69,7 @@ export const flickArrow = {
                 sprites.arrow.draw(
                     new Rect({ l, r, b, t }).translate(0, -h * s).mul(y),
                     layer.note.arrow,
-                    1 - Math.ease('In', 'Cubic', s),
+                    1 - Math.ease('In', 'Cubic', s)
                 )
             }
         }
