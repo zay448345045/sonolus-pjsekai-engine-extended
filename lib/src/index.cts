@@ -11,7 +11,7 @@ export const version = '1.1.1'
 
 export const engineInfo = {
     name: 'pjsekai',
-    version: 8,
+    version: 9,
     title: {
         en: 'Project Sekai',
         ja: 'プロセカ',
@@ -41,5 +41,6 @@ export const engineInfo = {
 } as const satisfies Partial<EngineInfo>
 
 export const engineConfiguration = new Resource('EngineConfiguration')
-export const engineData = new Resource('EngineData')
+export const enginePlayData = new Resource('EnginePlayData')
+export const engineTutorialData = new Resource('EngineTutorialData')
 export const engineThumbnail = new Resource('thumbnail.png')
