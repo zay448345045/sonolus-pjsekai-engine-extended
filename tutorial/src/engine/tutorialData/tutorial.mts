@@ -6,6 +6,7 @@ import { slide } from './components/slide.mjs'
 import { slotEffect } from './components/slotEffect.mjs'
 import { slotGlowEffect } from './components/slotGlowEffect.mjs'
 import { stage } from './components/stage.mjs'
+import { segment } from './segment.mjs'
 import { flickNoteFall } from './segments/flickNote/fall.mjs'
 import { flickNoteFrozen } from './segments/flickNote/frozen.mjs'
 import { flickNoteHit } from './segments/flickNote/hit.mjs'
@@ -26,7 +27,6 @@ import { tapNoteFall } from './segments/tapNote/fall.mjs'
 import { tapNoteFrozen } from './segments/tapNote/frozen.mjs'
 import { tapNoteHit } from './segments/tapNote/hit.mjs'
 import { tapNoteIntro } from './segments/tapNote/intro.mjs'
-import { segment } from './shared.mjs'
 
 const components = [
     initialization,
@@ -131,13 +131,16 @@ const moveNext = () => {
     startTime = time.now
     endTime = startTime
 
-    const index = current % 4
-    if (index === 0) {
-        endTime += 1
-    } else if (index === 2) {
-        endTime += 4
-    } else {
-        endTime += 2
+    switch (current % 4) {
+        case 0:
+            endTime += 1
+            break
+        case 2:
+            endTime += 4
+            break
+        default:
+            endTime += 2
+            break
     }
 }
 

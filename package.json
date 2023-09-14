@@ -1,6 +1,6 @@
 {
     "name": "sonolus-pjsekai-engine-extended",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Extended version of NonSpicyBurrito/sonolus-pjsekai-engine",
     "author": "NonSpicyBurrito + Nanashi.",
     "repository": "github:sevenc-nanashi/sonolus-pjsekai-engine-extended",
@@ -14,15 +14,23 @@
     ],
     "scripts": {
         "dev:play": "sonolus-cli --dev ./play/sonolus-cli.config.mjs",
+        "dev:preview": "sonolus-cli --dev ./preview",
         "dev:tutorial": "sonolus-cli --dev ./tutorial/sonolus-cli.config.mjs",
-        "prebuild": "tsc -p ./lib --noEmit && tsc -p ./shared --noEmit && tsc -p ./play --noEmit && tsc -p ./tutorial --noEmit && eslint --ext .cts ./lib && eslint --ext .mts ./shared && eslint --ext .mts ./play && eslint --ext .mts ./tutorial",
+        "prebuild": "run-p prebuild:lib prebuild:play prebuild:tutorial prebuild:preview",
+        "prebuild:lib": "tsc -p ./lib --noEmit && eslint --ext .cts ./lib && eslint --ext .mts ./shared",
+        "prebuild:play": "tsc -p ./play --noEmit && eslint --ext .mts ./play",
+        "prebuild:tutorial": "tsc -p ./tutorial --noEmit && eslint --ext .mts ./tutorial",
+        "prebuild:preview": "tsc -p ./preview --noEmit && eslint --ext .mts ./preview",
+        "build": "run-p build:lib build:play build:tutorial build:preview",
         "build:lib": "tsc -p ./lib/tsconfig.json",
-        "build": "tsc -p ./lib/tsconfig.json && sonolus-cli --build ./play/sonolus-cli.config.mjs && sonolus-cli --build ./tutorial/sonolus-cli.config.mjs && node ./lib/build.mjs",
+        "build:play": "sonolus-cli --build ./play/sonolus-cli.config.mjs",
+        "build:tutorial": "sonolus-cli --build ./tutorial/sonolus-cli.config.mjs",
+        "build:preview": "sonolus-cli --build ./preview",
         "lint": "eslint --ext .cts ./lib && eslint --ext .mts ./shared && eslint --ext .mts ./play && eslint --ext .mts ./tutorial",
         "lint:fix": "eslint --ext .cts ./lib --fix && eslint --ext .mts ./shared --fix && eslint --ext .mts ./play --fix && eslint --ext .mts ./tutorial --fix"
-   },
+    },
     "dependencies": {
-        "sonolus-core": "~7.2.0",
+        "sonolus-core": "~7.3.0",
         "streambuf": "github:sevenc-nanashi/node-streambuf"
     },
     "devDependencies": {
@@ -32,9 +40,10 @@
         "eslint": "^8.43.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-prettier": "^4.2.1",
+        "npm-run-all": "4.1.5",
         "prettier": "^2.8.8",
         "prettier-plugin-organize-imports": "^3.2.2",
-        "sonolus.js": "~9.1.0",
+        "sonolus.js": "~9.2.0",
         "ts-node": "^10.9.1",
         "typescript": "~5.1.3"
     }
