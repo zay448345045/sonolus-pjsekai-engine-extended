@@ -23,11 +23,18 @@ import { NormalAttachedSlideTickNote } from './notes/slideTickNotes/visibleSlide
 import { CriticalSlideConnector } from './slideConnectors/CriticalSlideConnector.mjs'
 import { NormalSlideConnector } from './slideConnectors/NormalSlideConnector.mjs'
 
+import { DamageNote } from './notes/flatNotes/damageNotes/DamageNote.mjs'
+import { CriticalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/CriticalTraceFlickNote.mjs'
+import { NonDirectionalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/NonDirectionalTraceFlickNote.mjs'
+import { NormalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/NormalTraceFlickNote.mjs'
+import { CriticalTraceNote } from './notes/flatNotes/traceNotes/CriticalTraceNote.mjs'
+import { NormalTraceNote } from './notes/flatNotes/traceNotes/NormalTraceNote.mjs'
+
 export const archetypes = defineArchetypes({
     Initialization,
 
     [EngineArchetypeName.BpmChange]: BpmChange,
-    [EngineArchetypeName.TimeScaleChange]: TimeScaleChange,
+    TimeScaleChange,
 
     Stage,
 
@@ -58,4 +65,18 @@ export const archetypes = defineArchetypes({
     CriticalSlideConnector,
 
     SimLine,
+
+    // Extended
+
+    NormalTraceNote,
+    CriticalTraceNote,
+
+    TraceSlideStartNote: NormalTraceNote,
+    TraceSlideEndNote: NormalTraceNote,
+
+    DamageNote,
+
+    NormalTraceFlickNote,
+    CriticalTraceFlickNote,
+    NonDirectionalTraceFlickNote,
 })

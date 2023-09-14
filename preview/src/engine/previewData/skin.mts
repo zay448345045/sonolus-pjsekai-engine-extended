@@ -75,6 +75,37 @@ export const skin = defineSkin({
         beatLine: SkinSpriteName.GridNeutral,
         bpmChangeLine: SkinSpriteName.GridPurple,
         timeScaleChangeLine: SkinSpriteName.GridYellow,
+
+        // Extended
+
+        normalTraceNoteLeft: 'Sekai+ Slim Note Gray Left',
+        normalTraceNoteMiddle: 'Sekai+ Slim Note Gray Middle',
+        normalTraceNoteRight: 'Sekai+ Slim Note Gray Right',
+        normalTraceNoteFallbackLeft: 'Sekai Note Neutral Left',
+        normalTraceNoteFallbackMiddle: 'Sekai Note Neutral Middle',
+        normalTraceNoteFallbackRight: 'Sekai Note Neutral Right',
+        normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadNeutral,
+        normalTraceNoteTickNote: 'Sekai Diamond Neutral',
+        normalTraceNoteTickNoteFallback: SkinSpriteName.NoteTickNeutral,
+
+        criticalTraceNoteLeft: 'Sekai+ Slim Note Yellow Left',
+        criticalTraceNoteMiddle: 'Sekai+ Slim Note Yellow Middle',
+        criticalTraceNoteRight: 'Sekai+ Slim Note Yellow Right',
+        criticalTraceNoteFallback: SkinSpriteName.NoteHeadYellow,
+
+        traceFlickNoteLeft: 'Sekai+ Slim Note Red Left',
+        traceFlickNoteMiddle: 'Sekai+ Slim Note Red Middle',
+        traceFlickNoteRight: 'Sekai+ Slim Note Red Right',
+
+        damageNoteLeft: 'Sekai+ Slim Note Purple Left',
+        damageNoteMiddle: 'Sekai+ Slim Note Purple Middle',
+        damageNoteRight: 'Sekai+ Slim Note Purple Right',
+        damageNoteFallbackLeft: 'Sekai Note Purple Left',
+        damageNoteFallbackMiddle: 'Sekai Note Purple Middle',
+        damageNoteFallbackRight: 'Sekai Note Purple Right',
+        damageNoteSecondaryFallback: SkinSpriteName.NoteHeadPurple,
+
+        backgroundDim: 'Sekai+ Black Background',
     },
 })
 

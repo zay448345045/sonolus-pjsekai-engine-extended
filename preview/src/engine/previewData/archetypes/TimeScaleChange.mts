@@ -5,7 +5,7 @@ import { line, skin } from '../skin.mjs'
 export class TimeScaleChange extends Archetype {
     data = this.defineData({
         beat: { name: EngineArchetypeDataName.Beat, type: Number },
-        timeScale: { name: EngineArchetypeDataName.TimeScale, type: Number },
+        timeScale: { name: 'timeScale', type: Number },
     })
 
     render() {
@@ -17,7 +17,7 @@ export class TimeScaleChange extends Archetype {
             PrintFormat.TimeScale,
             'auto',
             PrintColor.Yellow,
-            'left',
+            'left'
         )
     }
 }
