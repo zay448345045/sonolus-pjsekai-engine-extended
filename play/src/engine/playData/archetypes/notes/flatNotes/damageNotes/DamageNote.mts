@@ -111,4 +111,16 @@ export class DamageNote extends SlimNote {
     terminate() {
         // Noop
     }
+
+    playSlotEffects(startTime: number) {
+        const start = Math.floor(this.data.lane - this.data.size)
+        const end = Math.ceil(this.data.lane + this.data.size)
+
+        for (let i = start; i < end; i++) {
+            this.slotEffect.spawn({
+                startTime,
+                lane: i + 0.5,
+            })
+        }
+    }
 }
