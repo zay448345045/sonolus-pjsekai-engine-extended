@@ -28,7 +28,5 @@ export const effect = defineEffect({
 
         normalTrace: 'Sekai+ Normal Trace',
         criticalTrace: 'Sekai+ Critical Trace',
-        normalTraceFlick: 'Sekai+ Normal Trace Flick',
-        criticalTraceFlick: 'Sekai+ Critical Trace Flick',
     },
 })

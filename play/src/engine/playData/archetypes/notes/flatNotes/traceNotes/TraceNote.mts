@@ -18,6 +18,12 @@ export abstract class TraceNote extends SlimNote {
     }
     tickSpriteLayout = this.entityMemory(Quad)
 
+    initialize() {
+        super.initialize()
+        this.inputTime.min = this.targetTime + this.windows.great.min + input.offset
+        this.inputTime.max = this.targetTime + this.windows.great.max + input.offset
+    }
+
     updateSequential() {
         if (options.autoplay) return
 
@@ -25,6 +31,7 @@ export abstract class TraceNote extends SlimNote {
 
         claimStart(this.info.index, this.targetTime, this.hitbox, this.fullHitbox)
     }
+
     setLayout({ l, r }: { l: number; r: number }): void {
         super.setLayout({ l, r })
 

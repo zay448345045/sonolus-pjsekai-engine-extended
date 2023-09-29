@@ -23,8 +23,8 @@
         "prebuild:preview": "tsc -p ./preview --noEmit && eslint --ext .mts ./preview",
         "build": "run-p build:lib build:play build:tutorial build:preview",
         "build:lib": "tsc -p ./lib/tsconfig.json",
-        "build:play": "sonolus-cli --build ./play/sonolus-cli.config.mjs",
-        "build:tutorial": "sonolus-cli --build ./tutorial/sonolus-cli.config.mjs",
+        "build:play": "sonolus-cli --build ./play",
+        "build:tutorial": "sonolus-cli --build ./tutorial",
         "build:preview": "sonolus-cli --build ./preview",
         "lint": "eslint --ext .cts ./lib && eslint --ext .mts ./shared && eslint --ext .mts ./play && eslint --ext .mts ./tutorial",
         "lint:fix": "eslint --ext .cts ./lib --fix && eslint --ext .mts ./shared --fix && eslint --ext .mts ./play --fix && eslint --ext .mts ./tutorial --fix"

@@ -1,8 +1,9 @@
 import { options } from '../../../../../configuration/options.mjs'
 import { skin } from '../../../../skin.mjs'
+import { note } from '../../../constants.mjs'
 import { layer } from '../../../layer.mjs'
 import { scaledScreen } from '../../../shared.mjs'
-import { getZ, linearEffectLayout } from '../../../utils.mjs'
+import { getZ, linearEffectLayout, perspectiveLayout } from '../../../utils.mjs'
 import { FlickDirection } from '../flickNotes/FlickDirection.mjs'
 import { TraceFlickNote } from './TraceFlickNote.mjs'
 
@@ -16,6 +17,13 @@ export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
     }
 
     abstract directionalEffect: ParticleEffect
+
+    abstract tickSprites: {
+        tick: SkinSprite
+        fallback: SkinSprite
+    }
+
+    tickSpriteLayout = this.entityMemory(Quad)
 
     flickData = this.defineData({
         direction: { name: 'direction', type: DataType<FlickDirection> },
@@ -97,6 +105,12 @@ export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
     render() {
         super.render()
 
+        if (this.useFallbackTickSprite) {
+            this.tickSprites.fallback.draw(this.tickSpriteLayout.mul(this.y), this.z + 1, 1)
+        } else {
+            this.tickSprites.tick.draw(this.tickSpriteLayout.mul(this.y), this.z + 1, 1)
+        }
+
         if (options.markerAnimation) {
             const s = Math.mod(time.now, 0.5) / 0.5
 
@@ -126,5 +140,34 @@ export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
             0.32,
             false
         )
+    }
+
+    setLayout({ l, r }: { l: number; r: number }): void {
+        super.setLayout({ l, r })
+
+        const b = 1 + note.h
+        const t = 1 - note.h
+
+        if (this.useFallbackTickSprite) {
+            const l = this.data.lane - this.data.size
+            const r = this.data.lane + this.data.size
+
+            perspectiveLayout({ l, r, b, t }).copyTo(this.tickSpriteLayout)
+        } else {
+            const w = note.h / scaledScreen.wToH
+
+            new Rect({
+                l: this.data.lane - w,
+                r: this.data.lane + w,
+                b,
+                t,
+            })
+                .toQuad()
+                .copyTo(this.tickSpriteLayout)
+        }
+    }
+
+    get useFallbackTickSprite() {
+        return !this.tickSprites.tick.exists
     }
 }

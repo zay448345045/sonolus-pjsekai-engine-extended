@@ -19,8 +19,13 @@ export class NormalTraceFlickNote extends DirectionalTraceFlickNote {
         secondaryFallback: skin.sprites.flickNoteFallback,
     }
 
+    tickSprites = {
+        tick: skin.sprites.traceFlickTickNote,
+        fallback: skin.sprites.traceFlickTickNote,
+    }
+
     clips = {
-        perfect: effect.clips.normalTraceFlick,
+        perfect: effect.clips.flickPerfect,
     }
 
     effects = {

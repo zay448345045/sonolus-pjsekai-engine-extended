@@ -14,6 +14,11 @@ export class NormalTraceFlickNote extends TraceFlickNote {
         secondaryFallback: skin.sprites.flickNoteFallback,
     }
 
+    tickSprites = {
+        tick: skin.sprites.traceFlickTickNote,
+        fallback: skin.sprites.traceFlickTickNote,
+    }
+
     arrowSprites = {
         up: [
             skin.sprites.flickArrowUp1,

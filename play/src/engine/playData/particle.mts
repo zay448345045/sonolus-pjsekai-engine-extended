@@ -32,9 +32,6 @@ export const particle = defineParticle({
 
         // Extended
 
-        normalTraceNoteCircular: ParticleEffectName.NoteCircularTapNeutral,
-        normalTraceNoteLinear: ParticleEffectName.NoteLinearTapNeutral,
-
         damageNoteCircular: ParticleEffectName.NoteCircularTapPurple,
         damageNoteLinear: ParticleEffectName.NoteLinearTapPurple,
     },

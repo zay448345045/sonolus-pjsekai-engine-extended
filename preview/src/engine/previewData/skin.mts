@@ -78,15 +78,10 @@ export const skin = defineSkin({
 
         // Extended
 
-        normalTraceNoteLeft: 'Sekai+ Slim Note Gray Left',
-        normalTraceNoteMiddle: 'Sekai+ Slim Note Gray Middle',
-        normalTraceNoteRight: 'Sekai+ Slim Note Gray Right',
-        normalTraceNoteFallbackLeft: 'Sekai Note Neutral Left',
-        normalTraceNoteFallbackMiddle: 'Sekai Note Neutral Middle',
-        normalTraceNoteFallbackRight: 'Sekai Note Neutral Right',
-        normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadNeutral,
-        normalTraceNoteTickNote: 'Sekai Diamond Neutral',
-        normalTraceNoteTickNoteFallback: SkinSpriteName.NoteTickNeutral,
+        normalTraceNoteLeft: 'Sekai+ Slim Note Green Left',
+        normalTraceNoteMiddle: 'Sekai+ Slim Note Green Middle',
+        normalTraceNoteRight: 'Sekai+ Slim Note Green Right',
+        normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadGreen,
 
         criticalTraceNoteLeft: 'Sekai+ Slim Note Yellow Left',
         criticalTraceNoteMiddle: 'Sekai+ Slim Note Yellow Middle',
@@ -96,6 +91,8 @@ export const skin = defineSkin({
         traceFlickNoteLeft: 'Sekai+ Slim Note Red Left',
         traceFlickNoteMiddle: 'Sekai+ Slim Note Red Middle',
         traceFlickNoteRight: 'Sekai+ Slim Note Red Right',
+        traceFlickTickNote: 'Sekai Diamond Red',
+        traceFlickTickNoteFallback: SkinSpriteName.NoteTickRed,
 
         damageNoteLeft: 'Sekai+ Slim Note Purple Left',
         damageNoteMiddle: 'Sekai+ Slim Note Purple Middle',
@@ -134,7 +131,7 @@ export const line = (sprite: SkinSprite, beat: number, a: number) => {
             t: panel.h * 0.0025,
         }).add(pos),
         layer.line,
-        a,
+        a
     )
 }
 

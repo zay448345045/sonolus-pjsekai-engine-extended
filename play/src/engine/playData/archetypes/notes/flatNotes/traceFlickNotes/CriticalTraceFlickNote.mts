@@ -20,7 +20,12 @@ export class CriticalTraceFlickNote extends DirectionalTraceFlickNote {
     }
 
     clips = {
-        perfect: effect.clips.criticalTraceFlick,
+        perfect: effect.clips.criticalFlick,
+    }
+
+    tickSprites = {
+        tick: skin.sprites.criticalSlideTickNote,
+        fallback: skin.sprites.criticalSlideTickNoteFallback,
     }
 
     effects = {

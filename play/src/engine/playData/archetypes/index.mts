@@ -38,9 +38,7 @@ import { NormalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/NormalTr
 import { CriticalTraceNote } from './notes/flatNotes/traceNotes/CriticalTraceNote.mjs'
 import { NormalTraceNote } from './notes/flatNotes/traceNotes/NormalTraceNote.mjs'
 import { DamageSlotEffect } from './slotEffects/DamageSlotEffect.mjs'
-import { NormalTraceSlotEffect } from './slotEffects/NormalTraceSlotEffect.mjs'
 import { DamageSlotGlowEffect } from './slotGlowEffects/DamageSlotGlowEffect.mjs'
-import { NormalTraceSlotGlowEffect } from './slotGlowEffects/NormalTraceSlotGlowEffect.mjs'
 import { TimeScaleChange } from './timeScale/TimeScaleChange.mjs'
 import { TimeScaleGroup } from './timeScale/TimeScaleGroup.mjs'
 
@@ -92,9 +90,6 @@ export const archetypes = defineArchetypes({
 
     NormalTraceNote,
     CriticalTraceNote,
-
-    NormalTraceSlotEffect,
-    NormalTraceSlotGlowEffect,
 
     DamageNote,
 

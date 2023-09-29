@@ -14,6 +14,11 @@ export class CriticalTraceFlickNote extends TraceFlickNote {
         secondaryFallback: skin.sprites.criticalNoteFallback,
     }
 
+    tickSprites = {
+        tick: skin.sprites.criticalSlideTickNote,
+        fallback: skin.sprites.criticalSlideTickNoteFallback,
+    }
+
     arrowSprites = {
         up: [
             skin.sprites.criticalArrowUp1,

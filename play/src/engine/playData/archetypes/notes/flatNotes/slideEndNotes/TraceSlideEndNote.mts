@@ -3,7 +3,7 @@ import { effect } from '~/engine/playData/effect.mjs'
 import { particle } from '~/engine/playData/particle.mjs'
 import { skin } from '~/engine/playData/skin.mjs'
 import { options } from '../../../../../configuration/options.mjs'
-import { canTraceStart } from '../../../InputManager.mjs'
+import { claimEnd, getClaimedEnd } from '../../../InputManager.mjs'
 import { note } from '../../../constants.mjs'
 import { archetypes } from '../../../index.mjs'
 import { scaledScreen } from '../../../shared.mjs'
@@ -18,16 +18,16 @@ export class TraceSlideEndNote extends SlimNote {
         middle: skin.sprites.normalTraceNoteMiddle,
         right: skin.sprites.normalTraceNoteRight,
         primaryFallback: {
-            left: skin.sprites.normalTraceNoteFallbackLeft,
-            middle: skin.sprites.normalTraceNoteFallbackMiddle,
-            right: skin.sprites.normalTraceNoteFallbackRight,
+            left: skin.sprites.slideNoteLeft,
+            middle: skin.sprites.slideNoteMiddle,
+            right: skin.sprites.slideNoteRight,
         },
-        secondaryFallback: skin.sprites.normalTraceNoteSecondaryFallback,
+        secondaryFallback: skin.sprites.slideNoteFallback,
     }
 
     tickSprites = {
-        tick: skin.sprites.normalTraceNoteTickNote,
-        fallback: skin.sprites.normalTraceNoteTickNote,
+        tick: skin.sprites.normalSlideTickNote,
+        fallback: skin.sprites.normalSlideTickNoteFallback,
     }
 
     clips = {
@@ -36,23 +36,47 @@ export class TraceSlideEndNote extends SlimNote {
     }
 
     effects = {
-        circular: particle.effects.normalTraceNoteCircular,
-        linear: particle.effects.normalTraceNoteLinear,
+        circular: particle.effects.slideNoteCircular,
+        linear: particle.effects.slideNoteLinear,
     }
 
     windows = windows.tapNote.normal
 
     bucket = buckets.normalTraceNote
 
+    slideEndData = this.defineData({
+        slideRef: { name: 'slide', type: Number },
+    })
+
     get slotEffect() {
-        return archetypes.NormalTraceSlotEffect
+        return archetypes.SlideSlotEffect
     }
 
     get slotGlowEffect() {
-        return archetypes.NormalTraceSlotGlowEffect
+        return archetypes.SlideSlotGlowEffect
     }
 
     tickSpriteLayout = this.entityMemory(Quad)
+
+    get startSharedMemory() {
+        return archetypes.NormalSlideStartNote.sharedMemory.get(this.slideData.startRef)
+    }
+
+    updateSequential() {
+        if (options.autoplay) return
+
+        if (time.now < this.inputTime.min) return
+
+        if (this.startInfo.state !== EntityState.Despawned) return
+
+        claimEnd(
+            this.info.index,
+            this.targetTime,
+            this.hitbox,
+            this.fullHitbox,
+            this.startSharedMemory.lastActiveTime === time.now ? this.targetTime : 99999
+        )
+    }
 
     setLayout({ l, r }: { l: number; r: number }): void {
         super.setLayout({ l, r })
@@ -83,6 +107,14 @@ export class TraceSlideEndNote extends SlimNote {
         return !this.tickSprites.tick.exists
     }
 
+    get slideData() {
+        return archetypes.NormalSlideConnector.data.get(this.slideEndData.slideRef)
+    }
+
+    get startInfo() {
+        return entityInfos.get(this.slideData.startRef)
+    }
+
     globalPreprocess() {
         super.globalPreprocess()
         this.life.miss = -40
@@ -91,10 +123,19 @@ export class TraceSlideEndNote extends SlimNote {
     touch() {
         if (options.autoplay) return
 
+        if (time.now < this.inputTime.min) return
+
+        if (this.startInfo.state !== EntityState.Despawned) return
+
+        const index = getClaimedEnd(this.info.index)
+        if (index !== -1) {
+            this.complete(touches.get(index))
+            return
+        }
+
+        if (time.now < this.targetTime) return
+
         for (const touch of touches) {
-            if (touch.started && time.now < this.inputTime.min) continue
-            if (!touch.started && time.now < this.targetTime) continue
-            if (touch.started && !canTraceStart(touch)) continue
             if (!this.hitbox.contains(touch.position)) continue
 
             this.complete(touch)

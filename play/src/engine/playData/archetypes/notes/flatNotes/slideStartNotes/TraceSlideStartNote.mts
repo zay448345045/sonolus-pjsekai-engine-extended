@@ -18,16 +18,16 @@ export class TraceSlideStartNote extends SlimNote {
         middle: skin.sprites.normalTraceNoteMiddle,
         right: skin.sprites.normalTraceNoteRight,
         primaryFallback: {
-            left: skin.sprites.normalTraceNoteFallbackLeft,
-            middle: skin.sprites.normalTraceNoteFallbackMiddle,
-            right: skin.sprites.normalTraceNoteFallbackRight,
+            left: skin.sprites.slideNoteLeft,
+            middle: skin.sprites.slideNoteMiddle,
+            right: skin.sprites.slideNoteRight,
         },
-        secondaryFallback: skin.sprites.normalTraceNoteSecondaryFallback,
+        secondaryFallback: skin.sprites.slideNoteFallback,
     }
 
     tickSprites = {
-        tick: skin.sprites.normalTraceNoteTickNote,
-        fallback: skin.sprites.normalTraceNoteTickNote,
+        tick: skin.sprites.normalSlideTickNote,
+        fallback: skin.sprites.normalSlideTickNoteFallback,
     }
 
     clips = {
@@ -36,8 +36,8 @@ export class TraceSlideStartNote extends SlimNote {
     }
 
     effects = {
-        circular: particle.effects.normalTraceNoteCircular,
-        linear: particle.effects.normalTraceNoteLinear,
+        circular: particle.effects.slideNoteCircular,
+        linear: particle.effects.slideNoteLinear,
     }
 
     windows = windows.tapNote.normal
@@ -45,11 +45,11 @@ export class TraceSlideStartNote extends SlimNote {
     bucket = buckets.normalTraceNote
 
     get slotEffect() {
-        return archetypes.NormalTraceSlotEffect
+        return archetypes.SlideSlotEffect
     }
 
     get slotGlowEffect() {
-        return archetypes.NormalTraceSlotGlowEffect
+        return archetypes.SlideSlotGlowEffect
     }
 
     tickSpriteLayout = this.entityMemory(Quad)
