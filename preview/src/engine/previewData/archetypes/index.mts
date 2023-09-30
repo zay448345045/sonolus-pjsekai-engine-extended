@@ -71,8 +71,10 @@ export const archetypes = defineArchetypes({
     NormalTraceNote,
     CriticalTraceNote,
 
-    TraceSlideStartNote: NormalTraceNote,
-    TraceSlideEndNote: NormalTraceNote,
+    NormalTraceSlideStartNote: NormalTraceNote,
+    CriticalTraceSlideStartNote: CriticalTraceNote,
+    NormalTraceSlideEndNote: NormalTraceNote,
+    CriticalTraceSlideEndNote: CriticalTraceNote,
 
     DamageNote,
 

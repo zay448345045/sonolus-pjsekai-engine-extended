@@ -1,20 +1,21 @@
-import { options } from '../../../../configuration/options.mjs'
-import { Note } from '../Note.mjs'
+import { SlideTickNote } from './SlideTickNote.mjs'
+import { getAttached } from './utils.mjs'
 
-export class IgnoredSlideTickNote extends Note {
-    hasInput = false
+export class IgnoredSlideTickNote extends SlideTickNote {
+    attachedSlideTickData = this.defineData({
+        attachRef: { name: 'attach', type: Number },
+    })
 
-    leniency = 0
+    globalPreprocess() {
+        this.life.miss = -40
+    }
 
+    preprocessOrder = 1
     preprocess() {
-        if (options.mirror) this.data.lane *= -1
-    }
-
-    spawnOrder() {
-        return 100000
-    }
-
-    shouldSpawn() {
-        return false
+        super.preprocess()
+        ;({ lane: this.data.lane, size: this.data.size } = getAttached(
+            this.attachedSlideTickData.attachRef,
+            this.targetTime
+        ))
     }
 }

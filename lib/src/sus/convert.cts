@@ -15,6 +15,7 @@ export const chsLikeToUSC = (score: Score): USC => {
     const flickMods = new Map<string, 'left' | 'up' | 'right'>()
     const criticalMods = new Set<string>()
     const tickRemoveMods = new Set<string>()
+    const judgeRemoveMods = new Set<string>()
     const easeMods = new Map<string, 'in' | 'out'>()
 
     const preventSingles = new Set<string>()
@@ -85,7 +86,19 @@ export const chsLikeToUSC = (score: Score): USC => {
                 criticalMods.add(key)
                 break
             case 3:
+            case 5:
                 tickRemoveMods.add(key)
+                break
+            case 6:
+                criticalMods.add(key)
+                tickRemoveMods.add(key)
+                break
+            case 7:
+                judgeRemoveMods.add(key)
+                break
+            case 8:
+                criticalMods.add(key)
+                judgeRemoveMods.add(key)
                 break
         }
     }
@@ -122,14 +135,15 @@ export const chsLikeToUSC = (score: Score): USC => {
         switch (note.type) {
             case 1:
             case 2:
-            case 3: {
+            case 3:
+            case 5: {
                 object = {
                     type: 'single',
                     beat: note.tick / score.ticksPerBeat,
                     lane: note.lane - 8 + note.width / 2 + requests.laneOffset,
                     size: note.width / 2,
                     critical: note.type === 2,
-                    trace: note.type === 3 || tickRemoveMods.has(key),
+                    trace: [3, 5].includes(note.type) || tickRemoveMods.has(key),
 
                     timeScaleGroup: note.timeScaleGroup,
                 }
@@ -178,6 +192,9 @@ export const chsLikeToUSC = (score: Score): USC => {
 
             switch (note.type) {
                 case 1: {
+                    let judgeType: 'normal' | 'trace' | 'none' = 'normal'
+                    if (tickRemoveMods.has(key)) judgeType = 'trace'
+                    if (judgeRemoveMods.has(key)) judgeType = 'none'
                     const connection: USCConnectionStartNote = {
                         type: 'start',
                         beat,
@@ -185,7 +202,7 @@ export const chsLikeToUSC = (score: Score): USC => {
                         size,
                         critical,
                         ease: easeMods.get(key) ?? 'linear',
-                        trace: tickRemoveMods.has(key),
+                        judgeType,
 
                         timeScaleGroup,
                     }
@@ -194,13 +211,17 @@ export const chsLikeToUSC = (score: Score): USC => {
                     break
                 }
                 case 2: {
+                    let judgeType: 'normal' | 'trace' | 'none' = 'normal'
+                    if (tickRemoveMods.has(key)) judgeType = 'trace'
+                    if (judgeRemoveMods.has(key)) judgeType = 'none'
+
                     const connection: USCConnectionEndNote = {
                         type: 'end',
                         beat,
                         lane,
                         size,
                         critical,
-                        trace: tickRemoveMods.has(key),
+                        judgeType,
 
                         timeScaleGroup,
                     }

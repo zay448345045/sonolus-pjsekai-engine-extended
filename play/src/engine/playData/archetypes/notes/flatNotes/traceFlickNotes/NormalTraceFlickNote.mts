@@ -57,12 +57,4 @@ export class NormalTraceFlickNote extends DirectionalTraceFlickNote {
     windows = windows.flickNote.normal
 
     bucket = buckets.normalFlickNote
-
-    get slotEffect() {
-        return archetypes.FlickSlotEffect
-    }
-
-    get slotGlowEffect() {
-        return archetypes.FlickSlotGlowEffect
-    }
 }

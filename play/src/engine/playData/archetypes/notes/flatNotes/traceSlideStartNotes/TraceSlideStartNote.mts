@@ -1,9 +1,6 @@
 import { buckets } from '~/engine/playData/buckets.mjs'
-import { effect } from '~/engine/playData/effect.mjs'
-import { particle } from '~/engine/playData/particle.mjs'
-import { skin } from '~/engine/playData/skin.mjs'
 import { options } from '../../../../../configuration/options.mjs'
-import { claimEnd, getClaimedEnd } from '../../../InputManager.mjs'
+import { canTraceStart, disallowEmpty, disallowTraceStart } from '../../../InputManager.mjs'
 import { note } from '../../../constants.mjs'
 import { archetypes } from '../../../index.mjs'
 import { scaledScreen } from '../../../shared.mjs'
@@ -11,42 +8,38 @@ import { perspectiveLayout } from '../../../utils.mjs'
 import { windows } from '../../../windows.mjs'
 import { SlimNote } from '../SlimNote.mjs'
 
-export class TraceSlideEndNote extends SlimNote {
+export abstract class TraceSlideStartNote extends SlimNote {
     leniency = 0.75
-    sprites = {
-        left: skin.sprites.normalTraceNoteLeft,
-        middle: skin.sprites.normalTraceNoteMiddle,
-        right: skin.sprites.normalTraceNoteRight,
+    abstract sprites: {
+        left: SkinSprite
+        middle: SkinSprite
+        right: SkinSprite
         primaryFallback: {
-            left: skin.sprites.slideNoteLeft,
-            middle: skin.sprites.slideNoteMiddle,
-            right: skin.sprites.slideNoteRight,
-        },
-        secondaryFallback: skin.sprites.slideNoteFallback,
+            left: SkinSprite
+            middle: SkinSprite
+            right: SkinSprite
+        }
+        secondaryFallback: SkinSprite
     }
 
-    tickSprites = {
-        tick: skin.sprites.normalSlideTickNote,
-        fallback: skin.sprites.normalSlideTickNoteFallback,
+    abstract tickSprites: {
+        tick: SkinSprite
+        fallback: SkinSprite
     }
 
-    clips = {
-        perfect: effect.clips.normalTrace,
-        fallback: effect.clips.normalPerfect,
+    abstract clips: {
+        perfect: EffectClip
+        fallback: EffectClip
     }
 
-    effects = {
-        circular: particle.effects.slideNoteCircular,
-        linear: particle.effects.slideNoteLinear,
+    abstract effects: {
+        circular: ParticleEffect
+        linear: ParticleEffect
     }
 
     windows = windows.tapNote.normal
 
     bucket = buckets.normalTraceNote
-
-    slideEndData = this.defineData({
-        slideRef: { name: 'slide', type: Number },
-    })
 
     get slotEffect() {
         return archetypes.SlideSlotEffect
@@ -58,24 +51,14 @@ export class TraceSlideEndNote extends SlimNote {
 
     tickSpriteLayout = this.entityMemory(Quad)
 
-    get startSharedMemory() {
-        return archetypes.NormalSlideStartNote.sharedMemory.get(this.slideData.startRef)
-    }
+    sharedMemory = this.defineSharedMemory({
+        lastActiveTime: Number,
+    })
 
-    updateSequential() {
-        if (options.autoplay) return
+    preprocess() {
+        super.preprocess()
 
-        if (time.now < this.inputTime.min) return
-
-        if (this.startInfo.state !== EntityState.Despawned) return
-
-        claimEnd(
-            this.info.index,
-            this.targetTime,
-            this.hitbox,
-            this.fullHitbox,
-            this.startSharedMemory.lastActiveTime === time.now ? this.targetTime : 99999
-        )
+        this.sharedMemory.lastActiveTime = -1000
     }
 
     setLayout({ l, r }: { l: number; r: number }): void {
@@ -106,15 +89,6 @@ export class TraceSlideEndNote extends SlimNote {
     get useFallbackTickSprite() {
         return !this.tickSprites.tick.exists
     }
-
-    get slideData() {
-        return archetypes.NormalSlideConnector.data.get(this.slideEndData.slideRef)
-    }
-
-    get startInfo() {
-        return entityInfos.get(this.slideData.startRef)
-    }
-
     globalPreprocess() {
         super.globalPreprocess()
         this.life.miss = -40
@@ -123,19 +97,10 @@ export class TraceSlideEndNote extends SlimNote {
     touch() {
         if (options.autoplay) return
 
-        if (time.now < this.inputTime.min) return
-
-        if (this.startInfo.state !== EntityState.Despawned) return
-
-        const index = getClaimedEnd(this.info.index)
-        if (index !== -1) {
-            this.complete(touches.get(index))
-            return
-        }
-
-        if (time.now < this.targetTime) return
-
         for (const touch of touches) {
+            if (touch.started && time.now < this.inputTime.min) continue
+            if (!touch.started && time.now < this.targetTime) continue
+            if (touch.started && !canTraceStart(touch)) continue
             if (!this.hitbox.contains(touch.position)) continue
 
             this.complete(touch)
@@ -144,6 +109,7 @@ export class TraceSlideEndNote extends SlimNote {
     }
 
     render(): void {
+        if (time.now >= this.targetTime) return
         super.render()
 
         if (this.useFallbackTickSprite) {
@@ -154,6 +120,9 @@ export class TraceSlideEndNote extends SlimNote {
     }
 
     complete(touch: Touch) {
+        disallowEmpty(touch)
+        disallowTraceStart(touch)
+
         this.result.judgment = Judgment.Perfect
         this.result.accuracy = 0
 

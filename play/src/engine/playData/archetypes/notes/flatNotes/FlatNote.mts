@@ -48,8 +48,13 @@ export abstract class FlatNote extends Note {
         linear: ParticleEffect
     }
 
-    abstract slotEffect: SlotEffect
-    abstract slotGlowEffect: SlotGlowEffect
+    get slotEffect(): SlotEffect | undefined {
+        return undefined
+    }
+
+    get slotGlowEffect(): SlotGlowEffect | undefined {
+        return undefined
+    }
 
     abstract windows: JudgmentWindows
 
@@ -321,18 +326,22 @@ export abstract class FlatNote extends Note {
         const start = Math.floor(this.data.lane - this.data.size)
         const end = Math.ceil(this.data.lane + this.data.size)
 
-        for (let i = start; i < end; i++) {
-            this.slotEffect.spawn({
-                startTime,
-                lane: i + 0.5,
-            })
+        if (this.slotEffect) {
+            for (let i = start; i < end; i++) {
+                this.slotEffect.spawn({
+                    startTime,
+                    lane: i + 0.5,
+                })
+            }
         }
 
-        this.slotGlowEffect.spawn({
-            startTime,
-            lane: this.data.lane,
-            size: this.data.size,
-        })
+        if (this.slotGlowEffect) {
+            this.slotGlowEffect.spawn({
+                startTime,
+                lane: this.data.lane,
+                size: this.data.size,
+            })
+        }
     }
 
     playLaneEffects() {

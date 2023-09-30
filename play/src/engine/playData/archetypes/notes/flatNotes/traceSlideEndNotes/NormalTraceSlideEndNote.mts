@@ -1,11 +1,9 @@
-import { windows } from '~/engine/playData/archetypes/windows.mjs'
-import { buckets } from '~/engine/playData/buckets.mjs'
 import { effect } from '~/engine/playData/effect.mjs'
 import { particle } from '~/engine/playData/particle.mjs'
 import { skin } from '~/engine/playData/skin.mjs'
-import { TraceNote } from './TraceNote.mjs'
+import { TraceSlideEndNote } from './TraceSlideEndNote.mjs'
 
-export class NormalTraceNote extends TraceNote {
+export class NormalTraceSlideEndNote extends TraceSlideEndNote {
     sprites = {
         left: skin.sprites.normalTraceNoteLeft,
         middle: skin.sprites.normalTraceNoteMiddle,
@@ -32,8 +30,4 @@ export class NormalTraceNote extends TraceNote {
         circular: particle.effects.slideNoteCircular,
         linear: particle.effects.slideNoteLinear,
     }
-
-    windows = windows.tapNote.normal
-
-    bucket = buckets.normalTraceNote
 }

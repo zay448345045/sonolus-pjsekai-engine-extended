@@ -58,12 +58,4 @@ export class CriticalTraceFlickNote extends DirectionalTraceFlickNote {
     windows = windows.flickNote.critical
 
     bucket = buckets.criticalFlickNote
-
-    get slotEffect() {
-        return archetypes.CriticalSlotEffect
-    }
-
-    get slotGlowEffect() {
-        return archetypes.CriticalSlotGlowEffect
-    }
 }

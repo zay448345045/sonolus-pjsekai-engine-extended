@@ -30,13 +30,16 @@ import { NormalSlotGlowEffect } from './slotGlowEffects/NormalSlotGlowEffect.mjs
 import { SlideSlotGlowEffect } from './slotGlowEffects/SlideSlotGlowEffect.mjs'
 
 import { DamageNote } from './notes/flatNotes/damageNotes/DamageNote.mjs'
-import { TraceSlideEndNote } from './notes/flatNotes/slideEndNotes/TraceSlideEndNote.mjs'
-import { TraceSlideStartNote } from './notes/flatNotes/slideStartNotes/TraceSlideStartNote.mjs'
+import { HiddenSlideStartNote } from './notes/flatNotes/slideStartNotes/HiddenSlideStartNote.mjs'
 import { CriticalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/CriticalTraceFlickNote.mjs'
 import { NonDirectionalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/NonDirectonalTraceFlickNote.mjs'
 import { NormalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/NormalTraceFlickNote.mjs'
 import { CriticalTraceNote } from './notes/flatNotes/traceNotes/CriticalTraceNote.mjs'
 import { NormalTraceNote } from './notes/flatNotes/traceNotes/NormalTraceNote.mjs'
+import { CriticalTraceSlideEndNote } from './notes/flatNotes/traceSlideEndNotes/CriticalTraceSlideEndNote.mjs'
+import { NormalTraceSlideEndNote } from './notes/flatNotes/traceSlideEndNotes/NormalTraceSlideEndNote.mjs'
+import { CriticalTraceSlideStartNote } from './notes/flatNotes/traceSlideStartNotes/CriticalTraceSlideStartNote.mjs'
+import { NormalTraceSlideStartNote } from './notes/flatNotes/traceSlideStartNotes/NormalTraceSlideStartNote.mjs'
 import { DamageSlotEffect } from './slotEffects/DamageSlotEffect.mjs'
 import { DamageSlotGlowEffect } from './slotGlowEffects/DamageSlotGlowEffect.mjs'
 import { TimeScaleChange } from './timeScale/TimeScaleChange.mjs'
@@ -100,8 +103,13 @@ export const archetypes = defineArchetypes({
     CriticalTraceFlickNote,
     NonDirectionalTraceFlickNote,
 
-    TraceSlideStartNote,
-    TraceSlideEndNote,
+    HiddenSlideStartNote,
+
+    NormalTraceSlideStartNote,
+    CriticalTraceSlideStartNote,
+
+    NormalTraceSlideEndNote,
+    CriticalTraceSlideEndNote,
 
     TimeScaleGroup,
     TimeScaleChange,

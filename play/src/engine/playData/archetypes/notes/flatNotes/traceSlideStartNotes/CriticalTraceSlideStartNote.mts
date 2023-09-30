@@ -1,12 +1,9 @@
-import { buckets } from '../../../../buckets.mjs'
-import { effect } from '../../../../effect.mjs'
-import { particle } from '../../../../particle.mjs'
-import { skin } from '../../../../skin.mjs'
-import { archetypes } from '../../../index.mjs'
-import { windows } from '../../../windows.mjs'
-import { TraceNote } from './TraceNote.mjs'
+import { effect } from '~/engine/playData/effect.mjs'
+import { particle } from '~/engine/playData/particle.mjs'
+import { skin } from '~/engine/playData/skin.mjs'
+import { TraceSlideStartNote } from './TraceSlideStartNote.mjs'
 
-export class CriticalTraceNote extends TraceNote {
+export class CriticalTraceSlideStartNote extends TraceSlideStartNote {
     sprites = {
         left: skin.sprites.criticalTraceNoteLeft,
         middle: skin.sprites.criticalTraceNoteMiddle,
@@ -33,8 +30,4 @@ export class CriticalTraceNote extends TraceNote {
         circular: particle.effects.criticalNoteCircular,
         linear: particle.effects.criticalNoteLinear,
     }
-
-    windows = windows.tapNote.critical
-
-    bucket = buckets.criticalTapNote
 }

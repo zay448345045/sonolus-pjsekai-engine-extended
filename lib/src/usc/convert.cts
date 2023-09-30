@@ -315,12 +315,25 @@ const slide: Handler<USCSlideNote> = (object, append) => {
         if (i === 0) {
             if (connection.type !== 'start') continue
 
+            let archetype: string
+            if (connection.judgeType === 'none') {
+                archetype = 'HiddenSlideStartNote'
+            } else if (connection.judgeType === 'trace') {
+                if (connection.critical) {
+                    archetype = 'CriticalTraceSlideStartNote'
+                } else {
+                    archetype = 'NormalTraceSlideStartNote'
+                }
+            } else {
+                if (connection.critical) {
+                    archetype = 'CriticalSlideStartNote'
+                } else {
+                    archetype = 'NormalSlideStartNote'
+                }
+            }
+
             const ci: ConnectionIntermediate = {
-                archetype: connection.trace
-                    ? 'TraceSlideStartNote'
-                    : connection.critical
-                    ? 'CriticalSlideStartNote'
-                    : 'NormalSlideStartNote',
+                archetype,
                 data: {
                     [EngineArchetypeDataName.Beat]: connection.beat,
                     lane: connection.lane,
@@ -339,28 +352,54 @@ const slide: Handler<USCSlideNote> = (object, append) => {
 
         if (i === connections.length - 1) {
             if (connection.type !== 'end') continue
+            let ci: ConnectionIntermediate
 
-            const ci: ConnectionIntermediate = {
-                archetype: connection.trace
-                    ? 'TraceSlideEndNote'
-                    : connection.critical
-                    ? 'CriticalSlideEndNote'
-                    : 'NormalSlideEndNote',
-                data: {
-                    [EngineArchetypeDataName.Beat]: connection.beat,
-                    lane: connection.lane,
-                    size: connection.size,
-                },
-                sim: true,
+            if (connection.judgeType === 'none') {
+                ci = {
+                    archetype: 'HiddenSlideTickNote',
+                    data: {
+                        [EngineArchetypeDataName.Beat]: connection.beat,
+                        lane: connection.lane,
+                        size: connection.size,
+                    },
+                    sim: false,
 
-                timeScaleGroup: connection.timeScaleGroup,
-            }
+                    timeScaleGroup: connection.timeScaleGroup,
+                }
+            } else {
+                let archetype: string
+                if (connection.judgeType === 'trace') {
+                    if (connection.critical) {
+                        archetype = 'CriticalTraceSlideEndNote'
+                    } else {
+                        archetype = 'NormalTraceSlideEndNote'
+                    }
+                } else {
+                    if (connection.critical) {
+                        archetype = 'CriticalSlideEndNote'
+                    } else {
+                        archetype = 'NormalSlideEndNote'
+                    }
+                }
 
-            if ('direction' in connection) {
-                ci.archetype = connection.critical
-                    ? 'CriticalSlideEndFlickNote'
-                    : 'NormalSlideEndFlickNote'
-                ci.data.direction = directions[connection.direction]
+                ci = {
+                    archetype,
+                    data: {
+                        [EngineArchetypeDataName.Beat]: connection.beat,
+                        lane: connection.lane,
+                        size: connection.size,
+                    },
+                    sim: true,
+
+                    timeScaleGroup: connection.timeScaleGroup,
+                }
+
+                if ('direction' in connection) {
+                    ci.archetype = connection.critical
+                        ? 'CriticalSlideEndFlickNote'
+                        : 'NormalSlideEndFlickNote'
+                    ci.data.direction = directions[connection.direction]
+                }
             }
 
             cis.push(ci)
@@ -372,7 +411,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
         switch (connection.type) {
             case 'tick': {
                 const ci: ConnectionIntermediate = {
-                    archetype: 'IgnoredSlideTickNote',
+                    archetype: 'HiddenSlideTickNote',
                     data: {
                         [EngineArchetypeDataName.Beat]: connection.beat,
                         lane: connection.lane,
@@ -395,7 +434,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             }
             case 'attach': {
                 const ci: ConnectionIntermediate = {
-                    archetype: 'HiddenSlideTickNote',
+                    archetype: 'IgnoredSlideTickNote',
                     data: {
                         [EngineArchetypeDataName.Beat]: connection.beat,
                     },

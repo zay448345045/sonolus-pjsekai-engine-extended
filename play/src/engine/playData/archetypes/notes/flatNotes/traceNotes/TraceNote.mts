@@ -11,7 +11,7 @@ import { perspectiveLayout } from '~/engine/playData/archetypes/utils.mjs'
 import { SlimNote } from '../SlimNote.mjs'
 
 export abstract class TraceNote extends SlimNote {
-    leniency = 0.75
+    leniency = 1
     abstract tickSprites: {
         tick: SkinSprite
         fallback: SkinSprite
