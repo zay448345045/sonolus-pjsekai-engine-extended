@@ -137,6 +137,7 @@ const analyze = (chs: Buffer): Score => {
         offset,
         meta,
         slides,
+        dummySlides: [],
         tapNotes,
         ticksPerBeat,
         timeScaleChanges,

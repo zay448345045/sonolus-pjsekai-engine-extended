@@ -21,7 +21,7 @@
         "prebuild:play": "tsc -p ./play --noEmit && eslint --ext .mts ./play",
         "prebuild:tutorial": "tsc -p ./tutorial --noEmit && eslint --ext .mts ./tutorial",
         "prebuild:preview": "tsc -p ./preview --noEmit && eslint --ext .mts ./preview",
-        "build": "run-p build:lib build:play build:tutorial build:preview",
+        "build": "run-s build:lib build:play build:tutorial build:preview",
         "build:lib": "tsc -p ./lib/tsconfig.json",
         "build:play": "sonolus-cli --build ./play",
         "build:tutorial": "sonolus-cli --build ./tutorial",

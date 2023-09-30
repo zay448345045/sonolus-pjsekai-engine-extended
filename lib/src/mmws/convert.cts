@@ -65,7 +65,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
             ease: mmwsEaseToUSCEase[hold.start.ease],
             lane: laneToUSCLane(hold.start),
             size: hold.start.width / 2,
-            trace: false,
+            judgeType: 'normal',
         }
         const uscEndNote: USCConnectionEndNote = {
             type: 'end',
@@ -74,7 +74,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
             critical: hold.end.critical || hold.critical,
             lane: laneToUSCLane(hold.end),
             size: hold.end.width / 2,
-            trace: false,
+            judgeType: 'normal',
         }
         if (hold.end.flickType !== 'none') {
             uscEndNote.direction = hold.end.flickType
@@ -82,6 +82,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
 
         const uscSlide: USCSlideNote = {
             type: 'slide',
+            dummy: false,
             critical: hold.critical,
             connections: [
                 uscStartNote,
