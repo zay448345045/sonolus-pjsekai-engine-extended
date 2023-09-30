@@ -85,6 +85,9 @@ export const chsLikeToUSC = (score: Score): USC => {
             case 2:
                 criticalMods.add(key)
                 break
+            case 4:
+                judgeRemoveMods.add(key)
+                break
             case 3:
             case 5:
                 tickRemoveMods.add(key)
@@ -136,14 +139,15 @@ export const chsLikeToUSC = (score: Score): USC => {
             case 1:
             case 2:
             case 3:
-            case 5: {
+            case 5:
+            case 6: {
                 object = {
                     type: 'single',
                     beat: note.tick / score.ticksPerBeat,
                     lane: note.lane - 8 + note.width / 2 + requests.laneOffset,
                     size: note.width / 2,
-                    critical: note.type === 2,
-                    trace: [3, 5].includes(note.type) || tickRemoveMods.has(key),
+                    critical: [2, 6].includes(note.type) || criticalMods.has(key),
+                    trace: [3, 5, 6].includes(note.type) || tickRemoveMods.has(key),
 
                     timeScaleGroup: note.timeScaleGroup,
                 }
@@ -170,120 +174,126 @@ export const chsLikeToUSC = (score: Score): USC => {
         objects.push(object)
     }
 
-    for (const slide of score.slides) {
-        const startNote = slide.find(({ type }) => type === 1 || type === 2)
-        if (!startNote) continue
+    for (const [isDummy, slides] of [
+        [false, score.slides],
+        [true, score.dummySlides],
+    ] as const) {
+        for (const slide of slides) {
+            const startNote = slide.find(({ type }) => type === 1 || type === 2)
+            if (!startNote) continue
 
-        const object: USCSlideNote = {
-            type: 'slide',
-            critical: criticalMods.has(getKey(startNote)),
-            connections: [] as never,
-        }
+            const object: USCSlideNote = {
+                type: 'slide',
+                dummy: isDummy || tickRemoveMods.has(getKey(startNote)),
+                critical: criticalMods.has(getKey(startNote)),
+                connections: [] as never,
+            }
 
-        for (const note of slide) {
-            const key = getKey(note)
+            for (const note of slide) {
+                const key = getKey(note)
 
-            const beat = note.tick / score.ticksPerBeat
-            const lane = note.lane - 8 + note.width / 2 + requests.laneOffset
-            const size = note.width / 2
-            const timeScaleGroup = note.timeScaleGroup
-            const critical = object.critical || criticalMods.has(key)
-            const ease = easeMods.get(key) ?? 'linear'
+                const beat = note.tick / score.ticksPerBeat
+                const lane = note.lane - 8 + note.width / 2 + requests.laneOffset
+                const size = note.width / 2
+                const timeScaleGroup = note.timeScaleGroup
+                const critical = object.critical || criticalMods.has(key)
+                const ease = easeMods.get(key) ?? 'linear'
 
-            switch (note.type) {
-                case 1: {
-                    let judgeType: 'normal' | 'trace' | 'none' = 'normal'
-                    if (tickRemoveMods.has(key)) judgeType = 'trace'
-                    if (judgeRemoveMods.has(key)) judgeType = 'none'
-                    const connection: USCConnectionStartNote = {
-                        type: 'start',
-                        beat,
-                        lane,
-                        size,
-                        critical,
-                        ease: easeMods.get(key) ?? 'linear',
-                        judgeType,
-
-                        timeScaleGroup,
-                    }
-
-                    object.connections.push(connection)
-                    break
-                }
-                case 2: {
-                    let judgeType: 'normal' | 'trace' | 'none' = 'normal'
-                    if (tickRemoveMods.has(key)) judgeType = 'trace'
-                    if (judgeRemoveMods.has(key)) judgeType = 'none'
-
-                    const connection: USCConnectionEndNote = {
-                        type: 'end',
-                        beat,
-                        lane,
-                        size,
-                        critical,
-                        judgeType,
-
-                        timeScaleGroup,
-                    }
-
-                    const flickMod = flickMods.get(key)
-                    if (flickMod) connection.direction = flickMod
-
-                    object.connections.push(connection)
-                    break
-                }
-                case 3: {
-                    if (tickRemoveMods.has(key)) {
-                        const connection: USCConnectionAttachNote = {
-                            type: 'attach',
+                switch (note.type) {
+                    case 1: {
+                        let judgeType: 'normal' | 'trace' | 'none' = 'normal'
+                        if (tickRemoveMods.has(key)) judgeType = 'trace'
+                        if (judgeRemoveMods.has(key)) judgeType = 'none'
+                        const connection: USCConnectionStartNote = {
+                            type: 'start',
                             beat,
+                            lane,
+                            size,
                             critical,
+                            ease: easeMods.get(key) ?? 'linear',
+                            judgeType,
+
                             timeScaleGroup,
                         }
 
                         object.connections.push(connection)
-                    } else {
+                        break
+                    }
+                    case 2: {
+                        let judgeType: 'normal' | 'trace' | 'none' = 'normal'
+                        if (tickRemoveMods.has(key)) judgeType = 'trace'
+                        if (judgeRemoveMods.has(key)) judgeType = 'none'
+
+                        const connection: USCConnectionEndNote = {
+                            type: 'end',
+                            beat,
+                            lane,
+                            size,
+                            critical,
+                            judgeType,
+
+                            timeScaleGroup,
+                        }
+
+                        const flickMod = flickMods.get(key)
+                        if (flickMod) connection.direction = flickMod
+
+                        object.connections.push(connection)
+                        break
+                    }
+                    case 3: {
+                        if (tickRemoveMods.has(key)) {
+                            const connection: USCConnectionAttachNote = {
+                                type: 'attach',
+                                beat,
+                                critical,
+                                timeScaleGroup,
+                            }
+
+                            object.connections.push(connection)
+                        } else {
+                            const connection: USCConnectionTickNote = {
+                                type: 'tick',
+                                beat,
+                                lane,
+                                size,
+                                critical,
+                                ease,
+
+                                timeScaleGroup,
+                            }
+
+                            object.connections.push(connection)
+                        }
+                        break
+                    }
+                    case 5: {
+                        if (tickRemoveMods.has(key)) break
+
                         const connection: USCConnectionTickNote = {
                             type: 'tick',
                             beat,
                             lane,
                             size,
-                            critical,
                             ease,
 
                             timeScaleGroup,
                         }
 
                         object.connections.push(connection)
+                        break
                     }
-                    break
-                }
-                case 5: {
-                    if (tickRemoveMods.has(key)) break
-
-                    const connection: USCConnectionTickNote = {
-                        type: 'tick',
-                        beat,
-                        lane,
-                        size,
-                        ease,
-
-                        timeScaleGroup,
-                    }
-
-                    object.connections.push(connection)
-                    break
                 }
             }
+
+            objects.push(object)
+
+            const key = getKey(startNote)
+            const dupe = dedupeSlides.get(key)
+            if (dupe) objects.splice(objects.indexOf(dupe), 1)
+
+            dedupeSlides.set(key, object)
         }
-
-        objects.push(object)
-
-        const key = getKey(startNote)
-        const dupe = dedupeSlides.get(key)
-        if (dupe) objects.splice(objects.indexOf(dupe), 1)
-
-        dedupeSlides.set(key, object)
     }
 
     return {

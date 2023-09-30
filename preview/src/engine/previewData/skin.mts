@@ -78,21 +78,24 @@ export const skin = defineSkin({
 
         // Extended
 
-        normalTraceNoteLeft: 'Sekai+ Slim Note Green Left',
-        normalTraceNoteMiddle: 'Sekai+ Slim Note Green Middle',
-        normalTraceNoteRight: 'Sekai+ Slim Note Green Right',
+        normalTraceNoteLeft: 'Sekai Slim Note Green Left',
+        normalTraceNoteMiddle: 'Sekai Slim Note Green Middle',
+        normalTraceNoteRight: 'Sekai Slim Note Green Right',
         normalTraceNoteSecondaryFallback: SkinSpriteName.NoteHeadGreen,
 
-        criticalTraceNoteLeft: 'Sekai+ Slim Note Yellow Left',
-        criticalTraceNoteMiddle: 'Sekai+ Slim Note Yellow Middle',
-        criticalTraceNoteRight: 'Sekai+ Slim Note Yellow Right',
+        criticalTraceNoteLeft: 'Sekai Slim Note Yellow Left',
+        criticalTraceNoteMiddle: 'Sekai Slim Note Yellow Middle',
+        criticalTraceNoteRight: 'Sekai Slim Note Yellow Right',
         criticalTraceNoteFallback: SkinSpriteName.NoteHeadYellow,
 
-        traceFlickNoteLeft: 'Sekai+ Slim Note Red Left',
-        traceFlickNoteMiddle: 'Sekai+ Slim Note Red Middle',
-        traceFlickNoteRight: 'Sekai+ Slim Note Red Right',
+        traceFlickNoteLeft: 'Sekai Slim Note Red Left',
+        traceFlickNoteMiddle: 'Sekai Slim Note Red Middle',
+        traceFlickNoteRight: 'Sekai Slim Note Red Right',
         traceFlickTickNote: 'Sekai Diamond Red',
         traceFlickTickNoteFallback: SkinSpriteName.NoteTickRed,
+
+        dummySlideGreen: 'Sekai+ Dummy Slide Green',
+        dummySlideYellow: 'Sekai+ Dummy Slide Yellow',
 
         damageNoteLeft: 'Sekai+ Slim Note Purple Left',
         damageNoteMiddle: 'Sekai+ Slim Note Purple Middle',

@@ -316,8 +316,10 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.type !== 'start') continue
 
             let archetype: string
-            if (connection.judgeType === 'none') {
+            let sim = true
+            if (object.dummy || connection.judgeType === 'none') {
                 archetype = 'HiddenSlideStartNote'
+                sim = false
             } else if (connection.judgeType === 'trace') {
                 if (connection.critical) {
                     archetype = 'CriticalTraceSlideStartNote'
@@ -339,7 +341,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                     lane: connection.lane,
                     size: connection.size,
                 },
-                sim: true,
+                sim,
                 ease: connection.ease,
 
                 timeScaleGroup: connection.timeScaleGroup,
@@ -354,7 +356,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.type !== 'end') continue
             let ci: ConnectionIntermediate
 
-            if (connection.judgeType === 'none') {
+            if (object.dummy || connection.judgeType === 'none') {
                 ci = {
                     archetype: 'HiddenSlideTickNote',
                     data: {
@@ -468,10 +470,18 @@ const slide: Handler<USCSlideNote> = (object, append) => {
         const head = joints[i - 1]
         if (!head.ease) throw new Error('Unexpected missing ease')
 
+        let archetype: string
+        if (object.dummy) {
+            archetype = object.critical ? 'YellowDummySlide' : 'GreenDummySlide'
+        } else {
+            archetype = object.critical ? 'CriticalSlideConnector' : 'NormalSlideConnector'
+        }
+
         connectors.push({
-            archetype: object.critical ? 'CriticalSlideConnector' : 'NormalSlideConnector',
+            archetype,
             data: {
                 start,
+                end: ends[0],
                 head,
                 tail: joint,
                 ease: eases[head.ease],
@@ -513,18 +523,20 @@ const handlers: {
 const getConnections = (object: USCSlideNote) => {
     const connections = [...object.connections]
 
-    const beats = connections.map(({ beat }) => beat).sort((a, b) => a - b)
+    if (!object.dummy) {
+        const beats = connections.map(({ beat }) => beat).sort((a, b) => a - b)
 
-    const min = beats[0]
-    const max = beats[beats.length - 1]
+        const min = beats[0]
+        const max = beats[beats.length - 1]
 
-    const start = Math.max(Math.ceil(min / 0.5) * 0.5, Math.floor(min / 0.5 + 1) * 0.5)
+        const start = Math.max(Math.ceil(min / 0.5) * 0.5, Math.floor(min / 0.5 + 1) * 0.5)
 
-    for (let beat = start; beat < max; beat += 0.5) {
-        connections.push({
-            type: 'attach',
-            beat,
-        })
+        for (let beat = start; beat < max; beat += 0.5) {
+            connections.push({
+                type: 'attach',
+                beat,
+            })
+        }
     }
 
     const startStep = connections.find(({ type }) => type === 'start')

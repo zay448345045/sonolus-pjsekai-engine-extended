@@ -26,7 +26,7 @@ export const effect = defineEffect({
 
         // Extended
 
-        normalTrace: 'Sekai+ Normal Trace',
-        criticalTrace: 'Sekai+ Critical Trace',
+        normalTrace: 'Sekai Normal Trace',
+        criticalTrace: 'Sekai Critical Trace',
     },
 })

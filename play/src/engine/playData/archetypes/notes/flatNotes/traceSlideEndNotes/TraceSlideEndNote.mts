@@ -56,14 +56,17 @@ export abstract class TraceSlideEndNote extends SlimNote {
 
         if (time.now < this.inputTime.min) return
 
-        if (this.startInfo.state !== EntityState.Despawned) return
+        // if (this.startInfo.state !== EntityState.Despawned) return
 
         claimEnd(
             this.info.index,
             this.targetTime,
             this.hitbox,
             this.fullHitbox,
-            this.startSharedMemory.lastActiveTime === time.now ? this.targetTime : 99999
+
+            Math.abs(this.startSharedMemory.lastActiveTime - time.now) <= time.delta
+                ? this.targetTime
+                : 99999
         )
     }
 
@@ -114,7 +117,7 @@ export abstract class TraceSlideEndNote extends SlimNote {
 
         if (time.now < this.inputTime.min) return
 
-        if (this.startInfo.state !== EntityState.Despawned) return
+        // if (this.startInfo.state !== EntityState.Despawned) return
 
         const index = getClaimedEnd(this.info.index)
         if (index !== -1) {

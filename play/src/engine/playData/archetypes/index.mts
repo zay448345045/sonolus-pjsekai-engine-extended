@@ -29,6 +29,8 @@ import { FlickSlotGlowEffect } from './slotGlowEffects/FlickSlotGlowEffect.mjs'
 import { NormalSlotGlowEffect } from './slotGlowEffects/NormalSlotGlowEffect.mjs'
 import { SlideSlotGlowEffect } from './slotGlowEffects/SlideSlotGlowEffect.mjs'
 
+import { GreenDummySlide } from './dummySlides/GreenDummySlide.mjs'
+import { YellowDummySlide } from './dummySlides/YellowDummySlide.mjs'
 import { DamageNote } from './notes/flatNotes/damageNotes/DamageNote.mjs'
 import { HiddenSlideStartNote } from './notes/flatNotes/slideStartNotes/HiddenSlideStartNote.mjs'
 import { CriticalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/CriticalTraceFlickNote.mjs'
@@ -113,4 +115,7 @@ export const archetypes = defineArchetypes({
 
     TimeScaleGroup,
     TimeScaleChange,
+
+    GreenDummySlide,
+    YellowDummySlide,
 })

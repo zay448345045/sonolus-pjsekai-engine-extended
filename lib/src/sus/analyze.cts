@@ -41,6 +41,7 @@ export type Score = {
     tapNotes: NoteObject[]
     directionalNotes: NoteObject[]
     slides: NoteObject[][]
+    dummySlides: NoteObject[][]
     meta: Meta
 }
 
@@ -66,6 +67,7 @@ export const analyze = (sus: string): Score => {
     const tapNotes: NoteObject[] = []
     const directionalNotes: NoteObject[] = []
     const streams = new Map<string, NoteObject[]>()
+    const dummyStreams = new Map<string, NoteObject[]>()
 
     for (const [, timeScaleGroup] of timeScaleGroupChanges) {
         if (timeScaleGroups.has(timeScaleGroup)) continue
@@ -133,6 +135,19 @@ export const analyze = (sus: string): Score => {
             return
         }
 
+        // Dummy Streams
+        if (header.length === 6 && header[3] === '9') {
+            const channel = header[5]
+            const stream = dummyStreams.get(channel)
+
+            if (stream) {
+                stream.push(...toNotes(line, measureOffset, timeScaleGroup, toTick))
+            } else {
+                dummyStreams.set(channel, toNotes(line, measureOffset, timeScaleGroup, toTick))
+            }
+            return
+        }
+
         // Directional Notes
         if (header.length === 5 && header[3] === '5') {
             directionalNotes.push(...toNotes(line, measureOffset, timeScaleGroup, toTick))
@@ -141,6 +156,7 @@ export const analyze = (sus: string): Score => {
     })
 
     const slides = [...streams.values()].map(toSlides).flat()
+    const dummySlides = [...dummyStreams.values()].map(toSlides).flat()
 
     return {
         offset,
@@ -150,6 +166,7 @@ export const analyze = (sus: string): Score => {
         tapNotes,
         directionalNotes,
         slides,
+        dummySlides,
         meta,
     }
 }

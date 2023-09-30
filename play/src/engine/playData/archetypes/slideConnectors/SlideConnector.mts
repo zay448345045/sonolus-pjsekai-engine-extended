@@ -11,7 +11,6 @@ import {
     getHitbox,
     getScheduleSFXTime,
     getZ,
-    linearEffectLayout,
     perspectiveLayout,
     scaledTimeToEarliestTime,
     timeToScaledTime,
@@ -60,11 +59,17 @@ export abstract class SlideConnector extends Archetype {
         startRef: { name: 'start', type: Number },
         headRef: { name: 'head', type: Number },
         tailRef: { name: 'tail', type: Number },
+        endRef: { name: 'end', type: Number },
         ease: { name: 'ease', type: DataType<EaseType> },
     })
 
     start = this.entityMemory({
         time: Number,
+        scaledTime: Number,
+    })
+    end = this.entityMemory({
+        time: Number,
+        scaledTime: Number,
     })
     head = this.entityMemory({
         time: Number,
@@ -125,18 +130,11 @@ export abstract class SlideConnector extends Archetype {
             scaledTimeToEarliestTime(spawnTime, this.headData.timeScaleGroup),
             scaledTimeToEarliestTime(spawnTime, this.tailData.timeScaleGroup)
         )
-    }
 
-    spawnOrder() {
-        return 1000 + this.spawnTime
-    }
-
-    shouldSpawn() {
-        return time.now >= this.spawnTime
-    }
-
-    initialize() {
         this.start.time = bpmChanges.at(this.startData.beat).time
+        this.start.scaledTime = timeToScaledTime(this.start.time, this.startData.timeScaleGroup)
+        this.end.time = bpmChanges.at(this.endData.beat).time
+        this.end.scaledTime = timeToScaledTime(this.end.time, this.endData.timeScaleGroup)
 
         this.head.lane = this.headData.lane
         this.head.l = this.head.lane - this.headData.size
@@ -154,6 +152,14 @@ export abstract class SlideConnector extends Archetype {
         this.connector.z = getZ(layer.note.connector, this.head.time, this.headData.lane)
 
         this.slide.z = getZ(layer.note.slide, this.head.time, this.headData.lane)
+    }
+
+    spawnOrder() {
+        return 1000 + this.spawnTime
+    }
+
+    shouldSpawn() {
+        return time.now >= this.spawnTime
     }
 
     updateSequentialOrder = 1
@@ -184,9 +190,6 @@ export abstract class SlideConnector extends Archetype {
 
             if (this.shouldPlayCircularEffect && !this.effectInstanceIds.circular)
                 this.spawnCircularEffect()
-
-            if (this.shouldPlayLinearEffect && !this.effectInstanceIds.linear)
-                this.spawnLinearEffect()
         }
 
         if (this.startSharedMemory.lastActiveTime === time.now) return
@@ -195,8 +198,6 @@ export abstract class SlideConnector extends Archetype {
 
         if (this.shouldPlayCircularEffect && this.effectInstanceIds.circular)
             this.destroyCircularEffect()
-
-        if (this.shouldPlayLinearEffect && this.effectInstanceIds.linear) this.destroyLinearEffect()
     }
 
     updateParallel() {
@@ -220,12 +221,7 @@ export abstract class SlideConnector extends Archetype {
         if (this.shouldScheduleCircularEffect && !this.effectInstanceIds.circular)
             this.spawnCircularEffect()
 
-        if (this.shouldScheduleLinearEffect && !this.effectInstanceIds.linear)
-            this.spawnLinearEffect()
-
         if (this.effectInstanceIds.circular) this.updateCircularEffect()
-
-        if (this.effectInstanceIds.linear) this.updateLinearEffect()
 
         this.renderSlide()
     }
@@ -238,16 +234,14 @@ export abstract class SlideConnector extends Archetype {
             this.effectInstanceIds.circular
         )
             this.destroyCircularEffect()
-
-        if (
-            (this.shouldScheduleLinearEffect || this.shouldPlayLinearEffect) &&
-            this.effectInstanceIds.linear
-        )
-            this.destroyLinearEffect()
     }
 
     get startData() {
         return this.slideStartNote.data.get(this.data.startRef)
+    }
+
+    get endData() {
+        return this.slideStartNote.data.get(this.data.endRef)
     }
 
     get startSharedMemory() {
@@ -285,14 +279,6 @@ export abstract class SlideConnector extends Archetype {
 
     get shouldPlayCircularEffect() {
         return options.noteEffectEnabled && this.effects.circular.exists && !options.autoplay
-    }
-
-    get shouldScheduleLinearEffect() {
-        return options.noteEffectEnabled && this.effects.linear.exists && options.autoplay
-    }
-
-    get shouldPlayLinearEffect() {
-        return options.noteEffectEnabled && this.effects.linear.exists && !options.autoplay
     }
 
     get useFallbackConnectorSprites() {
@@ -354,28 +340,6 @@ export abstract class SlideConnector extends Archetype {
         this.effectInstanceIds.circular = 0
     }
 
-    spawnLinearEffect() {
-        this.effectInstanceIds.linear = this.effects.linear.spawn(new Quad(), 1, true)
-    }
-
-    updateLinearEffect() {
-        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
-        const lane = this.getLane(s)
-
-        particle.effects.move(
-            this.effectInstanceIds.linear,
-            linearEffectLayout({
-                lane,
-                shear: 0,
-            })
-        )
-    }
-
-    destroyLinearEffect() {
-        particle.effects.destroy(this.effectInstanceIds.linear)
-        this.effectInstanceIds.linear = 0
-    }
-
     renderConnector() {
         if (
             options.hidden > 0 &&
@@ -395,20 +359,15 @@ export abstract class SlideConnector extends Archetype {
 
         const hiddenDuration = options.hidden > 0 ? Note.duration * options.hidden : 0
 
+        const now = timeToScaledTime(time.now, this.headData.timeScaleGroup)
+
         const visibleTime = {
             min: Math.max(
                 this.head.scaledTime,
-                time.now > this.head.time
-                    ? timeToScaledTime(time.now, this.headData.timeScaleGroup) + hiddenDuration
-                    : timeToScaledTime(time.now, this.headData.timeScaleGroup) - Note.duration * 1.5
+                time.now > this.head.time ? now + hiddenDuration : now - Note.duration * 1.5
             ),
-            max: Math.min(
-                this.tail.scaledTime,
-                timeToScaledTime(time.now, this.headData.timeScaleGroup) + Note.duration
-            ),
+            max: Math.min(this.tail.scaledTime, now + Note.duration),
         }
-
-        timeToScaledTime(time.now, this.headData.timeScaleGroup)
 
         for (let i = 0; i < 10; i++) {
             const scaledTime = {
@@ -422,16 +381,8 @@ export abstract class SlideConnector extends Archetype {
             }
 
             const y = {
-                min: Note.approach(
-                    scaledTime.min - Note.duration,
-                    scaledTime.min,
-                    timeToScaledTime(time.now, this.headData.timeScaleGroup)
-                ),
-                max: Note.approach(
-                    scaledTime.max - Note.duration,
-                    scaledTime.max,
-                    timeToScaledTime(time.now, this.headData.timeScaleGroup)
-                ),
+                min: Note.approach(scaledTime.min - Note.duration, scaledTime.min, now),
+                max: Note.approach(scaledTime.max - Note.duration, scaledTime.max, now),
             }
 
             const layout = {

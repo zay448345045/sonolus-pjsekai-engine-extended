@@ -1,6 +1,8 @@
-import { SlideTickNote } from './SlideTickNote.mjs'
+import { options } from '../../../../configuration/options.mjs'
+import { Note } from '../Note.mjs'
 
-export class HiddenSlideTickNote extends SlideTickNote {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    preprocess() {}
+export class HiddenSlideTickNote extends Note {
+    preprocess() {
+        if (options.mirror) this.data.lane *= -1
+    }
 }

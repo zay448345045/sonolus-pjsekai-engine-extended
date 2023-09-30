@@ -23,6 +23,8 @@ import { NormalAttachedSlideTickNote } from './notes/slideTickNotes/visibleSlide
 import { CriticalSlideConnector } from './slideConnectors/CriticalSlideConnector.mjs'
 import { NormalSlideConnector } from './slideConnectors/NormalSlideConnector.mjs'
 
+import { GreenDummySlide } from './dummySlides/GreenDummySlide.mjs'
+import { YellowDummySlide } from './dummySlides/YellowDummySlide.mjs'
 import { DamageNote } from './notes/flatNotes/damageNotes/DamageNote.mjs'
 import { CriticalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/CriticalTraceFlickNote.mjs'
 import { NonDirectionalTraceFlickNote } from './notes/flatNotes/traceFlickNotes/NonDirectionalTraceFlickNote.mjs'
@@ -53,11 +55,11 @@ export const archetypes = defineArchetypes({
     NormalSlideEndFlickNote,
     CriticalSlideEndFlickNote,
 
-    IgnoredSlideTickNote,
+    HiddenSlideTickNote,
     NormalSlideTickNote,
     CriticalSlideTickNote,
 
-    HiddenSlideTickNote,
+    IgnoredSlideTickNote,
     NormalAttachedSlideTickNote,
     CriticalAttachedSlideTickNote,
 
@@ -81,4 +83,8 @@ export const archetypes = defineArchetypes({
     NormalTraceFlickNote,
     CriticalTraceFlickNote,
     NonDirectionalTraceFlickNote,
+
+    GreenDummySlide,
+    YellowDummySlide,
+    HiddenSlideStartNote: HiddenSlideTickNote,
 })

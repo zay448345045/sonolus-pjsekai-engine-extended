@@ -2,6 +2,7 @@ import { options } from '~/engine/configuration/options.mjs'
 import { Note } from '../../Note.mjs'
 
 export class HiddenSlideStartNote extends Note {
+    hasInput = false
     leniency = 1
 
     sharedMemory = this.defineSharedMemory({
@@ -13,11 +14,15 @@ export class HiddenSlideStartNote extends Note {
         if (options.mirror) this.data.lane *= -1
     }
 
+    updateSequential() {
+        this.despawn = true
+    }
+
     spawnOrder() {
         return 100000
     }
 
     shouldSpawn() {
-        return false
+        return this.targetTime <= time.now
     }
 }

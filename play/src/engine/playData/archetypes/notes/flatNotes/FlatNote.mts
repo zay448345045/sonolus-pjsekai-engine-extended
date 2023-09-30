@@ -124,8 +124,8 @@ export abstract class FlatNote extends Note {
         this.inputTime.min = this.targetTime + this.windows.good.min + input.offset
         this.inputTime.max = this.targetTime + this.windows.good.max + input.offset
 
-        const l = this.data.lane - this.data.size
-        const r = this.data.lane + this.data.size
+        const l = this.data.lane - this.data.size + 0.1
+        const r = this.data.lane + this.data.size - 0.1
 
         getHitbox({ l, r, leniency: 0 }).copyTo(this.hitbox)
         getHitbox({ l, r, leniency: this.leniency }).copyTo(this.fullHitbox)
