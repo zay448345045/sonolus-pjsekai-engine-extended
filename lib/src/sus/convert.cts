@@ -184,7 +184,10 @@ export const chsLikeToUSC = (score: Score): USC => {
 
             const object: USCSlideNote = {
                 type: 'slide',
-                dummy: isDummy || tickRemoveMods.has(getKey(startNote)),
+                dummy:
+                    isDummy ||
+                    (tickRemoveMods.has(getKey(startNote)) &&
+                        judgeRemoveMods.has(getKey(startNote))),
                 critical: criticalMods.has(getKey(startNote)),
                 connections: [] as never,
             }

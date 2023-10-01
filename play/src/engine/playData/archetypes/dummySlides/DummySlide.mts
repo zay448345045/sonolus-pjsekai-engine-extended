@@ -196,7 +196,13 @@ export abstract class DummySlide extends Archetype {
                 y4: y.min,
             }
 
-            const alpha = Math.remapClamped(this.start.scaledTime, this.end.scaledTime, 0.5, 0, now)
+            const alpha = Math.remapClamped(
+                this.start.scaledTime,
+                this.end.scaledTime,
+                0.5,
+                0,
+                scaledTime.min
+            )
             if (this.sprites.normal.exists) {
                 this.sprites.normal.draw(layout, this.connector.z, alpha)
             } else if (this.sprites.fallback.exists) {

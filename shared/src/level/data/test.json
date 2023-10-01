@@ -45,11 +45,32 @@
             ]
         },
         {
+            "archetype": "CriticalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 12
+                },
+                {
+                    "name": "lane",
+                    "value": -2
+                },
+                {
+                    "name": "size",
+                    "value": 1
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:0"
+                }
+            ]
+        },
+        {
             "archetype": "HiddenSlideStartNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 4
+                    "value": 0
                 },
                 {
                     "name": "lane",
@@ -67,63 +88,11 @@
             "ref": "1"
         },
         {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 4.5
-                },
-                {
-                    "name": "attach",
-                    "ref": "0"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 5
-                },
-                {
-                    "name": "attach",
-                    "ref": "0"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 5.5
-                },
-                {
-                    "name": "attach",
-                    "ref": "0"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 6
-                },
-                {
-                    "name": "attach",
-                    "ref": "0"
-                }
-            ]
-        },
-        {
             "archetype": "NormalSlideEndNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 6.5
+                    "value": 0.5
                 },
                 {
                     "name": "lane",
@@ -171,15 +140,15 @@
             "ref": "0"
         },
         {
-            "archetype": "HiddenSlideStartNote",
+            "archetype": "NormalTraceSlideStartNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 7
+                    "value": 0
                 },
                 {
                     "name": "lane",
-                    "value": 3
+                    "value": 0
                 },
                 {
                     "name": "size",
@@ -193,15 +162,15 @@
             "ref": "4"
         },
         {
-            "archetype": "HiddenSlideTickNote",
+            "archetype": "NormalSlideEndNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 10
+                    "value": 0.5
                 },
                 {
                     "name": "lane",
-                    "value": 3
+                    "value": 0
                 },
                 {
                     "name": "size",
@@ -219,7 +188,7 @@
             "ref": "5"
         },
         {
-            "archetype": "YellowDummySlide",
+            "archetype": "NormalSlideConnector",
             "data": [
                 {
                     "name": "start",
@@ -245,15 +214,15 @@
             "ref": "3"
         },
         {
-            "archetype": "NormalSlideStartNote",
+            "archetype": "HiddenSlideStartNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 4
+                    "value": 0
                 },
                 {
                     "name": "lane",
-                    "value": 0
+                    "value": 5
                 },
                 {
                     "name": "size",
@@ -267,67 +236,15 @@
             "ref": "7"
         },
         {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 4.5
-                },
-                {
-                    "name": "attach",
-                    "ref": "6"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 5
-                },
-                {
-                    "name": "attach",
-                    "ref": "6"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 5.5
-                },
-                {
-                    "name": "attach",
-                    "ref": "6"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 6
-                },
-                {
-                    "name": "attach",
-                    "ref": "6"
-                }
-            ]
-        },
-        {
             "archetype": "HiddenSlideTickNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 6.5
+                    "value": 0.5
                 },
                 {
                     "name": "lane",
-                    "value": 0
+                    "value": 5
                 },
                 {
                     "name": "size",
@@ -345,7 +262,7 @@
             "ref": "8"
         },
         {
-            "archetype": "NormalSlideConnector",
+            "archetype": "GreenDummySlide",
             "data": [
                 {
                     "name": "start",
@@ -371,204 +288,17 @@
             "ref": "6"
         },
         {
-            "archetype": "HiddenSlideStartNote",
+            "archetype": "SimLine",
             "data": [
                 {
-                    "name": "#BEAT",
-                    "value": 4
+                    "name": "a",
+                    "ref": "2"
                 },
                 {
-                    "name": "lane",
-                    "value": 5
-                },
-                {
-                    "name": "size",
-                    "value": 1
-                },
-                {
-                    "name": "timeScaleGroup",
-                    "ref": "tsg:0"
-                }
-            ],
-            "ref": "a"
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 4.5
-                },
-                {
-                    "name": "attach",
-                    "ref": "9"
+                    "name": "b",
+                    "ref": "5"
                 }
             ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 5
-                },
-                {
-                    "name": "attach",
-                    "ref": "9"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 5.5
-                },
-                {
-                    "name": "attach",
-                    "ref": "9"
-                }
-            ]
-        },
-        {
-            "archetype": "IgnoredSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 6
-                },
-                {
-                    "name": "attach",
-                    "ref": "9"
-                }
-            ]
-        },
-        {
-            "archetype": "HiddenSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 6.5
-                },
-                {
-                    "name": "lane",
-                    "value": 5
-                },
-                {
-                    "name": "size",
-                    "value": 1
-                },
-                {
-                    "name": "slide",
-                    "ref": "9"
-                },
-                {
-                    "name": "timeScaleGroup",
-                    "ref": "tsg:0"
-                }
-            ],
-            "ref": "b"
-        },
-        {
-            "archetype": "NormalSlideConnector",
-            "data": [
-                {
-                    "name": "start",
-                    "ref": "a"
-                },
-                {
-                    "name": "end",
-                    "ref": "b"
-                },
-                {
-                    "name": "head",
-                    "ref": "a"
-                },
-                {
-                    "name": "tail",
-                    "ref": "b"
-                },
-                {
-                    "name": "ease",
-                    "value": 0
-                }
-            ],
-            "ref": "9"
-        },
-        {
-            "archetype": "HiddenSlideStartNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 7
-                },
-                {
-                    "name": "lane",
-                    "value": -2
-                },
-                {
-                    "name": "size",
-                    "value": 1
-                },
-                {
-                    "name": "timeScaleGroup",
-                    "ref": "tsg:0"
-                }
-            ],
-            "ref": "d"
-        },
-        {
-            "archetype": "HiddenSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 10
-                },
-                {
-                    "name": "lane",
-                    "value": -2
-                },
-                {
-                    "name": "size",
-                    "value": 1
-                },
-                {
-                    "name": "slide",
-                    "ref": "c"
-                },
-                {
-                    "name": "timeScaleGroup",
-                    "ref": "tsg:0"
-                }
-            ],
-            "ref": "e"
-        },
-        {
-            "archetype": "GreenDummySlide",
-            "data": [
-                {
-                    "name": "start",
-                    "ref": "d"
-                },
-                {
-                    "name": "end",
-                    "ref": "e"
-                },
-                {
-                    "name": "head",
-                    "ref": "d"
-                },
-                {
-                    "name": "tail",
-                    "ref": "e"
-                },
-                {
-                    "name": "ease",
-                    "value": 0
-                }
-            ],
-            "ref": "c"
         }
     ]
 }
