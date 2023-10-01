@@ -84,6 +84,9 @@ const analyze = (chs: Buffer): Score => {
             timeScale: hispeedChange.speedRatio,
         })
     }
+    if (timeScaleChanges.length === 0) {
+        timeScaleChanges.push([])
+    }
     for (const timeScaleChange of timeScaleChanges) {
         timeScaleChange.sort((a, b) => a.tick - b.tick)
     }
