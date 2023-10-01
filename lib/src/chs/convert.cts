@@ -78,6 +78,8 @@ const analyze = (chs: Buffer): Score => {
                 timeScaleChanges.push([])
             }
             timeScaleGroup = channelMap.get(hispeedChange.speedCh)!
+        } else if (timeScaleChanges.length === 0) {
+            timeScaleChanges.push([])
         }
         timeScaleChanges[timeScaleGroup].push({
             tick: hispeedChange.tick,

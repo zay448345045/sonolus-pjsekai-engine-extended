@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+// import { promises as fs } from 'fs'
 import { LevelData } from 'sonolus-core'
 // import { chsToUSC } from '~lib/src/chs/convert.cjs'
 // import { susToUSC } from '~lib/src/sus/convert.cjs'
@@ -6,7 +6,7 @@ import { LevelData } from 'sonolus-core'
 import expert from './test.json'
 
 // export const data: LevelData = (await fs
-//     .readFile('./shared/src/level/data/test.sus', { encoding: 'utf8' })
+//     .readFile('./shared/src/level/data/neom.sus', { encoding: 'utf8' })
 //     .then(susToUSC)
 //     .then(uscToLevelData)
 //     .catch((error) => {
