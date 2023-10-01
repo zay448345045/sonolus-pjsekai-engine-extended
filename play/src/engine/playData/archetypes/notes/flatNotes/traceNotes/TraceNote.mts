@@ -72,7 +72,7 @@ export abstract class TraceNote extends SlimNote {
             if (touch.started && time.now < this.inputTime.min) continue
             if (!touch.started && time.now < this.targetTime) continue
             if (touch.started && !canTraceStart(touch)) continue
-            if (!this.hitbox.contains(touch.position)) continue
+            if (!this.fullHitbox.contains(touch.position)) continue
 
             this.complete(touch)
             return
