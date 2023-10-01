@@ -22,14 +22,68 @@
                 },
                 {
                     "name": "length",
-                    "value": 0
+                    "value": 1
                 },
                 {
                     "name": "next",
-                    "ref": "tsg:1"
+                    "value": -1
                 }
             ],
             "ref": "tsg:0"
+        },
+        {
+            "archetype": "TimeScaleGroup",
+            "data": [
+                {
+                    "name": "first",
+                    "ref": "tsc:1:0"
+                },
+                {
+                    "name": "length",
+                    "value": 1
+                },
+                {
+                    "name": "next",
+                    "ref": "tsg:2"
+                }
+            ],
+            "ref": "tsg:1"
+        },
+        {
+            "archetype": "TimeScaleChange",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 0
+                },
+                {
+                    "name": "timeScale",
+                    "value": 5
+                },
+                {
+                    "name": "next",
+                    "value": -1
+                }
+            ],
+            "ref": "tsc:0:0"
+        },
+        {
+            "archetype": "TimeScaleChange",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 0
+                },
+                {
+                    "name": "timeScale",
+                    "value": 1
+                },
+                {
+                    "name": "next",
+                    "value": -1
+                }
+            ],
+            "ref": "tsc:1:0"
         },
         {
             "archetype": "#BPM_CHANGE",
@@ -45,19 +99,71 @@
             ]
         },
         {
-            "archetype": "CriticalTapNote",
+            "archetype": "NormalFlickNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 12
+                    "value": 4.5
                 },
                 {
                     "name": "lane",
-                    "value": -2
+                    "value": 0
                 },
                 {
                     "name": "size",
-                    "value": 1
+                    "value": 2
+                },
+                {
+                    "name": "direction",
+                    "value": 0
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:0"
+                }
+            ],
+            "ref": "6"
+        },
+        {
+            "archetype": "NormalFlickNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 4.5
+                },
+                {
+                    "name": "lane",
+                    "value": 3
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "direction",
+                    "value": 0
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:0"
+                }
+            ],
+            "ref": "7"
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 3.5
+                },
+                {
+                    "name": "lane",
+                    "value": 4
+                },
+                {
+                    "name": "size",
+                    "value": 2
                 },
                 {
                     "name": "timeScaleGroup",
@@ -66,33 +172,265 @@
             ]
         },
         {
-            "archetype": "HiddenSlideStartNote",
+            "archetype": "NormalTapNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 0
+                    "value": 3
                 },
                 {
                     "name": "lane",
-                    "value": -5
+                    "value": 4
                 },
                 {
                     "name": "size",
-                    "value": 1
+                    "value": 2
                 },
                 {
                     "name": "timeScaleGroup",
                     "ref": "tsg:0"
                 }
-            ],
-            "ref": "1"
+            ]
         },
         {
-            "archetype": "NormalSlideEndNote",
+            "archetype": "NormalTapNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 0.5
+                    "value": 10
+                },
+                {
+                    "name": "lane",
+                    "value": -4
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ],
+            "ref": "8"
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 10
+                },
+                {
+                    "name": "lane",
+                    "value": 3
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ],
+            "ref": "9"
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 9.5
+                },
+                {
+                    "name": "lane",
+                    "value": 3
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 9
+                },
+                {
+                    "name": "lane",
+                    "value": 2
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 8.5
+                },
+                {
+                    "name": "lane",
+                    "value": 0
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 13
+                },
+                {
+                    "name": "lane",
+                    "value": -3
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 12
+                },
+                {
+                    "name": "lane",
+                    "value": 0
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 11.5
+                },
+                {
+                    "name": "lane",
+                    "value": 0
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 16
+                },
+                {
+                    "name": "lane",
+                    "value": -3
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 20
+                },
+                {
+                    "name": "lane",
+                    "value": 0
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 22
+                },
+                {
+                    "name": "lane",
+                    "value": -1
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 28
                 },
                 {
                     "name": "lane",
@@ -100,7 +438,177 @@
                 },
                 {
                     "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 27.5
+                },
+                {
+                    "name": "lane",
+                    "value": -1
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 26.5
+                },
+                {
+                    "name": "lane",
                     "value": 1
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 26
+                },
+                {
+                    "name": "lane",
+                    "value": 1
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalTapNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 25.5
+                },
+                {
+                    "name": "lane",
+                    "value": 2
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalSlideStartNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 2
+                },
+                {
+                    "name": "lane",
+                    "value": -4
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "timeScaleGroup",
+                    "ref": "tsg:1"
+                }
+            ],
+            "ref": "1"
+        },
+        {
+            "archetype": "IgnoredSlideTickNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 2.5
+                },
+                {
+                    "name": "attach",
+                    "ref": "0"
+                }
+            ]
+        },
+        {
+            "archetype": "IgnoredSlideTickNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 3
+                },
+                {
+                    "name": "attach",
+                    "ref": "0"
+                }
+            ]
+        },
+        {
+            "archetype": "IgnoredSlideTickNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 3.5
+                },
+                {
+                    "name": "attach",
+                    "ref": "0"
+                }
+            ]
+        },
+        {
+            "archetype": "NormalSlideEndFlickNote",
+            "data": [
+                {
+                    "name": "#BEAT",
+                    "value": 4
+                },
+                {
+                    "name": "lane",
+                    "value": -4
+                },
+                {
+                    "name": "size",
+                    "value": 2
+                },
+                {
+                    "name": "direction",
+                    "value": 0
                 },
                 {
                     "name": "slide",
@@ -108,7 +616,7 @@
                 },
                 {
                     "name": "timeScaleGroup",
-                    "ref": "tsg:0"
+                    "ref": "tsg:1"
                 }
             ],
             "ref": "2"
@@ -135,24 +643,28 @@
                 {
                     "name": "ease",
                     "value": 0
+                },
+                {
+                    "name": "noFade",
+                    "value": 1
                 }
             ],
             "ref": "0"
         },
         {
-            "archetype": "NormalTraceSlideStartNote",
+            "archetype": "HiddenSlideStartNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 0
+                    "value": 5
                 },
                 {
                     "name": "lane",
-                    "value": 0
+                    "value": -4
                 },
                 {
                     "name": "size",
-                    "value": 1
+                    "value": 2
                 },
                 {
                     "name": "timeScaleGroup",
@@ -162,19 +674,19 @@
             "ref": "4"
         },
         {
-            "archetype": "NormalSlideEndNote",
+            "archetype": "HiddenSlideTickNote",
             "data": [
                 {
                     "name": "#BEAT",
-                    "value": 0.5
+                    "value": 5.5
                 },
                 {
                     "name": "lane",
-                    "value": 0
+                    "value": -4
                 },
                 {
                     "name": "size",
-                    "value": 1
+                    "value": 2
                 },
                 {
                     "name": "slide",
@@ -188,115 +700,58 @@
             "ref": "5"
         },
         {
-            "archetype": "NormalSlideConnector",
-            "data": [
-                {
-                    "name": "start",
-                    "ref": "4"
-                },
-                {
-                    "name": "end",
-                    "ref": "5"
-                },
-                {
-                    "name": "head",
-                    "ref": "4"
-                },
-                {
-                    "name": "tail",
-                    "ref": "5"
-                },
-                {
-                    "name": "ease",
-                    "value": 0
-                }
-            ],
-            "ref": "3"
-        },
-        {
-            "archetype": "HiddenSlideStartNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 0
-                },
-                {
-                    "name": "lane",
-                    "value": 5
-                },
-                {
-                    "name": "size",
-                    "value": 1
-                },
-                {
-                    "name": "timeScaleGroup",
-                    "ref": "tsg:0"
-                }
-            ],
-            "ref": "7"
-        },
-        {
-            "archetype": "HiddenSlideTickNote",
-            "data": [
-                {
-                    "name": "#BEAT",
-                    "value": 0.5
-                },
-                {
-                    "name": "lane",
-                    "value": 5
-                },
-                {
-                    "name": "size",
-                    "value": 1
-                },
-                {
-                    "name": "slide",
-                    "ref": "6"
-                },
-                {
-                    "name": "timeScaleGroup",
-                    "ref": "tsg:0"
-                }
-            ],
-            "ref": "8"
-        },
-        {
             "archetype": "GreenDummySlide",
             "data": [
                 {
                     "name": "start",
-                    "ref": "7"
+                    "ref": "4"
                 },
                 {
                     "name": "end",
-                    "ref": "8"
+                    "ref": "5"
                 },
                 {
                     "name": "head",
-                    "ref": "7"
+                    "ref": "4"
                 },
                 {
                     "name": "tail",
-                    "ref": "8"
+                    "ref": "5"
                 },
                 {
                     "name": "ease",
                     "value": 0
+                },
+                {
+                    "name": "noFade",
+                    "value": 1
                 }
             ],
-            "ref": "6"
+            "ref": "3"
         },
         {
             "archetype": "SimLine",
             "data": [
                 {
                     "name": "a",
-                    "ref": "2"
+                    "ref": "6"
                 },
                 {
                     "name": "b",
-                    "ref": "5"
+                    "ref": "7"
+                }
+            ]
+        },
+        {
+            "archetype": "SimLine",
+            "data": [
+                {
+                    "name": "a",
+                    "ref": "8"
+                },
+                {
+                    "name": "b",
+                    "ref": "9"
                 }
             ]
         }

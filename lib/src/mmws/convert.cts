@@ -82,7 +82,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
 
         const uscSlide: USCSlideNote = {
             type: 'slide',
-            dummy: false,
+            subType: 'normal',
             critical: hold.critical,
             connections: [
                 uscStartNote,

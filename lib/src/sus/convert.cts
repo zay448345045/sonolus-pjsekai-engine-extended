@@ -181,13 +181,19 @@ export const chsLikeToUSC = (score: Score): USC => {
         for (const slide of slides) {
             const startNote = slide.find(({ type }) => type === 1 || type === 2)
             if (!startNote) continue
+            const endNote = slide.find(({ type }) => type === 2)
+            if (!endNote) continue
 
             const object: USCSlideNote = {
                 type: 'slide',
-                dummy:
+                subType:
                     isDummy ||
                     (tickRemoveMods.has(getKey(startNote)) &&
-                        judgeRemoveMods.has(getKey(startNote))),
+                        judgeRemoveMods.has(getKey(startNote)))
+                        ? judgeRemoveMods.has(getKey(endNote))
+                            ? 'dummy'
+                            : 'fadeDummy'
+                        : 'normal',
                 critical: criticalMods.has(getKey(startNote)),
                 connections: [] as never,
             }

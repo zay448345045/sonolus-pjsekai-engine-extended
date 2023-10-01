@@ -19,6 +19,7 @@ export abstract class DummySlide extends Archetype {
         tailRef: { name: 'tail', type: Number },
         endRef: { name: 'end', type: Number },
         ease: { name: 'ease', type: DataType<EaseType> },
+        noFade: { name: 'noFade', type: Boolean },
     })
 
     start = this.entityMemory({
@@ -196,13 +197,15 @@ export abstract class DummySlide extends Archetype {
                 y4: y.min,
             }
 
-            const alpha = Math.remapClamped(
-                this.start.scaledTime,
-                this.end.scaledTime,
-                0.5,
-                0,
-                scaledTime.min
-            )
+            const alpha = this.data.noFade
+                ? 0.5
+                : Math.remapClamped(
+                      this.start.scaledTime,
+                      this.end.scaledTime,
+                      0.5,
+                      0,
+                      scaledTime.min
+                  )
             if (this.sprites.normal.exists) {
                 this.sprites.normal.draw(layout, this.connector.z, alpha)
             } else if (this.sprites.fallback.exists) {

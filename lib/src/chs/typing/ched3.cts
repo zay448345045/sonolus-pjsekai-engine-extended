@@ -36,6 +36,7 @@ export type BPMChangeEvent = {
 export type HighSpeedChangeEvent = {
     $id: string
     speedRatio: number
+    speedCh?: number
     tick: number
 }
 
@@ -48,12 +49,12 @@ export type TimeSignatureChangeEvent = {
 
 export type Notes = {
     $id: string
-    taps: ExTap[]
-    exTaps: ExTap[]
+    taps: Tap[]
+    exTaps: Tap[]
     holds: unknown[]
     slides: Slide[]
-    flicks: ExTap[]
-    damages: ExTap[]
+    flicks: Tap[]
+    damages: Tap[]
     airs: Air[]
     airActions: unknown[]
 }
@@ -69,11 +70,12 @@ export type ParentNote = {
     $ref: string
 }
 
-export type ExTap = {
+export type Tap = {
     $id: string
     tick: number
     laneIndex: number
     width: number
+    channel?: number
 }
 
 export type Slide = {
@@ -82,6 +84,7 @@ export type Slide = {
     startLaneIndex: number
     stepNotes: StepNote[]
     startTick: number
+    channel?: number
 }
 
 export type StepNote = {
@@ -91,6 +94,7 @@ export type StepNote = {
     tickOffset: number
     isVisible: boolean
     parentNote: ParentNote
+    channel?: number
 }
 
 export type Version = {

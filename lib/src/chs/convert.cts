@@ -33,7 +33,7 @@ const analyze = (chs: Buffer): Score => {
     const slides: Score['slides'] = []
     const tapNotes: Score['tapNotes'] = []
     const ticksPerBeat = parsedChs.score.ticksPerBeat
-    const timeScaleChanges: Score['timeScaleChanges'] = [[]]
+    const timeScaleChanges: Score['timeScaleChanges'] = []
 
     meta.set('REQUEST', ['"side_lane true"'])
 
@@ -57,13 +57,36 @@ const analyze = (chs: Buffer): Score => {
         })
     }
     bpmChanges.sort((a, b) => a.tick - b.tick)
+    const channelMap = new Map<number, number>()
+
+    const tryChannel = (obj: { channel?: number } | {}) => {
+        if (!('channel' in obj)) {
+            return 0
+        }
+        const channel = obj.channel ?? 0
+        if (!channelMap.has(channel)) {
+            channelMap.set(channel, channelMap.size)
+        }
+        return channelMap.get(channel)!
+    }
+
     for (const hispeedChange of parsedChs.score.events.highSpeedChangeEvents) {
-        timeScaleChanges[0].push({
+        let timeScaleGroup = 0
+        if ('speedCh' in hispeedChange) {
+            if (!channelMap.has(hispeedChange.speedCh)) {
+                channelMap.set(hispeedChange.speedCh, channelMap.size)
+                timeScaleChanges.push([])
+            }
+            timeScaleGroup = channelMap.get(hispeedChange.speedCh)!
+        }
+        timeScaleChanges[timeScaleGroup].push({
             tick: hispeedChange.tick,
             timeScale: hispeedChange.speedRatio,
         })
     }
-    timeScaleChanges[0].sort((a, b) => a.tick - b.tick)
+    for (const timeScaleChange of timeScaleChanges) {
+        timeScaleChange.sort((a, b) => a.tick - b.tick)
+    }
 
     for (const [noteType, note] of tapLikeNotes.flatMap((key) =>
         parsedChs.score.notes[key].map((note) => [key, note] as const)
@@ -74,7 +97,7 @@ const analyze = (chs: Buffer): Score => {
             tick: note.tick,
             lane: note.laneIndex,
             width: note.width,
-            timeScaleGroup: 0,
+            timeScaleGroup: tryChannel(note),
         })
     }
 
@@ -85,6 +108,7 @@ const analyze = (chs: Buffer): Score => {
         tick: number
         laneIndex: number
         width: number
+        channel?: number
     }[]
 
     for (const slide of parsedChs.score.notes.slides) {
@@ -94,7 +118,7 @@ const analyze = (chs: Buffer): Score => {
                 tick: slide.startTick,
                 type: 1,
                 width: slide.startWidth,
-                timeScaleGroup: 0,
+                timeScaleGroup: tryChannel(slide),
             },
         ]
         slide.stepNotes.sort((a, b) => a.tickOffset - b.tickOffset)
@@ -104,7 +128,7 @@ const analyze = (chs: Buffer): Score => {
                 tick: slide.startTick + step.tickOffset,
                 type: step.isVisible ? 3 : 5,
                 width: slide.startWidth + step.widthChange,
-                timeScaleGroup: 0,
+                timeScaleGroup: tryChannel(step),
             })
             notes.push({
                 $id: step.$id,
@@ -127,7 +151,7 @@ const analyze = (chs: Buffer): Score => {
             lane: refNote.laneIndex,
             width: refNote.width,
             type: chsDirectionToSusDirection(note),
-            timeScaleGroup: 0,
+            timeScaleGroup: tryChannel(note),
         })
     }
 

@@ -15,6 +15,7 @@ export abstract class DummySlide extends Archetype {
         tailRef: { name: 'tail', type: Number },
         endRef: { name: 'end', type: Number },
         ease: { name: 'ease', type: DataType<EaseType> },
+        noFade: { name: 'noFade', type: Boolean },
     })
 
     render() {
@@ -73,7 +74,9 @@ export abstract class DummySlide extends Archetype {
                     p4: pos.min.translate(Math.lerp(r.min, r.max, s.min), 0),
                 })
 
-                const alpha = Math.remapClamped(startTime, endTime, 0.5, 0, st.min)
+                const alpha = this.data.noFade
+                    ? 0.5
+                    : Math.remapClamped(startTime, endTime, 0.5, 0, st.min)
 
                 if (this.useFallbackSprite) {
                     this.sprites.fallback.draw(layout, z, alpha)

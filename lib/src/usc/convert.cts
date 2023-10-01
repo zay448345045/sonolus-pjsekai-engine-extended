@@ -16,7 +16,7 @@ import {
 
 type Intermediate = {
     archetype: string
-    data: Record<string, number | Intermediate>
+    data: Record<string, number | Intermediate | boolean>
     sim: boolean
     timeScaleGroup?: number
 }
@@ -76,6 +76,11 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
                 entity.data.push({
                     name,
                     value,
+                })
+            } else if (typeof value === 'boolean') {
+                entity.data.push({
+                    name,
+                    value: value ? 1 : 0,
                 })
             } else {
                 entity.data.push({
@@ -317,7 +322,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
 
             let archetype: string
             let sim = true
-            if (object.dummy || connection.judgeType === 'none') {
+            if (object.subType !== 'normal' || connection.judgeType === 'none') {
                 archetype = 'HiddenSlideStartNote'
                 sim = false
             } else if (connection.judgeType === 'trace') {
@@ -356,7 +361,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.type !== 'end') continue
             let ci: ConnectionIntermediate
 
-            if (object.dummy || connection.judgeType === 'none') {
+            if (object.subType !== 'normal' || connection.judgeType === 'none') {
                 ci = {
                     archetype: 'HiddenSlideTickNote',
                     data: {
@@ -471,7 +476,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
         if (!head.ease) throw new Error('Unexpected missing ease')
 
         let archetype: string
-        if (object.dummy) {
+        if (object.subType !== 'normal') {
             archetype = object.critical ? 'YellowDummySlide' : 'GreenDummySlide'
         } else {
             archetype = object.critical ? 'CriticalSlideConnector' : 'NormalSlideConnector'
@@ -485,6 +490,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                 head,
                 tail: joint,
                 ease: eases[head.ease],
+                noFade: object.subType !== 'fadeDummy',
             },
             sim: false,
         })
@@ -523,7 +529,7 @@ const handlers: {
 const getConnections = (object: USCSlideNote) => {
     const connections = [...object.connections]
 
-    if (!object.dummy) {
+    if (object.subType === 'normal') {
         const beats = connections.map(({ beat }) => beat).sort((a, b) => a - b)
 
         const min = beats[0]
