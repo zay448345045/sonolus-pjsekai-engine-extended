@@ -48,8 +48,8 @@ export abstract class DummySlide extends Archetype {
                 max: Math.min(t.max, (i + 1) * panel.h),
             }
 
-            const startTime = bpmChanges.at(this.headData.beat).time
-            const endTime = bpmChanges.at(this.tailData.beat).time
+            const startTime = bpmChanges.at(this.startData.beat).time
+            const endTime = bpmChanges.at(this.endData.beat).time
 
             for (let j = 0; j < 10; j++) {
                 const st = {

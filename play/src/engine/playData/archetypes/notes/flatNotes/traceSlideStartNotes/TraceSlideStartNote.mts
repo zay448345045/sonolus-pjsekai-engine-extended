@@ -41,14 +41,6 @@ export abstract class TraceSlideStartNote extends SlimNote {
 
     bucket = buckets.normalTraceNote
 
-    get slotEffect() {
-        return archetypes.SlideSlotEffect
-    }
-
-    get slotGlowEffect() {
-        return archetypes.SlideSlotGlowEffect
-    }
-
     tickSpriteLayout = this.entityMemory(Quad)
 
     sharedMemory = this.defineSharedMemory({

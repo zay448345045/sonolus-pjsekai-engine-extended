@@ -1,6 +1,7 @@
 import { effect } from '~/engine/playData/effect.mjs'
 import { particle } from '~/engine/playData/particle.mjs'
 import { skin } from '~/engine/playData/skin.mjs'
+import { archetypes } from '../../../index.mjs'
 import { TraceSlideStartNote } from './TraceSlideStartNote.mjs'
 
 export class CriticalTraceSlideStartNote extends TraceSlideStartNote {
@@ -29,5 +30,13 @@ export class CriticalTraceSlideStartNote extends TraceSlideStartNote {
     effects = {
         circular: particle.effects.criticalNoteCircular,
         linear: particle.effects.criticalNoteLinear,
+    }
+
+    get slotEffect() {
+        return archetypes.CriticalSlotEffect
+    }
+
+    get slotGlowEffect() {
+        return archetypes.CriticalSlotGlowEffect
     }
 }
