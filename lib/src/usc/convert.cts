@@ -19,7 +19,7 @@ import {
 
 type Intermediate = {
     archetype: string
-    data: Record<string, number | Intermediate | boolean>
+    data: Record<string, number | Intermediate | boolean | `tsg:${string}`>
     sim: boolean
     timeScaleGroup?: number
 }
@@ -84,6 +84,11 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
                 entity.data.push({
                     name,
                     value: value ? 1 : 0,
+                })
+            } else if (typeof value === 'string') {
+                entity.data.push({
+                    name,
+                    ref: value,
                 })
             } else {
                 entity.data.push({
@@ -532,22 +537,22 @@ const guide: Handler<USCGuideNote> = (object, append) => {
                 startLane: start.lane,
                 startSize: start.size,
                 startBeat: start.beat,
-                startTimeScaleGroup: start.timeScaleGroup,
+                startTimeScaleGroup: `tsg:${start.timeScaleGroup}`,
 
                 headLane: head.lane,
                 headSize: head.size,
                 headBeat: head.beat,
-                headTimeScaleGroup: head.timeScaleGroup,
+                headTimeScaleGroup: `tsg:${head.timeScaleGroup}`,
 
                 tailLane: joint.lane,
                 tailSize: joint.size,
                 tailBeat: joint.beat,
-                tailTimeScaleGroup: joint.timeScaleGroup,
+                tailTimeScaleGroup: `tsg:${joint.timeScaleGroup}`,
 
                 endLane: end.lane,
                 endSize: end.size,
                 endBeat: end.beat,
-                endTimeScaleGroup: end.timeScaleGroup,
+                endTimeScaleGroup: `tsg:${end.timeScaleGroup}`,
             },
             sim: false,
         })
