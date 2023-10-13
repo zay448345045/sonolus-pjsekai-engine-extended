@@ -8,12 +8,7 @@ export abstract class SlimNote extends Note {
         left: SkinSprite
         middle: SkinSprite
         right: SkinSprite
-        fallback: {
-            left: SkinSprite
-            middle: SkinSprite
-            right: SkinSprite
-        }
-        secondaryFallback: SkinSprite
+        fallback: SkinSprite
     }
 
     render() {
@@ -24,18 +19,13 @@ export abstract class SlimNote extends Note {
 
         const l = this.data.lane - this.data.size
         const r = this.data.lane + this.data.size
-        const b = -note.h / 2
-        const t = note.h / 2
+        const fb = -note.h / 2
+        const ft = note.h / 2
+        const b = -note.h
+        const t = note.h
 
-        if (this.useSecondaryFallbackSprites) {
-            this.sprites.secondaryFallback.draw(new Rect({ l, r, b, t }).add(pos), z, 1)
-        } else if (this.useFallbackSprites) {
-            const ml = l + 0.125
-            const mr = r - 0.125
-
-            this.sprites.fallback.left.draw(new Rect({ l, r: ml, b, t }).add(pos), z, 1)
-            this.sprites.fallback.middle.draw(new Rect({ l: ml, r: mr, b, t }).add(pos), z, 1)
-            this.sprites.fallback.right.draw(new Rect({ l: mr, r, b, t }).add(pos), z, 1)
+        if (this.useFallbackSprites) {
+            this.sprites.fallback.draw(new Rect({ l, r, b: fb, t: ft }).add(pos), z, 1)
         } else {
             const ml = l + 0.125
             const mr = r - 0.125
@@ -50,20 +40,7 @@ export abstract class SlimNote extends Note {
 
     get useFallbackSprites() {
         return (
-            (!this.sprites.left.exists ||
-                !this.sprites.middle.exists ||
-                !this.sprites.right.exists) &&
-            this.sprites.fallback.left.exists &&
-            this.sprites.fallback.middle.exists &&
-            this.sprites.fallback.right.exists
-        )
-    }
-
-    get useSecondaryFallbackSprites() {
-        return (
-            !this.sprites.fallback.left.exists ||
-            !this.sprites.fallback.middle.exists ||
-            !this.sprites.fallback.right.exists
+            !this.sprites.left.exists || !this.sprites.middle.exists || !this.sprites.right.exists
         )
     }
 }

@@ -2,7 +2,6 @@ import { buckets } from '~/engine/playData/buckets.mjs'
 import { options } from '../../../../../configuration/options.mjs'
 import { canTraceStart, disallowEmpty, disallowTraceStart } from '../../../InputManager.mjs'
 import { note } from '../../../constants.mjs'
-import { archetypes } from '../../../index.mjs'
 import { scaledScreen } from '../../../shared.mjs'
 import { perspectiveLayout } from '../../../utils.mjs'
 import { windows } from '../../../windows.mjs'
@@ -10,17 +9,6 @@ import { SlimNote } from '../SlimNote.mjs'
 
 export abstract class TraceSlideStartNote extends SlimNote {
     leniency = 0.75
-    abstract sprites: {
-        left: SkinSprite
-        middle: SkinSprite
-        right: SkinSprite
-        primaryFallback: {
-            left: SkinSprite
-            middle: SkinSprite
-            right: SkinSprite
-        }
-        secondaryFallback: SkinSprite
-    }
 
     abstract tickSprites: {
         tick: SkinSprite

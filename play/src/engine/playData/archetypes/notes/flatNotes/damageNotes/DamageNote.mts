@@ -28,12 +28,7 @@ export class DamageNote extends SlimNote {
         left: skin.sprites.damageNoteLeft,
         middle: skin.sprites.damageNoteMiddle,
         right: skin.sprites.damageNoteRight,
-        primaryFallback: {
-            left: skin.sprites.damageNoteFallbackLeft,
-            middle: skin.sprites.damageNoteFallbackMiddle,
-            right: skin.sprites.damageNoteFallbackRight,
-        },
-        secondaryFallback: skin.sprites.damageNoteSecondaryFallback,
+        fallback: skin.sprites.damageNoteFallback,
     }
 
     clips = {

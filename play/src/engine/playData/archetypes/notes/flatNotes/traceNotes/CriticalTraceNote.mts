@@ -2,7 +2,6 @@ import { buckets } from '../../../../buckets.mjs'
 import { effect } from '../../../../effect.mjs'
 import { particle } from '../../../../particle.mjs'
 import { skin } from '../../../../skin.mjs'
-import { archetypes } from '../../../index.mjs'
 import { windows } from '../../../windows.mjs'
 import { TraceNote } from './TraceNote.mjs'
 
@@ -11,12 +10,7 @@ export class CriticalTraceNote extends TraceNote {
         left: skin.sprites.criticalTraceNoteLeft,
         middle: skin.sprites.criticalTraceNoteMiddle,
         right: skin.sprites.criticalTraceNoteRight,
-        primaryFallback: {
-            left: skin.sprites.criticalNoteLeft,
-            middle: skin.sprites.criticalNoteMiddle,
-            right: skin.sprites.criticalNoteRight,
-        },
-        secondaryFallback: skin.sprites.criticalNoteFallback,
+        fallback: skin.sprites.criticalNoteFallback,
     }
 
     tickSprites = {

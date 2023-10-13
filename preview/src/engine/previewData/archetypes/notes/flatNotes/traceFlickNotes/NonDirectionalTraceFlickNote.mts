@@ -6,11 +6,6 @@ export class NonDirectionalTraceFlickNote extends SlimNote {
         left: skin.sprites.traceFlickNoteLeft,
         middle: skin.sprites.traceFlickNoteMiddle,
         right: skin.sprites.traceFlickNoteRight,
-        fallback: {
-            left: skin.sprites.flickNoteLeft,
-            middle: skin.sprites.flickNoteMiddle,
-            right: skin.sprites.flickNoteRight,
-        },
-        secondaryFallback: skin.sprites.flickNoteFallback,
+        fallback: skin.sprites.flickNoteFallback,
     }
 }

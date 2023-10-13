@@ -1,11 +1,11 @@
 import StreamBuffer from 'streambuf'
 
-const flickType = ['none', 'up', 'left', 'right'] as const
-type FlickType = (typeof flickType)[number]
-const stepType = ['visible', 'hidden', 'ignored'] as const
-type StepType = (typeof stepType)[number]
-const easeType = ['linear', 'easeIn', 'easeOut'] as const
-type EaseType = (typeof easeType)[number]
+const FlickType = ['none', 'up', 'left', 'right'] as const
+type FlickType = (typeof FlickType)[number]
+const StepType = ['visible', 'hidden', 'ignored'] as const
+type StepType = (typeof StepType)[number]
+const EaseType = ['linear', 'easeIn', 'easeOut'] as const
+type EaseType = (typeof EaseType)[number]
 
 export type Score = {
     metadata: {
@@ -41,16 +41,28 @@ export type Score = {
         lane: number
         width: number
         flickType: FlickType
-        critical: boolean
+        flags: {
+            critical: boolean
+            friction: boolean
+        }
     }[]
     holds: {
-        critical: boolean
+        flags: {
+            startHidden: boolean
+            endHidden: boolean
+            guide: boolean
+        }
         start: {
             tick: number
             lane: number
             width: number
+            flags: {
+                critical: boolean
+                friction: boolean
+            }
             ease: EaseType
         }
+        fadeType: number
         steps: {
             tick: number
             lane: number
@@ -62,8 +74,22 @@ export type Score = {
             tick: number
             lane: number
             width: number
-            critical: boolean
             flickType: FlickType
+
+            flags: {
+                critical: boolean
+                friction: boolean
+            }
+        }
+    }[]
+    damages: {
+        tick: number
+        lane: number
+        width: number
+        flickType: FlickType
+        flags: {
+            critical: boolean
+            friction: boolean
         }
     }[]
 }
@@ -71,17 +97,23 @@ export type Score = {
 export const analyze = (mmws: Buffer): Score => {
     const buffer = StreamBuffer.from(mmws)
     const header = buffer.readString()
-    if (header !== 'MMWS') {
+    if (header !== 'MMWS' && header !== 'CCMMWS') {
         throw new Error('Invalid MMWS file')
     }
-    const version = buffer.readInt32LE()
-    if (version !== 3) {
+    const version = buffer.readInt16LE()
+    let cyanvasVersion = buffer.readInt16LE()
+    if (version < 3) {
         throw new Error('Unsupported MMWS version')
     }
+    if (header === 'CCMMWS' && cyanvasVersion === 0) {
+        cyanvasVersion = 1
+    }
+
     const metadataPointer = buffer.readUInt32LE()
     const eventsPointer = buffer.readUInt32LE()
     const tapsPointer = buffer.readUInt32LE()
     const holdsPointer = buffer.readUInt32LE()
+    const damagesPointer = cyanvasVersion > 0 ? buffer.readUInt32LE() : 0
 
     buffer.seek(metadataPointer)
     const metadata = {
@@ -138,13 +170,23 @@ export const analyze = (mmws: Buffer): Score => {
     const taps: Score['taps'] = []
     const tapsCount = buffer.readInt32LE()
     for (let i = 0; i < tapsCount; i++) {
-        taps.push({
-            tick: buffer.readInt32LE(),
+        const tick = buffer.readInt32LE()
 
-            lane: buffer.readInt32LE(),
-            width: buffer.readInt32LE(),
-            flickType: flickType[buffer.readInt32LE() as 0 | 1 | 2 | 3],
-            critical: buffer.readInt32LE() === 0 ? false : true,
+        const lane = buffer.readInt32LE()
+        const width = buffer.readInt32LE()
+
+        const flickType = FlickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
+        const flags = buffer.readInt32LE()
+        taps.push({
+            tick,
+
+            lane,
+            width,
+            flickType,
+            flags: {
+                critical: !!(flags & (1 << 0)),
+                friction: !!(flags & (1 << 1)),
+            },
         })
     }
 
@@ -152,20 +194,22 @@ export const analyze = (mmws: Buffer): Score => {
     const holds: Score['holds'] = []
     const holdsCount = buffer.readInt32LE()
     for (let i = 0; i < holdsCount; i++) {
+        const holdFlags = version >= 4 ? buffer.readInt32LE() : 0
         const startTick = buffer.readInt32LE()
         const startLane = buffer.readInt32LE()
         const startWidth = buffer.readInt32LE()
-        const critical = buffer.readInt32LE() === 0 ? false : true
-        const startEase = easeType[buffer.readInt32LE() as 0 | 1 | 2]
+        const startFlags = buffer.readInt32LE()
+        const startEase = EaseType[buffer.readInt32LE() as 0 | 1 | 2]
+        const fadeType = cyanvasVersion >= 2 ? buffer.readInt32LE() : 0
         const stepsCount = buffer.readInt32LE()
         const steps: Score['holds'][0]['steps'] = []
         for (let j = 0; j < stepsCount; j++) {
             const tick = buffer.readInt32LE()
             const lane = buffer.readInt32LE()
             const width = buffer.readInt32LE()
-            buffer.readInt32LE() // unused critical
-            const type = stepType[buffer.readInt32LE() as 0 | 1 | 2]
-            const ease = easeType[buffer.readInt32LE() as 0 | 1 | 2]
+            buffer.readInt32LE() // unused flags
+            const type = StepType[buffer.readInt32LE() as 0 | 1 | 2]
+            const ease = EaseType[buffer.readInt32LE() as 0 | 1 | 2]
             steps.push({
                 tick,
                 lane,
@@ -177,22 +221,35 @@ export const analyze = (mmws: Buffer): Score => {
         const endTick = buffer.readInt32LE()
         const endLane = buffer.readInt32LE()
         const endWidth = buffer.readInt32LE()
-        const endFlickType = flickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
-        const endCritical = buffer.readInt32LE() === 0 ? false : true
+        const endFlickType = FlickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
+        const endFlags = buffer.readInt32LE()
+
         holds.push({
-            critical,
+            flags: {
+                startHidden: !!(holdFlags & (1 << 0)),
+                endHidden: !!(holdFlags & (1 << 1)),
+                guide: !!(holdFlags & (1 << 2)),
+            },
             start: {
                 tick: startTick,
                 lane: startLane,
                 width: startWidth,
                 ease: startEase,
+                flags: {
+                    critical: !!(startFlags & (1 << 0)),
+                    friction: !!(startFlags & (1 << 1)),
+                },
             },
+            fadeType,
             steps,
             end: {
                 tick: endTick,
                 lane: endLane,
                 width: endWidth,
-                critical: endCritical,
+                flags: {
+                    critical: !!(endFlags & (1 << 0)),
+                    friction: !!(endFlags & (1 << 1)),
+                },
                 flickType: endFlickType,
             },
         })
@@ -205,10 +262,38 @@ export const analyze = (mmws: Buffer): Score => {
     taps.sort((a, b) => a.tick - b.tick)
     holds.sort((a, b) => a.start.tick - b.start.tick)
 
+    const damages: Score['damages'] = []
+    if (cyanvasVersion >= 1) {
+        buffer.seek(damagesPointer)
+        const damagesCount = buffer.readInt32LE()
+        for (let i = 0; i < damagesCount; i++) {
+            const tick = buffer.readInt32LE()
+
+            const lane = buffer.readInt32LE()
+            const width = buffer.readInt32LE()
+
+            const flickType = FlickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
+            const flags = buffer.readInt32LE()
+            damages.push({
+                tick,
+
+                lane,
+                width,
+                flickType,
+                flags: {
+                    critical: !!(flags & (1 << 0)),
+                    friction: !!(flags & (1 << 1)),
+                },
+            })
+        }
+        damages.sort((a, b) => a.tick - b.tick)
+    }
+
     return {
         metadata,
         events,
         taps,
         holds,
+        damages,
     }
 }

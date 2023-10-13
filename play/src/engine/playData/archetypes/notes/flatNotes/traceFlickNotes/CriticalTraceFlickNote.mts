@@ -11,12 +11,7 @@ export class CriticalTraceFlickNote extends DirectionalTraceFlickNote {
         left: skin.sprites.criticalTraceNoteLeft,
         middle: skin.sprites.criticalTraceNoteMiddle,
         right: skin.sprites.criticalTraceNoteRight,
-        primaryFallback: {
-            left: skin.sprites.criticalNoteLeft,
-            middle: skin.sprites.criticalNoteMiddle,
-            right: skin.sprites.criticalNoteRight,
-        },
-        secondaryFallback: skin.sprites.criticalNoteFallback,
+        fallback: skin.sprites.criticalNoteFallback,
     }
 
     clips = {

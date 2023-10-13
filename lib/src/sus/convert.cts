@@ -4,6 +4,7 @@ import {
     USCConnectionEndNote,
     USCConnectionStartNote,
     USCConnectionTickNote,
+    USCGuideNote,
     USCObject,
     USCSlideNote,
 } from '../usc/index.cjs'
@@ -20,7 +21,7 @@ export const chsLikeToUSC = (score: Score): USC => {
 
     const preventSingles = new Set<string>()
     const dedupeSingles = new Set<string>()
-    const dedupeSlides = new Map<string, USCSlideNote>()
+    const dedupeSlides = new Map<string, USCSlideNote | USCGuideNote>()
 
     const requests = {
         sideLane: false,
@@ -176,7 +177,7 @@ export const chsLikeToUSC = (score: Score): USC => {
 
     for (const [isDummy, slides] of [
         [false, score.slides],
-        [true, score.dummySlides],
+        [true, score.guides],
     ] as const) {
         for (const slide of slides) {
             const startNote = slide.find(({ type }) => type === 1 || type === 2)
@@ -186,14 +187,6 @@ export const chsLikeToUSC = (score: Score): USC => {
 
             const object: USCSlideNote = {
                 type: 'slide',
-                subType:
-                    isDummy ||
-                    (tickRemoveMods.has(getKey(startNote)) &&
-                        judgeRemoveMods.has(getKey(startNote)))
-                        ? judgeRemoveMods.has(getKey(endNote))
-                            ? 'dummy'
-                            : 'fadeDummy'
-                        : 'normal',
                 critical: criticalMods.has(getKey(startNote)),
                 connections: [] as never,
             }
@@ -205,7 +198,7 @@ export const chsLikeToUSC = (score: Score): USC => {
                 const lane = note.lane - 8 + note.width / 2 + requests.laneOffset
                 const size = note.width / 2
                 const timeScaleGroup = note.timeScaleGroup
-                const critical = object.critical || criticalMods.has(key)
+                const critical = ('critical' in object && object.critical) || criticalMods.has(key)
                 const ease = easeMods.get(key) ?? 'linear'
 
                 switch (note.type) {
@@ -295,7 +288,31 @@ export const chsLikeToUSC = (score: Score): USC => {
                 }
             }
 
-            objects.push(object)
+            if (
+                isDummy ||
+                (tickRemoveMods.has(getKey(startNote)) && judgeRemoveMods.has(getKey(startNote)))
+            ) {
+                objects.push({
+                    type: 'guide',
+                    color: criticalMods.has(getKey(startNote)) ? 'yellow' : 'green',
+                    fade: judgeRemoveMods.has(getKey(endNote)) ? 'none' : 'out',
+                    midpoints: object.connections.flatMap((connection) =>
+                        connection.type === 'attach'
+                            ? []
+                            : [
+                                  {
+                                      beat: connection.beat,
+                                      lane: connection.lane,
+                                      size: connection.size,
+                                      ease: connection.type === 'end' ? 'linear' : connection.ease,
+                                      timeScaleGroup: connection.timeScaleGroup,
+                                  },
+                              ]
+                    ),
+                })
+            } else {
+                objects.push(object)
+            }
 
             const key = getKey(startNote)
             const dupe = dedupeSlides.get(key)

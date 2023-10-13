@@ -7,7 +7,10 @@ import {
 import {
     USC,
     USCBpmChange,
+    USCColor,
     USCDamageNote,
+    USCFade,
+    USCGuideNote,
     USCObject,
     USCSingleNote,
     USCSlideNote,
@@ -322,7 +325,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
 
             let archetype: string
             let sim = true
-            if (object.subType !== 'normal' || connection.judgeType === 'none') {
+            if (connection.judgeType === 'none') {
                 archetype = 'HiddenSlideStartNote'
                 sim = false
             } else if (connection.judgeType === 'trace') {
@@ -361,7 +364,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.type !== 'end') continue
             let ci: ConnectionIntermediate
 
-            if (object.subType !== 'normal' || connection.judgeType === 'none') {
+            if (connection.judgeType === 'none') {
                 ci = {
                     archetype: 'HiddenSlideTickNote',
                     data: {
@@ -475,12 +478,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
         const head = joints[i - 1]
         if (!head.ease) throw new Error('Unexpected missing ease')
 
-        let archetype: string
-        if (object.subType !== 'normal') {
-            archetype = object.critical ? 'YellowDummySlide' : 'GreenDummySlide'
-        } else {
-            archetype = object.critical ? 'CriticalSlideConnector' : 'NormalSlideConnector'
-        }
+        const archetype = object.critical ? 'CriticalSlideConnector' : 'NormalSlideConnector'
 
         connectors.push({
             archetype,
@@ -490,7 +488,6 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                 head,
                 tail: joint,
                 ease: eases[head.ease],
-                noFade: object.subType !== 'fadeDummy',
             },
             sim: false,
         })
@@ -516,6 +513,47 @@ const slide: Handler<USCSlideNote> = (object, append) => {
     }
 }
 
+const guide: Handler<USCGuideNote> = (object, append) => {
+    const start = object.midpoints[0]
+    const end = object.midpoints[object.midpoints.length - 1]
+    for (const [i, joint] of object.midpoints.entries()) {
+        if (i === 0) continue
+
+        const head = object.midpoints[i - 1]
+        if (!head.ease) throw new Error('Unexpected missing ease')
+
+        append({
+            archetype: 'Guide',
+            data: {
+                color: USCColor[object.color],
+                fade: USCFade[object.fade],
+                ease: eases[head.ease],
+
+                startLane: start.lane,
+                startSize: start.size,
+                startBeat: start.beat,
+                startTimeScaleGroup: start.timeScaleGroup,
+
+                headLane: head.lane,
+                headSize: head.size,
+                headBeat: head.beat,
+                headTimeScaleGroup: head.timeScaleGroup,
+
+                tailLane: joint.lane,
+                tailSize: joint.size,
+                tailBeat: joint.beat,
+                tailTimeScaleGroup: joint.timeScaleGroup,
+
+                endLane: end.lane,
+                endSize: end.size,
+                endBeat: end.beat,
+                endTimeScaleGroup: end.timeScaleGroup,
+            },
+            sim: false,
+        })
+    }
+}
+
 const handlers: {
     [K in USCObject['type']]: Handler<Extract<USCObject, { type: K }>>
 } = {
@@ -523,26 +561,25 @@ const handlers: {
     single,
     timeScaleGroup,
     slide,
+    guide,
     damage,
 }
 
 const getConnections = (object: USCSlideNote) => {
     const connections = [...object.connections]
 
-    if (object.subType === 'normal') {
-        const beats = connections.map(({ beat }) => beat).sort((a, b) => a - b)
+    const beats = connections.map(({ beat }) => beat).sort((a, b) => a - b)
 
-        const min = beats[0]
-        const max = beats[beats.length - 1]
+    const min = beats[0]
+    const max = beats[beats.length - 1]
 
-        const start = Math.max(Math.ceil(min / 0.5) * 0.5, Math.floor(min / 0.5 + 1) * 0.5)
+    const start = Math.max(Math.ceil(min / 0.5) * 0.5, Math.floor(min / 0.5 + 1) * 0.5)
 
-        for (let beat = start; beat < max; beat += 0.5) {
-            connections.push({
-                type: 'attach',
-                beat,
-            })
-        }
+    for (let beat = start; beat < max; beat += 0.5) {
+        connections.push({
+            type: 'attach',
+            beat,
+        })
     }
 
     const startStep = connections.find(({ type }) => type === 'start')

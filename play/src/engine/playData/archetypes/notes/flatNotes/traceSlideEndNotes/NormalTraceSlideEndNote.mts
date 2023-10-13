@@ -8,12 +8,7 @@ export class NormalTraceSlideEndNote extends TraceSlideEndNote {
         left: skin.sprites.normalTraceNoteLeft,
         middle: skin.sprites.normalTraceNoteMiddle,
         right: skin.sprites.normalTraceNoteRight,
-        primaryFallback: {
-            left: skin.sprites.slideNoteLeft,
-            middle: skin.sprites.slideNoteMiddle,
-            right: skin.sprites.slideNoteRight,
-        },
-        secondaryFallback: skin.sprites.slideNoteFallback,
+        fallback: skin.sprites.slideNoteFallback,
     }
 
     tickSprites = {

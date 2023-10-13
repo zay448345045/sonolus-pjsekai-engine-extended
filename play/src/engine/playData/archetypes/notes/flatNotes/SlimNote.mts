@@ -7,7 +7,7 @@ export abstract class SlimNote extends FlatNote {
         const b = 1 + note.h / 2
         const t = 1 - note.h / 2
 
-        if (this.useSingleFallbackSprites) {
+        if (this.useFallbackSprites) {
             perspectiveLayout({ l, r, b, t }).copyTo(this.spriteLayouts.middle)
         } else {
             const ml = l + 0.125

@@ -10,17 +10,6 @@ import { SlimNote } from '../SlimNote.mjs'
 
 export abstract class TraceSlideEndNote extends SlimNote {
     leniency = 0.75
-    abstract sprites: {
-        left: SkinSprite
-        middle: SkinSprite
-        right: SkinSprite
-        primaryFallback: {
-            left: SkinSprite
-            middle: SkinSprite
-            right: SkinSprite
-        }
-        secondaryFallback: SkinSprite
-    }
 
     abstract tickSprites: {
         tick: SkinSprite

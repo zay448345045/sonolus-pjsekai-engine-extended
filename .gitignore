@@ -9,5 +9,6 @@ shared/src/level/data/*.sus
 shared/src/level/data/*.mmws
 shared/src/level/data/*.chs
 shared/src/level/data/*.json
+shared/src/level/data/*.ccmmws
 !src/level/data/expert.json
 

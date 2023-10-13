@@ -32,6 +32,7 @@ const analyze = (chs: Buffer): Score => {
     const meta: Score['meta'] = new Map()
     const slides: Score['slides'] = []
     const tapNotes: Score['tapNotes'] = []
+    const guides: Score['guides'] = []
     const ticksPerBeat = parsedChs.score.ticksPerBeat
     const timeScaleChanges: Score['timeScaleChanges'] = []
 
@@ -57,6 +58,9 @@ const analyze = (chs: Buffer): Score => {
         })
     }
     bpmChanges.sort((a, b) => a.tick - b.tick)
+    const laneOffset = 'laneoffset' in parsedChs ? parsedChs.laneoffset : 0
+
+    meta.set('REQUEST', [`"lane_offset ${laneOffset}"`])
     const channelMap = new Map<number, number>()
 
     const tryChannel = (obj: { channel?: number } | {}) => {
@@ -146,6 +150,38 @@ const analyze = (chs: Buffer): Score => {
         slides.push(susSlide)
     }
 
+    if ('guides' in parsedChs.score.notes) {
+        for (const guide of parsedChs.score.notes.guides) {
+            const susSlide: Score['slides'][0] = [
+                {
+                    lane: guide.startLaneIndex,
+                    tick: guide.startTick,
+                    type: 1,
+                    width: guide.startWidth,
+                    timeScaleGroup: tryChannel(guide),
+                },
+            ]
+            guide.stepNotes.sort((a, b) => a.tickOffset - b.tickOffset)
+            for (const step of guide.stepNotes) {
+                susSlide.push({
+                    lane: guide.startLaneIndex + step.laneIndexOffset,
+                    tick: guide.startTick + step.tickOffset,
+                    type: step.isVisible ? 3 : 5,
+                    width: guide.startWidth + step.widthChange,
+                    timeScaleGroup: tryChannel(step),
+                })
+                notes.push({
+                    $id: step.$id,
+                    tick: guide.startTick + step.tickOffset,
+                    laneIndex: guide.startLaneIndex + step.laneIndexOffset,
+                    width: guide.startWidth + step.widthChange,
+                })
+            }
+            susSlide[susSlide.length - 1].type = 2
+            guides.push(susSlide)
+        }
+    }
+
     for (const note of parsedChs.score.notes.airs) {
         const refNote = notes.find((n) => n.$id === note.parentNote.$ref)
         if (!refNote) {
@@ -166,7 +202,7 @@ const analyze = (chs: Buffer): Score => {
         offset,
         meta,
         slides,
-        dummySlides: [],
+        guides,
         tapNotes,
         ticksPerBeat,
         timeScaleChanges,

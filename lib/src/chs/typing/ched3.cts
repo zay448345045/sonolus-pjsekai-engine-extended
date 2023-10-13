@@ -3,6 +3,7 @@ export type Chs3 = {
     version: Version
     title: string
     artistName: string
+    laneoffset?: number
     notesDesignerName: string
     score: Score
     exportArgs: ExportArgs
@@ -57,6 +58,7 @@ export type Notes = {
     damages: Tap[]
     airs: Air[]
     airActions: unknown[]
+    guides: Slide[]
 }
 
 export type Air = {

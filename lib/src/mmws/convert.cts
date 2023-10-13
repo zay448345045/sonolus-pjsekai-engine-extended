@@ -4,9 +4,11 @@ import {
     USCConnectionEndNote,
     USCConnectionStartNote,
     USCConnectionTickNote,
+    USCDamageNote,
+    USCGuideNote,
     USCSingleNote,
     USCSlideNote,
-} from '../index.cjs'
+} from '../usc/index.cjs'
 import { analyze } from './analyze.cjs'
 
 const mmwsEaseToUSCEase = {
@@ -46,10 +48,10 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
             type: 'single',
             beat: tap.tick / ticksPerBeat,
             timeScaleGroup: 0,
-            critical: tap.critical,
+            critical: tap.flags.critical,
             lane: laneToUSCLane(tap),
             size: tap.width / 2,
-            trace: false,
+            trace: tap.flags.friction,
         }
         if (tap.flickType !== 'none') {
             uscTap.direction = tap.flickType
@@ -61,63 +63,93 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
             type: 'start',
             beat: hold.start.tick / ticksPerBeat,
             timeScaleGroup: 0,
-            critical: hold.critical,
+            critical: hold.start.flags.critical,
             ease: mmwsEaseToUSCEase[hold.start.ease],
             lane: laneToUSCLane(hold.start),
             size: hold.start.width / 2,
-            judgeType: 'normal',
+            judgeType: hold.flags.startHidden
+                ? 'none'
+                : hold.start.flags.friction
+                ? 'trace'
+                : 'normal',
         }
         const uscEndNote: USCConnectionEndNote = {
             type: 'end',
             beat: hold.end.tick / ticksPerBeat,
             timeScaleGroup: 0,
-            critical: hold.end.critical || hold.critical,
+            critical: hold.end.flags.critical,
             lane: laneToUSCLane(hold.end),
             size: hold.end.width / 2,
-            judgeType: 'normal',
+            judgeType: hold.flags.endHidden ? 'none' : hold.end.flags.friction ? 'trace' : 'normal',
         }
         if (hold.end.flickType !== 'none') {
             uscEndNote.direction = hold.end.flickType
         }
 
-        const uscSlide: USCSlideNote = {
-            type: 'slide',
-            subType: 'normal',
-            critical: hold.critical,
-            connections: [
-                uscStartNote,
-                ...hold.steps.map((step) => {
-                    const beat = step.tick / ticksPerBeat
-                    const lane = laneToUSCLane(step)
-                    const size = step.width / 2
-                    if (step.type === 'ignored') {
-                        return {
-                            type: 'attach',
-                            beat,
-                            critical: hold.critical,
-                            timeScaleGroup: 0,
-                        } satisfies USCConnectionAttachNote
-                    } else {
-                        const uscStep: USCConnectionTickNote = {
-                            type: 'tick',
-                            beat,
+        if (hold.flags.guide) {
+            const uscGuide: USCGuideNote = {
+                type: 'guide',
+                fade: hold.fadeType === 0 ? 'out' : hold.fadeType === 1 ? 'none' : 'in',
+                color: hold.start.flags.critical ? 'yellow' : 'green',
+                midpoints: [hold.start, ...hold.steps, hold.end].map((step) => ({
+                    beat: step.tick / ticksPerBeat,
+                    lane: laneToUSCLane(step),
+                    size: step.width / 2,
+                    timeScaleGroup: 0,
+                    ease: 'ease' in step ? mmwsEaseToUSCEase[step.ease] : 'linear',
+                })),
+            }
+            usc.objects.push(uscGuide)
+        } else {
+            const uscSlide: USCSlideNote = {
+                type: 'slide',
+                critical: hold.start.flags.critical,
+                connections: [
+                    uscStartNote,
+                    ...hold.steps.map((step) => {
+                        const beat = step.tick / ticksPerBeat
+                        const lane = laneToUSCLane(step)
+                        const size = step.width / 2
+                        if (step.type === 'ignored') {
+                            return {
+                                type: 'attach',
+                                beat,
+                                critical: hold.start.flags.critical,
+                                timeScaleGroup: 0,
+                            } satisfies USCConnectionAttachNote
+                        } else {
+                            const uscStep: USCConnectionTickNote = {
+                                type: 'tick',
+                                beat,
 
-                            timeScaleGroup: 0,
-                            lane,
-                            size,
-                            ease: mmwsEaseToUSCEase[step.ease],
-                        }
-                        if (step.type === 'visible') {
-                            uscStep.critical = hold.critical
-                        }
+                                timeScaleGroup: 0,
+                                lane,
+                                size,
+                                ease: mmwsEaseToUSCEase[step.ease],
+                            }
+                            if (step.type === 'visible') {
+                                uscStep.critical = hold.start.flags.critical
+                            }
 
-                        return uscStep
-                    }
-                }),
-                uscEndNote,
-            ],
+                            return uscStep
+                        }
+                    }),
+                    uscEndNote,
+                ],
+            }
+            usc.objects.push(uscSlide)
         }
-        usc.objects.push(uscSlide)
+    }
+
+    for (const damage of score.damages) {
+        const uscDamage: USCDamageNote = {
+            type: 'damage',
+            beat: damage.tick / ticksPerBeat,
+            timeScaleGroup: 0,
+            lane: laneToUSCLane(damage),
+            size: damage.width / 2,
+        }
+        usc.objects.push(uscDamage)
     }
 
     return usc
