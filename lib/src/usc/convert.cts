@@ -126,7 +126,9 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
     for (const tsGroup of usc.objects) {
         if (tsGroup.type !== 'timeScaleGroup') continue
         tsGroupIndex++
-        for (const [index, change] of Object.entries(tsGroup.changes)) {
+        const changes = [...tsGroup.changes]
+        changes.sort((a, b) => a.beat - b.beat)
+        for (const [index, change] of Object.entries(changes)) {
             tsChangeEntities.push({
                 archetype: 'TimeScaleChange',
                 data: [
