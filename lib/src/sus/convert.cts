@@ -46,16 +46,18 @@ export const chsLikeToUSC = (score: Score): USC => {
         }
     }
 
-    for (const slide of score.slides) {
-        for (const note of slide) {
-            const key = getKey(note)
-            switch (note.type) {
-                case 1:
-                case 2:
-                case 3:
-                case 5:
-                    preventSingles.add(key)
-                    break
+    for (const slides of [score.slides, score.guides] as const) {
+        for (const slide of slides) {
+            for (const note of slide) {
+                const key = getKey(note)
+                switch (note.type) {
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 5:
+                        preventSingles.add(key)
+                        break
+                }
             }
         }
     }

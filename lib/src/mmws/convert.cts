@@ -1,5 +1,6 @@
 import {
     USC,
+    USCColor,
     USCConnectionAttachNote,
     USCConnectionEndNote,
     USCConnectionStartNote,
@@ -90,7 +91,7 @@ export const mmwsToUSC = (mmws: Buffer): USC => {
             const uscGuide: USCGuideNote = {
                 type: 'guide',
                 fade: hold.fadeType === 0 ? 'out' : hold.fadeType === 1 ? 'none' : 'in',
-                color: hold.start.flags.critical ? 'yellow' : 'green',
+                color: Object.entries(USCColor).find(([, i]) => i === hold.guideColor)![0] as USCColor,
                 midpoints: [hold.start, ...hold.steps, hold.end].map((step) => ({
                     beat: step.tick / ticksPerBeat,
                     lane: laneToUSCLane(step),

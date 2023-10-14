@@ -63,6 +63,7 @@ export type Score = {
             ease: EaseType
         }
         fadeType: number
+        guideColor: number
         steps: {
             tick: number
             lane: number
@@ -201,6 +202,8 @@ export const analyze = (mmws: Buffer): Score => {
         const startFlags = buffer.readInt32LE()
         const startEase = EaseType[buffer.readInt32LE() as 0 | 1 | 2]
         const fadeType = cyanvasVersion >= 2 ? buffer.readInt32LE() : 0
+        const guideColor =
+            cyanvasVersion >= 3 ? buffer.readInt32LE() : startFlags & (1 << 0) ? 4 : 2
         const stepsCount = buffer.readInt32LE()
         const steps: Score['holds'][0]['steps'] = []
         for (let j = 0; j < stepsCount; j++) {
@@ -241,6 +244,7 @@ export const analyze = (mmws: Buffer): Score => {
                 },
             },
             fadeType,
+            guideColor,
             steps,
             end: {
                 tick: endTick,
