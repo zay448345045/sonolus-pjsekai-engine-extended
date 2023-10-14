@@ -539,22 +539,22 @@ const guide: Handler<USCGuideNote> = (object, append) => {
                 startLane: start.lane,
                 startSize: start.size,
                 startBeat: start.beat,
-                startTimeScaleGroup: `tsg:${start.timeScaleGroup}`,
+                startTimeScaleGroup: `tsg:${start.timeScaleGroup ?? 0}`,
 
                 headLane: head.lane,
                 headSize: head.size,
                 headBeat: head.beat,
-                headTimeScaleGroup: `tsg:${head.timeScaleGroup}`,
+                headTimeScaleGroup: `tsg:${head.timeScaleGroup ?? 0}`,
 
                 tailLane: joint.lane,
                 tailSize: joint.size,
                 tailBeat: joint.beat,
-                tailTimeScaleGroup: `tsg:${joint.timeScaleGroup}`,
+                tailTimeScaleGroup: `tsg:${joint.timeScaleGroup ?? 0}`,
 
                 endLane: end.lane,
                 endSize: end.size,
                 endBeat: end.beat,
-                endTimeScaleGroup: `tsg:${end.timeScaleGroup}`,
+                endTimeScaleGroup: `tsg:${end.timeScaleGroup ?? 0}`,
             },
             sim: false,
         })
