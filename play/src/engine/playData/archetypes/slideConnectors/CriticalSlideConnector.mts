@@ -20,6 +20,8 @@ export class CriticalSlideConnector extends SlideConnector {
         },
     }
 
+    zOrder = 2
+
     clips = {
         hold: effect.clips.criticalHold,
         fallback: effect.clips.normalHold,

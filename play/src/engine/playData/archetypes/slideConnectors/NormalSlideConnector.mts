@@ -20,6 +20,8 @@ export class NormalSlideConnector extends SlideConnector {
         },
     }
 
+    zOrder = 1
+
     clips = {
         hold: effect.clips.normalHold,
         fallback: effect.clips.normalHold,

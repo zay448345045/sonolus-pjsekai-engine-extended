@@ -5,7 +5,12 @@ import { skin } from '../skin.mjs'
 import { layer } from './layer.mjs'
 import { Note } from './notes/Note.mjs'
 import { EaseType, ease } from './slideConnectors/EaseType.mjs'
-import { getScheduleSFXTime, getZ, scaledTimeToEarliestTime, timeToScaledTime } from './utils.mjs'
+import {
+    getScheduleSFXTime,
+    getZwithLayer,
+    scaledTimeToEarliestTime,
+    timeToScaledTime,
+} from './utils.mjs'
 
 export class Guide extends Archetype {
     leniency = 1
@@ -127,9 +132,19 @@ export class Guide extends Archetype {
         if (options.hidden > 0)
             this.visualTime.hidden = this.tail.scaledTime - Note.duration * options.hidden
 
-        this.connector.z = getZ(layer.note.connector, this.head.time, this.data.headLane)
+        this.connector.z = getZwithLayer(
+            layer.note.connector,
+            this.head.time,
+            this.data.headLane,
+            this.data.color
+        )
 
-        this.slide.z = getZ(layer.note.slide, this.head.time, this.data.headLane)
+        this.slide.z = getZwithLayer(
+            layer.note.slide,
+            this.head.time,
+            this.data.headLane,
+            this.data.color
+        )
 
         this.sprites.normal = this.normalSprite
         this.sprites.fallback = this.fallbackSprite

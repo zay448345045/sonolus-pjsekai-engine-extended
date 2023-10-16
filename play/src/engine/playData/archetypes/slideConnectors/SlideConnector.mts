@@ -10,7 +10,7 @@ import {
     circularEffectLayout,
     getHitbox,
     getScheduleSFXTime,
-    getZ,
+    getZwithLayer,
     perspectiveLayout,
     scaledTimeToEarliestTime,
     timeToScaledTime,
@@ -50,6 +50,8 @@ export abstract class SlideConnector extends Archetype {
         circular: ParticleEffect
         linear: ParticleEffect
     }
+
+    abstract zOrder: number
 
     abstract slideStartNote: SlideStartNote
 
@@ -149,9 +151,19 @@ export abstract class SlideConnector extends Archetype {
         if (options.hidden > 0)
             this.visualTime.hidden = this.tail.scaledTime - Note.duration * options.hidden
 
-        this.connector.z = getZ(layer.note.connector, this.head.time, this.headData.lane)
+        this.connector.z = getZwithLayer(
+            layer.note.connector,
+            this.head.time,
+            this.headData.lane,
+            this.zOrder
+        )
 
-        this.slide.z = getZ(layer.note.slide, this.head.time, this.headData.lane)
+        this.slide.z = getZwithLayer(
+            layer.note.slide,
+            this.head.time,
+            this.headData.lane,
+            this.zOrder
+        )
     }
 
     spawnOrder() {
@@ -412,7 +424,7 @@ export abstract class SlideConnector extends Archetype {
                 )
                 this.sprites.connector.normal.draw(
                     layout,
-                    this.connector.z + 1,
+                    this.connector.z + 5,
                     Math.ease('Out', 'Cubic', 1 - activeA)
                 )
             } else {

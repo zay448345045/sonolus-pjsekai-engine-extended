@@ -66,7 +66,10 @@ export const getHitbox = (options: { l: number; r: number; leniency: number }) =
     }).transform(skin.transform)
 
 export const getZ = (layer: number, time: number, lane: number) =>
-    layer - time / 1000 - lane / 100000
+    (layer - time / 1000 - lane / 100000) * 10
+
+export const getZwithLayer = (layer: number, time: number, lane: number, priority: number) =>
+    (layer - time / 1000 - lane / 100000) * 10 + priority
 
 export const getScheduleSFXTime = (targetTime: number) =>
     targetTime - 0.5 - Math.max(audio.offset, 0)

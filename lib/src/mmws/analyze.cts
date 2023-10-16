@@ -29,6 +29,7 @@ export type Score = {
         hispeedChanges: {
             tick: number
             speed: number
+            layer: number
         }[]
         skills: number[]
         fever: {
@@ -45,6 +46,7 @@ export type Score = {
             critical: boolean
             friction: boolean
         }
+        layer: number
     }[]
     holds: {
         flags: {
@@ -60,6 +62,7 @@ export type Score = {
                 critical: boolean
                 friction: boolean
             }
+            layer: number
             ease: EaseType
         }
         fadeType: number
@@ -70,6 +73,7 @@ export type Score = {
             width: number
             type: StepType
             ease: EaseType
+            layer: number
         }[]
         end: {
             tick: number
@@ -81,6 +85,8 @@ export type Score = {
                 critical: boolean
                 friction: boolean
             }
+
+            layer: number
         }
     }[]
     damages: {
@@ -92,6 +98,8 @@ export type Score = {
             critical: boolean
             friction: boolean
         }
+
+        layer: number
     }[]
 }
 
@@ -157,6 +165,7 @@ export const analyze = (mmws: Buffer): Score => {
         events.hispeedChanges.push({
             tick: buffer.readInt32LE(),
             speed: buffer.readFloatLE(),
+            layer: cyanvasVersion >= 4 ? buffer.readInt32LE() : 0,
         })
     }
     const skillsCount = buffer.readInt32LE()
@@ -175,6 +184,7 @@ export const analyze = (mmws: Buffer): Score => {
 
         const lane = buffer.readInt32LE()
         const width = buffer.readInt32LE()
+        const layer = cyanvasVersion >= 4 ? buffer.readInt32LE() : 0
 
         const flickType = FlickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
         const flags = buffer.readInt32LE()
@@ -188,6 +198,7 @@ export const analyze = (mmws: Buffer): Score => {
                 critical: !!(flags & (1 << 0)),
                 friction: !!(flags & (1 << 1)),
             },
+            layer
         })
     }
 
@@ -199,6 +210,7 @@ export const analyze = (mmws: Buffer): Score => {
         const startTick = buffer.readInt32LE()
         const startLane = buffer.readInt32LE()
         const startWidth = buffer.readInt32LE()
+        const startLayer = cyanvasVersion >= 4 ? buffer.readInt32LE() : 0
         const startFlags = buffer.readInt32LE()
         const startEase = EaseType[buffer.readInt32LE() as 0 | 1 | 2]
         const fadeType = cyanvasVersion >= 2 ? buffer.readInt32LE() : 0
@@ -210,6 +222,7 @@ export const analyze = (mmws: Buffer): Score => {
             const tick = buffer.readInt32LE()
             const lane = buffer.readInt32LE()
             const width = buffer.readInt32LE()
+            const layer = cyanvasVersion >= 4 ? buffer.readInt32LE() : 0
             buffer.readInt32LE() // unused flags
             const type = StepType[buffer.readInt32LE() as 0 | 1 | 2]
             const ease = EaseType[buffer.readInt32LE() as 0 | 1 | 2]
@@ -219,11 +232,14 @@ export const analyze = (mmws: Buffer): Score => {
                 width,
                 type,
                 ease,
+
+                layer
             })
         }
         const endTick = buffer.readInt32LE()
         const endLane = buffer.readInt32LE()
         const endWidth = buffer.readInt32LE()
+        const endLayer = cyanvasVersion >= 4 ? buffer.readInt32LE() : 0
         const endFlickType = FlickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
         const endFlags = buffer.readInt32LE()
 
@@ -242,6 +258,7 @@ export const analyze = (mmws: Buffer): Score => {
                     critical: !!(startFlags & (1 << 0)),
                     friction: !!(startFlags & (1 << 1)),
                 },
+                layer: startLayer
             },
             fadeType,
             guideColor,
@@ -255,6 +272,7 @@ export const analyze = (mmws: Buffer): Score => {
                     friction: !!(endFlags & (1 << 1)),
                 },
                 flickType: endFlickType,
+                layer: endLayer
             },
         })
     }
@@ -276,6 +294,8 @@ export const analyze = (mmws: Buffer): Score => {
             const lane = buffer.readInt32LE()
             const width = buffer.readInt32LE()
 
+            const layer = cyanvasVersion >= 4 ? buffer.readInt32LE() : 0
+
             const flickType = FlickType[buffer.readInt32LE() as 0 | 1 | 2 | 3]
             const flags = buffer.readInt32LE()
             damages.push({
@@ -284,6 +304,7 @@ export const analyze = (mmws: Buffer): Score => {
                 lane,
                 width,
                 flickType,
+                layer,
                 flags: {
                     critical: !!(flags & (1 << 0)),
                     friction: !!(flags & (1 << 1)),
