@@ -103,7 +103,7 @@ export const skin = defineSkin({
         traceFlickNoteLeft: 'Sekai Trace Note Red Left',
         traceFlickNoteMiddle: 'Sekai Trace Note Red Middle',
         traceFlickNoteRight: 'Sekai Trace Note Red Right',
-        traceFlickTickNote: 'Sekai Diamond Red',
+        traceFlickTickNote: 'Sekai Trace Diamond Red',
         traceFlickTickNoteFallback: SkinSpriteName.NoteTickRed,
 
         guideGreen: 'Sekai+ Guide Green',

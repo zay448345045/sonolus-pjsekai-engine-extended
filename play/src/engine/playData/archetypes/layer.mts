@@ -9,6 +9,7 @@ export const layer = {
         body: 100,
         slide: 99,
         connector: 97,
+        guide: 98,
     },
 
     simLine: 90,

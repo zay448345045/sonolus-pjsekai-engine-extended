@@ -87,10 +87,6 @@ export class Guide extends Archetype {
         z: Number,
     })
 
-    slide = this.entityMemory({
-        z: Number,
-    })
-
     sprites = this.entityMemory({
         normal: SkinSpriteId,
         fallback: SkinSpriteId,
@@ -133,14 +129,7 @@ export class Guide extends Archetype {
             this.visualTime.hidden = this.tail.scaledTime - Note.duration * options.hidden
 
         this.connector.z = getZwithLayer(
-            layer.note.connector,
-            this.head.time,
-            this.data.headLane,
-            this.data.color
-        )
-
-        this.slide.z = getZwithLayer(
-            layer.note.slide,
+            layer.note.guide,
             this.head.time,
             this.data.headLane,
             this.data.color
