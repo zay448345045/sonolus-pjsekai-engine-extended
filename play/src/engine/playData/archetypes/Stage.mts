@@ -129,7 +129,7 @@ export class Stage extends Archetype {
                 t: scaledScreen.t,
                 b: Math.lerp(lane.t, 1, options.stageCover),
             }),
-            layer.cover,
+            layer.cover * 10,
             1
         )
     }
