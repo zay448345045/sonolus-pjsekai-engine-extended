@@ -20,7 +20,7 @@ export class CriticalSlideConnector extends SlideConnector {
         },
     }
 
-    zOrder = 2
+    zOrder = 5
 
     clips = {
         hold: effect.clips.criticalHold,

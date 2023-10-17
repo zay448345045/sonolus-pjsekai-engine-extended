@@ -1,6 +1,6 @@
 import { EaseType, ease } from '../../../../../../shared/src/engine/data/EaseType.mjs'
 import { panel } from '../../panel.mjs'
-import { getZ, layer } from '../../skin.mjs'
+import { getZ, getZwithLayer, layer } from '../../skin.mjs'
 import { SlideStartNote } from '../notes/flatNotes/slideStartNotes/SlideStartNote.mjs'
 
 export abstract class SlideConnector extends Archetype {
@@ -10,6 +10,8 @@ export abstract class SlideConnector extends Archetype {
     }
 
     abstract slideStartNote: SlideStartNote
+
+    abstract zOrder: number
 
     data = this.defineData({
         headRef: { name: 'head', type: Number },
@@ -37,7 +39,7 @@ export abstract class SlideConnector extends Archetype {
             max: this.tailData.lane + this.tailData.size,
         }
 
-        const z = getZ(layer.note.connector, t.min, this.headData.lane)
+        const z = getZwithLayer(layer.note.connector, t.min, this.headData.lane, this.zOrder)
 
         for (let i = index.min; i <= index.max; i++) {
             const x = i * panel.w

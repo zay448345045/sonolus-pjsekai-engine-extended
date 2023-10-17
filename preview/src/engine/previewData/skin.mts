@@ -123,6 +123,7 @@ export const layer = {
         arrow: 101,
         body: 100,
         connector: 99,
+        guide: 98
     },
 
     simLine: 90,
@@ -148,4 +149,7 @@ export const line = (sprite: SkinSprite, beat: number, a: number) => {
 }
 
 export const getZ = (layer: number, time: number, lane: number) =>
-    layer - time / 1000 - lane / 100000
+    (layer - time / 1000 - lane / 100000) * 10
+
+export const getZwithLayer = (layer: number, time: number, lane: number, priority: number) =>
+    (layer - time / 1000 - lane / 100000) * 10 + priority

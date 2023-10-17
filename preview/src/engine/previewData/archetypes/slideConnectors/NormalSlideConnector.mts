@@ -8,6 +8,8 @@ export class NormalSlideConnector extends SlideConnector {
         fallback: skin.sprites.normalSlideConnectorFallback,
     }
 
+    zOrder = 0
+
     get slideStartNote() {
         return archetypes.NormalSlideStartNote
     }

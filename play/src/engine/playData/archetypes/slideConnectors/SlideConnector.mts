@@ -424,7 +424,7 @@ export abstract class SlideConnector extends Archetype {
                 )
                 this.sprites.connector.normal.draw(
                     layout,
-                    this.connector.z + 5,
+                    this.connector.z + 1,
                     Math.ease('Out', 'Cubic', 1 - activeA)
                 )
             } else {

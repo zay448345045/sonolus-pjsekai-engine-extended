@@ -2,7 +2,7 @@ import { Color } from '../../../../../shared/src/engine/data/Color.mjs'
 import { EaseType, ease } from '../../../../../shared/src/engine/data/EaseType.mjs'
 import { FadeType } from '../../../../../shared/src/engine/data/FadeType.mjs'
 import { panel } from '../panel.mjs'
-import { getZ, layer, skin } from '../skin.mjs'
+import { getZwithLayer, layer, skin } from '../skin.mjs'
 
 export class Guide extends Archetype {
     data = this.defineData({
@@ -51,7 +51,7 @@ export class Guide extends Archetype {
             max: this.data.tailLane + this.data.tailSize,
         }
 
-        const z = getZ(layer.note.connector, t.min, this.data.headLane)
+        const z = getZwithLayer(layer.note.guide, t.min, this.data.headLane, this.data.color)
 
         for (let i = index.min; i <= index.max; i++) {
             const x = i * panel.w

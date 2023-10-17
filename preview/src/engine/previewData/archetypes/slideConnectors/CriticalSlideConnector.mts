@@ -8,6 +8,8 @@ export class CriticalSlideConnector extends SlideConnector {
         fallback: skin.sprites.criticalSlideConnectorFallback,
     }
 
+    zOrder = 5
+
     get slideStartNote() {
         return archetypes.CriticalSlideStartNote
     }
