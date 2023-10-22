@@ -97,7 +97,7 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
                 })
             }
         }
-        if ("timeScaleGroup" in intermediate) {
+        if ('timeScaleGroup' in intermediate) {
             entity.data.push({
                 name: `timeScaleGroup`,
                 ref: `tsg:${intermediate.timeScaleGroup ?? 0}`,
@@ -138,7 +138,7 @@ export const uscToLevelData = (usc: USC, offset = 0): LevelData => {
                     },
                     {
                         name: 'timeScale',
-                        value: change.timeScale,
+                        value: change.timeScale === 0 ? 0.000001 : change.timeScale,
                     },
                     tsGroup.changes[+index + 1] === undefined
                         ? {
