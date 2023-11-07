@@ -1,3 +1,4 @@
+import { options } from '~/engine/configuration/options.mjs'
 import { Color } from '../../../../../shared/src/engine/data/Color.mjs'
 import { EaseType, ease } from '../../../../../shared/src/engine/data/EaseType.mjs'
 import { FadeType } from '../../../../../shared/src/engine/data/FadeType.mjs'
@@ -30,6 +31,12 @@ export class Guide extends Archetype {
         fade: { name: 'fade', type: DataType<FadeType> },
         color: { name: 'color', type: DataType<Color> },
     })
+    preprocess(): void {
+        if (options.mirror) this.data.headLane *= -1
+        if (options.mirror) this.data.tailLane *= -1
+        if (options.mirror) this.data.startLane *= -1
+        if (options.mirror) this.data.endLane *= -1
+    }
 
     render() {
         const t = {

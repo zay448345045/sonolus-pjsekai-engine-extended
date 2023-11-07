@@ -203,6 +203,7 @@ export abstract class FlatNote extends Note {
     }
 
     render() {
+        if (!options.showNotes) return
         if (this.data.size < 0.25) return
         this.y = Note.approach(
             this.visualTime.min,

@@ -80,6 +80,7 @@ export abstract class TraceNote extends SlimNote {
     }
 
     render(): void {
+        if (!options.showNotes) return
         super.render()
 
         if (this.useFallbackTickSprite) {

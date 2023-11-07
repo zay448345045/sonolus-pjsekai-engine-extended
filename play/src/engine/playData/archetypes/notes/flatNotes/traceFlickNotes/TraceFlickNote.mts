@@ -1,21 +1,14 @@
 import { options } from '../../../../../configuration/options.mjs'
 import { minFlickVR } from '../../../constants.mjs'
 import { SlimNote } from '../SlimNote.mjs'
-import { FlickDirection } from '../flickNotes/FlickDirection.mjs'
 
 export abstract class TraceFlickNote extends SlimNote {
     leniency = 1
 
     earlyInputTime = this.entityMemory(Number)
 
-    flickData = this.defineData({
-        direction: { name: 'direction', type: DataType<FlickDirection> },
-    })
-
     preprocess() {
         super.preprocess()
-
-        if (options.mirror) this.flickData.direction *= -1
     }
 
     initialize() {

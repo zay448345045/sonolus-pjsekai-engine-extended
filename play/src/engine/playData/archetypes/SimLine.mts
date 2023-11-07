@@ -131,6 +131,7 @@ export class SimLine extends Archetype {
     }
 
     render() {
+        if (!options.showNotes) return
         if (
             this.leftVisualTime.min > timeToScaledTime(time.now, this.leftTimeScaleGroup) ||
             this.rightVisualTime.min > timeToScaledTime(time.now, this.rightTimeScaleGroup)

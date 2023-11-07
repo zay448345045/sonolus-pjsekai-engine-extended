@@ -138,6 +138,7 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     }
 
     render() {
+        if (!options.showNotes) return
         this.y = Note.approach(
             this.visualTime.min,
             this.visualTime.max,

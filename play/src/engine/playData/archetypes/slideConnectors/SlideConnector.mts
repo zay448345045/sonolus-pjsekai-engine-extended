@@ -353,6 +353,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     renderConnector() {
+        if (!options.showNotes) return
         if (
             options.hidden > 0 &&
             timeToScaledTime(time.now, this.headData.timeScaleGroup) > this.visualTime.hidden
@@ -438,6 +439,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     renderSlide() {
+        if (!options.showNotes) return
         const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
 
         const l = this.getL(s)

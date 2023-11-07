@@ -125,6 +125,7 @@ export abstract class TraceSlideEndNote extends SlimNote {
     }
 
     render(): void {
+        if (!options.showNotes) return
         super.render()
 
         if (this.useFallbackTickSprite) {

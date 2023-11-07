@@ -103,6 +103,7 @@ export abstract class DirectionalTraceFlickNote extends TraceFlickNote {
     }
 
     render() {
+        if (!options.showNotes) return
         super.render()
 
         if (this.useFallbackTickSprite) {

@@ -75,14 +75,6 @@ export class Guide extends Archetype {
 
     spawnTime = this.entityMemory(Number)
 
-    hasSFXScheduled = this.entityMemory(Boolean)
-
-    sfxInstanceId = this.entityMemory(LoopedEffectClipInstanceId)
-    effectInstanceIds = this.entityMemory({
-        circular: ParticleEffectInstanceId,
-        linear: ParticleEffectInstanceId,
-    })
-
     connector = this.entityMemory({
         z: Number,
     })
@@ -93,6 +85,10 @@ export class Guide extends Archetype {
     })
 
     preprocess() {
+        if (options.mirror) this.data.headLane *= -1
+        if (options.mirror) this.data.tailLane *= -1
+        if (options.mirror) this.data.startLane *= -1
+        if (options.mirror) this.data.endLane *= -1
         this.head.time = bpmChanges.at(this.data.headBeat).time
         this.head.scaledTime = timeToScaledTime(this.head.time, this.data.headTimeScaleGroup)
 
@@ -153,6 +149,7 @@ export class Guide extends Archetype {
             this.despawn = true
             return
         }
+        if (!options.showNotes) return
         this.renderConnector()
     }
 

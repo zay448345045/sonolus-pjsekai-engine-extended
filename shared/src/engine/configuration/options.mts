@@ -145,4 +145,16 @@ export const optionsDefinition = {
         type: 'toggle',
         def: 0,
     },
+    showNotes: {
+        name: NameText.NoteVisibility,
+        scope: 'Sekai+',
+        type: 'toggle',
+        def: 1,
+    },
+    showLane: {
+        name: NameText.StageVisibility,
+        scope: 'Sekai+',
+        type: 'toggle',
+        def: 1,
+    },
 } as const satisfies Record<string, EngineConfigurationOption>
