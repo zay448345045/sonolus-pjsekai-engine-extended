@@ -18,6 +18,17 @@ export class CriticalSlideConnector extends SlideConnector {
             right: skin.sprites.criticalNoteRight,
             fallback: skin.sprites.criticalNoteFallback,
         },
+
+        traceSlide: {
+            left: skin.sprites.criticalTraceNoteLeft,
+            middle: skin.sprites.criticalTraceNoteMiddle,
+            right: skin.sprites.criticalTraceNoteRight,
+            fallback: skin.sprites.criticalTraceNoteFallback,
+        },
+        traceSlideTick: {
+            tick: skin.sprites.criticalSlideTickNote,
+            fallback: skin.sprites.criticalSlideTickNoteFallback,
+        },
     }
 
     zOrder = 5

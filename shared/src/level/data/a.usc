@@ -1,0 +1,97 @@
+{
+    "usc": {
+        "objects": [
+            {
+                "beat": 0.0,
+                "bpm": 160.0,
+                "type": "bpm"
+            },
+            {
+                "changes": [
+                    {
+                        "beat": 0.0,
+                        "timeScale": 1.0
+                    }
+                ],
+                "type": "timeScaleGroup"
+            },
+            {
+                "connections": [
+                    {
+                        "beat": 0.0,
+                        "critical": false,
+                        "ease": "linear",
+                        "judgeType": "normal",
+                        "lane": -4.0,
+                        "size": 2.0,
+                        "timeScaleGroup": 0,
+                        "type": "start"
+                    },
+                    {
+                        "beat": 2.0,
+                        "critical": false,
+                        "judgeType": "normal",
+                        "lane": -4.0,
+                        "size": 2.0,
+                        "timeScaleGroup": 0,
+                        "type": "end"
+                    }
+                ],
+                "critical": false,
+                "type": "slide"
+            },
+            {
+                "connections": [
+                    {
+                        "beat": 0.0,
+                        "critical": false,
+                        "ease": "linear",
+                        "judgeType": "trace",
+                        "lane": 0.0,
+                        "size": 2.0,
+                        "timeScaleGroup": 0,
+                        "type": "start"
+                    },
+                    {
+                        "beat": 2.0,
+                        "critical": false,
+                        "judgeType": "normal",
+                        "lane": 0.0,
+                        "size": 2.0,
+                        "timeScaleGroup": 0,
+                        "type": "end"
+                    }
+                ],
+                "critical": false,
+                "type": "slide"
+            },
+            {
+                "connections": [
+                    {
+                        "beat": 0.0,
+                        "critical": false,
+                        "ease": "linear",
+                        "judgeType": "none",
+                        "lane": 4.0,
+                        "size": 2.0,
+                        "timeScaleGroup": 0,
+                        "type": "start"
+                    },
+                    {
+                        "beat": 2.0,
+                        "critical": false,
+                        "judgeType": "normal",
+                        "lane": 4.0,
+                        "size": 2.0,
+                        "timeScaleGroup": 0,
+                        "type": "end"
+                    }
+                ],
+                "critical": false,
+                "type": "slide"
+            }
+        ],
+        "offset": -0.0
+    },
+    "version": 2
+}

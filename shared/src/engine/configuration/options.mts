@@ -157,4 +157,22 @@ export const optionsDefinition = {
         type: 'toggle',
         def: 1,
     },
+    slideQuality: {
+        name: 'Slide Quality',
+        scope: 'Sekai+',
+        type: 'slider',
+        def: 10,
+        min: 1,
+        max: 50,
+        step: 1,
+    },
+    guideQuality: {
+        name: 'Guide Quality',
+        scope: 'Sekai+',
+        type: 'slider',
+        def: 10,
+        min: 1,
+        max: 50,
+        step: 1,
+    },
 } as const satisfies Record<string, EngineConfigurationOption>

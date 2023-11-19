@@ -249,6 +249,11 @@ const eases = {
     linear: 0,
     in: 1,
 } as const
+const slideStarts = {
+    tap: 0,
+    trace: 1,
+    none: 2,
+} as const
 
 const bpm: Handler<USCBpmChange> = (object, append) => {
     append({
@@ -325,6 +330,8 @@ const slide: Handler<USCSlideNote> = (object, append) => {
     const attaches: ConnectionIntermediate[] = []
     const ends: ConnectionIntermediate[] = []
 
+    let startType: keyof typeof slideStarts = 'tap'
+
     const connections = getConnections(object)
     for (const [i, connection] of connections.entries()) {
         if (i === 0) {
@@ -335,18 +342,21 @@ const slide: Handler<USCSlideNote> = (object, append) => {
             if (connection.judgeType === 'none') {
                 archetype = 'HiddenSlideStartNote'
                 sim = false
+                startType = 'none'
             } else if (connection.judgeType === 'trace') {
                 if (connection.critical) {
                     archetype = 'CriticalTraceSlideStartNote'
                 } else {
                     archetype = 'NormalTraceSlideStartNote'
                 }
+                startType = 'trace'
             } else {
                 if (connection.critical) {
                     archetype = 'CriticalSlideStartNote'
                 } else {
                     archetype = 'NormalSlideStartNote'
                 }
+                startType = 'tap'
             }
 
             const ci: ConnectionIntermediate = {
@@ -495,6 +505,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                 head,
                 tail: joint,
                 ease: eases[head.ease],
+                startType: slideStarts[startType],
             },
             sim: false,
         })

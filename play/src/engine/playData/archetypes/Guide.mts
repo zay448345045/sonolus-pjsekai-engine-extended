@@ -173,10 +173,10 @@ export class Guide extends Archetype {
         }
         if (visibleTime.min >= visibleTime.max) return
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < options.guideQuality; i++) {
             const scaledTime = {
-                min: Math.lerp(visibleTime.min, visibleTime.max, i / 10),
-                max: Math.lerp(visibleTime.min, visibleTime.max, (i + 1) / 10),
+                min: Math.lerp(visibleTime.min, visibleTime.max, i / options.guideQuality),
+                max: Math.lerp(visibleTime.min, visibleTime.max, (i + 1) / options.guideQuality),
             }
 
             const s = {

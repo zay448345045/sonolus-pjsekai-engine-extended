@@ -6,6 +6,7 @@ import { note } from '../constants.mjs'
 import { layer } from '../layer.mjs'
 import { Note } from '../notes/Note.mjs'
 import { SlideStartNote } from '../notes/flatNotes/slideStartNotes/SlideStartNote.mjs'
+import { scaledScreen } from '../shared.mjs'
 import {
     circularEffectLayout,
     getHitbox,
@@ -16,6 +17,7 @@ import {
     timeToScaledTime,
 } from '../utils.mjs'
 import { EaseType, ease } from './EaseType.mjs'
+import { SlideStartType } from './SlideType.mjs'
 
 const VisualType = {
     Waiting: 0,
@@ -37,6 +39,16 @@ export abstract class SlideConnector extends Archetype {
             left: SkinSprite
             middle: SkinSprite
             right: SkinSprite
+            fallback: SkinSprite
+        }
+        traceSlide: {
+            left: SkinSprite
+            middle: SkinSprite
+            right: SkinSprite
+            fallback: SkinSprite
+        }
+        traceSlideTick: {
+            tick: SkinSprite
             fallback: SkinSprite
         }
     }
@@ -63,6 +75,7 @@ export abstract class SlideConnector extends Archetype {
         tailRef: { name: 'tail', type: Number },
         endRef: { name: 'end', type: Number },
         ease: { name: 'ease', type: DataType<EaseType> },
+        startType: { name: 'startType', type: DataType<SlideStartType> },
     })
 
     start = this.entityMemory({
@@ -296,13 +309,24 @@ export abstract class SlideConnector extends Archetype {
     get useFallbackConnectorSprites() {
         return !this.sprites.connector.normal.exists || !this.sprites.connector.active.exists
     }
-
     get useFallbackSlideSprites() {
         return (
             !this.sprites.slide.left.exists ||
             !this.sprites.slide.middle.exists ||
             !this.sprites.slide.right.exists
         )
+    }
+
+    get useFallbackSlideTraceSprites() {
+        return (
+            !this.sprites.traceSlide.left.exists ||
+            !this.sprites.traceSlide.middle.exists ||
+            !this.sprites.traceSlide.right.exists
+        )
+    }
+
+    get useFallbackSlideTraceTickSprites() {
+        return !this.sprites.traceSlideTick.tick.exists
     }
 
     get useFallbackClip() {
@@ -382,10 +406,10 @@ export abstract class SlideConnector extends Archetype {
             max: Math.min(this.tail.scaledTime, now + Note.duration),
         }
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < options.slideQuality; i++) {
             const scaledTime = {
-                min: Math.lerp(visibleTime.min, visibleTime.max, i / 10),
-                max: Math.lerp(visibleTime.min, visibleTime.max, (i + 1) / 10),
+                min: Math.lerp(visibleTime.min, visibleTime.max, i / options.slideQuality),
+                max: Math.lerp(visibleTime.min, visibleTime.max, (i + 1) / options.slideQuality),
             }
 
             const s = {
@@ -440,31 +464,90 @@ export abstract class SlideConnector extends Archetype {
 
     renderSlide() {
         if (!options.showNotes) return
+        if (this.data.startType === SlideStartType.None) return
         const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
 
         const l = this.getL(s)
         const r = this.getR(s)
+        const lane = this.getLane(s)
 
         if (Math.abs(l - r) < 0.25) {
             return
         }
 
-        const b = 1 + note.h
-        const t = 1 - note.h
+        if (this.data.startType === SlideStartType.Trace) {
+            const b = 1 + note.h
+            const t = 1 - note.h
+            const fb = 1 + note.h / 2
+            const ft = 1 - note.h
 
-        if (this.useFallbackSlideSprites) {
-            this.sprites.slide.fallback.draw(perspectiveLayout({ l, r, b, t }), this.slide.z, 1)
+            if (this.useFallbackSlideSprites) {
+                this.sprites.traceSlide.fallback.draw(
+                    perspectiveLayout({ l, r, b: fb, t: ft }),
+                    this.slide.z,
+                    1
+                )
+            } else {
+                const ml = l + 0.125
+                const mr = r - 0.125
+
+                this.sprites.traceSlide.left.draw(
+                    perspectiveLayout({ l, r: ml, b, t }),
+                    this.slide.z,
+                    1
+                )
+                this.sprites.traceSlide.middle.draw(
+                    perspectiveLayout({ l: ml, r: mr, b, t }),
+                    this.slide.z,
+                    1
+                )
+                this.sprites.traceSlide.right.draw(
+                    perspectiveLayout({ l: mr, r, b, t }),
+                    this.slide.z,
+                    1
+                )
+            }
+            if (this.useFallbackSlideTraceTickSprites) {
+                this.sprites.traceSlideTick.fallback.draw(
+                    perspectiveLayout({ l, r, b, t }),
+                    this.slide.z + 1,
+                    1
+                )
+            } else {
+                const w = note.h / scaledScreen.wToH
+                this.sprites.traceSlideTick.tick.draw(
+                    new Rect({
+                        l: lane - w,
+                        r: lane + w,
+                        b,
+                        t,
+                    }).toQuad(),
+                    this.slide.z + 1,
+                    1
+                )
+            }
         } else {
-            const ml = l + 0.25
-            const mr = r - 0.25
+            const b = 1 + note.h
+            const t = 1 - note.h
 
-            this.sprites.slide.left.draw(perspectiveLayout({ l, r: ml, b, t }), this.slide.z, 1)
-            this.sprites.slide.middle.draw(
-                perspectiveLayout({ l: ml, r: mr, b, t }),
-                this.slide.z,
-                1
-            )
-            this.sprites.slide.right.draw(perspectiveLayout({ l: mr, r, b, t }), this.slide.z, 1)
+            if (this.useFallbackSlideSprites) {
+                this.sprites.slide.fallback.draw(perspectiveLayout({ l, r, b, t }), this.slide.z, 1)
+            } else {
+                const ml = l + 0.25
+                const mr = r - 0.25
+
+                this.sprites.slide.left.draw(perspectiveLayout({ l, r: ml, b, t }), this.slide.z, 1)
+                this.sprites.slide.middle.draw(
+                    perspectiveLayout({ l: ml, r: mr, b, t }),
+                    this.slide.z,
+                    1
+                )
+                this.sprites.slide.right.draw(
+                    perspectiveLayout({ l: mr, r, b, t }),
+                    this.slide.z,
+                    1
+                )
+            }
         }
     }
 
