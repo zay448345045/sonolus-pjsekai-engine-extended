@@ -437,7 +437,7 @@ export abstract class SlideConnector extends Archetype {
                 this.sprites.connector.fallback.draw(
                     layout,
                     this.connector.z,
-                    visual === VisualType.NotActivated ? 0.5 : 1
+                    (visual === VisualType.NotActivated ? 0.5 : 1) * options.connectorAlpha
                 )
             } else if (options.connectorAnimation && visual === VisualType.Activated) {
                 const activeA = (Math.sin(time.now * 2 * Math.PI) + 1) / 2
@@ -445,18 +445,18 @@ export abstract class SlideConnector extends Archetype {
                 this.sprites.connector.active.draw(
                     layout,
                     this.connector.z,
-                    Math.ease('Out', 'Cubic', activeA)
+                    Math.ease('Out', 'Cubic', activeA) * options.connectorAlpha
                 )
                 this.sprites.connector.normal.draw(
                     layout,
                     this.connector.z + 1,
-                    Math.ease('Out', 'Cubic', 1 - activeA)
+                    Math.ease('Out', 'Cubic', 1 - activeA) * options.connectorAlpha
                 )
             } else {
                 this.sprites.connector.normal.draw(
                     layout,
                     this.connector.z,
-                    visual === VisualType.NotActivated ? 0.5 : 1
+                    (visual === VisualType.NotActivated ? 0.5 : 1) * options.connectorAlpha
                 )
             }
         }
