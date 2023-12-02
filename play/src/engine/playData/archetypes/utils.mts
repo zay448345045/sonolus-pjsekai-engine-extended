@@ -1,3 +1,7 @@
+import {
+    createScaledTimeToEarliestTime,
+    createTimeToScaledTime,
+} from '~shared/engine/data/timeScale.mjs'
 import { options } from '../../configuration/options.mjs'
 import { skin } from '../skin.mjs'
 import { lane } from './constants.mjs'
@@ -108,34 +112,5 @@ export const timeToScaledTime = (baseTime: number, tsGroup: number, noCache?: bo
     return baseTime
 }
 
-export const scaledTimeToEarliestTime = (time: number, tsGroup: number): number => {
-    // if (tsGroup === 0) {
-    //     return time
-    // }
-    const tsGroupEntity = archetypes.TimeScaleGroup.data.get(tsGroup)
-    let nextRef = tsGroupEntity.firstRef
-    let currentTime = 0
-    for (let i = 0; i < tsGroupEntity.length; i++) {
-        const tsChangeStart = archetypes.TimeScaleChange.data.get(nextRef)
-        const tsChangeStartTime = bpmChanges.at(tsChangeStart.beat).time
-        if (i === 0) {
-            if (time < tsChangeStartTime) {
-                return time
-            }
-            currentTime = tsChangeStartTime
-        }
-        if (i === tsGroupEntity.length - 1) {
-            return tsChangeStartTime + (time - currentTime) / tsChangeStart.timeScale
-        }
-        nextRef = tsChangeStart.nextRef
-        const tsChangeEnd = archetypes.TimeScaleChange.data.get(nextRef)
-        const tsChangeEndTime = bpmChanges.at(tsChangeEnd.beat).time
-
-        const timeDiff = tsChangeEndTime - tsChangeStartTime
-        if (time <= currentTime + timeDiff * tsChangeStart.timeScale) {
-            return tsChangeStartTime + (time - currentTime) / tsChangeStart.timeScale
-        }
-        currentTime += timeDiff * tsChangeStart.timeScale
-    }
-    return time
-}
+export const scaledTimeToEarliestTime = createScaledTimeToEarliestTime(archetypes, bpmChanges)
+export const timeToScaledTime = createTimeToScaledTime(archetypes, bpmChanges)

@@ -1,3 +1,4 @@
+import { SlideStartType } from '~shared/src/engine/data/SlideStartType.mjs'
 import { options } from '../../../configuration/options.mjs'
 import { effect } from '../../effect.mjs'
 import { particle } from '../../particle.mjs'
@@ -17,7 +18,6 @@ import {
     timeToScaledTime,
 } from '../utils.mjs'
 import { EaseType, ease } from './EaseType.mjs'
-import { SlideStartType } from './SlideType.mjs'
 
 const VisualType = {
     Waiting: 0,
@@ -189,8 +189,6 @@ export abstract class SlideConnector extends Archetype {
 
     updateSequentialOrder = 1
     updateSequential() {
-        if (options.autoplay) return
-
         if (time.now < this.head.time) return
 
         const s = this.getScale(
@@ -285,7 +283,7 @@ export abstract class SlideConnector extends Archetype {
         return (
             options.sfxEnabled &&
             (this.useFallbackClip ? this.clips.fallback.exists : this.clips.hold.exists) &&
-            (options.autoplay || options.autoSFX)
+            options.autoSFX
         )
     }
 
@@ -293,17 +291,16 @@ export abstract class SlideConnector extends Archetype {
         return (
             options.sfxEnabled &&
             (this.useFallbackClip ? this.clips.fallback.exists : this.clips.hold.exists) &&
-            !options.autoplay &&
             !options.autoSFX
         )
     }
 
     get shouldScheduleCircularEffect() {
-        return options.noteEffectEnabled && this.effects.circular.exists && options.autoplay
+        return options.noteEffectEnabled && this.effects.circular.exists
     }
 
     get shouldPlayCircularEffect() {
-        return options.noteEffectEnabled && this.effects.circular.exists && !options.autoplay
+        return options.noteEffectEnabled && this.effects.circular.exists
     }
 
     get useFallbackConnectorSprites() {
@@ -384,15 +381,12 @@ export abstract class SlideConnector extends Archetype {
         )
             return
 
-        const visual = options.autoplay
-            ? time.now >= this.start.time
+        const visual =
+            this.startSharedMemory.lastActiveTime === time.now
                 ? VisualType.Activated
+                : time.now >= this.start.time + this.slideStartNote.windows.good.max + input.offset
+                ? VisualType.NotActivated
                 : VisualType.Waiting
-            : this.startSharedMemory.lastActiveTime === time.now
-            ? VisualType.Activated
-            : time.now >= this.start.time + this.slideStartNote.windows.good.max + input.offset
-            ? VisualType.NotActivated
-            : VisualType.Waiting
 
         const hiddenDuration = options.hidden > 0 ? Note.duration * options.hidden : 0
 

@@ -141,7 +141,7 @@
             "ref": "c"
         },
         {
-            "archetype": "NormalTapNote",
+            "archetype": "NormalTraceNote",
             "data": [
                 {
                     "name": "#BEAT",
@@ -189,7 +189,7 @@
             "ref": "e"
         },
         {
-            "archetype": "CriticalTapNote",
+            "archetype": "CriticalTraceNote",
             "data": [
                 {
                     "name": "#BEAT",
@@ -635,6 +635,10 @@
                 {
                     "name": "ease",
                     "value": 0
+                },
+                {
+                    "name": "startType",
+                    "value": 0
                 }
             ]
         },
@@ -659,6 +663,10 @@
                 },
                 {
                     "name": "ease",
+                    "value": 0
+                },
+                {
+                    "name": "startType",
                     "value": 0
                 }
             ],
@@ -685,6 +693,10 @@
                 },
                 {
                     "name": "ease",
+                    "value": 0
+                },
+                {
+                    "name": "startType",
                     "value": 0
                 }
             ],
@@ -799,6 +811,10 @@
                 {
                     "name": "ease",
                     "value": 0
+                },
+                {
+                    "name": "startType",
+                    "value": 0
                 }
             ],
             "ref": "6"
@@ -832,7 +848,7 @@
                 },
                 {
                     "name": "startTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "headLane",
@@ -848,7 +864,7 @@
                 },
                 {
                     "name": "headTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "tailLane",
@@ -864,7 +880,7 @@
                 },
                 {
                     "name": "tailTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "endLane",
@@ -880,7 +896,7 @@
                 },
                 {
                     "name": "endTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 }
             ]
         },
@@ -913,7 +929,7 @@
                 },
                 {
                     "name": "startTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "headLane",
@@ -929,7 +945,7 @@
                 },
                 {
                     "name": "headTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "tailLane",
@@ -945,7 +961,7 @@
                 },
                 {
                     "name": "tailTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "endLane",
@@ -961,7 +977,7 @@
                 },
                 {
                     "name": "endTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 }
             ]
         },
@@ -970,7 +986,7 @@
             "data": [
                 {
                     "name": "color",
-                    "value": 2
+                    "value": 4
                 },
                 {
                     "name": "fade",
@@ -994,7 +1010,7 @@
                 },
                 {
                     "name": "startTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "headLane",
@@ -1010,7 +1026,7 @@
                 },
                 {
                     "name": "headTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "tailLane",
@@ -1026,7 +1042,7 @@
                 },
                 {
                     "name": "tailTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 },
                 {
                     "name": "endLane",
@@ -1042,7 +1058,7 @@
                 },
                 {
                     "name": "endTimeScaleGroup",
-                    "value": 0
+                    "ref": "tsg:0"
                 }
             ]
         },
