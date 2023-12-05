@@ -5,6 +5,7 @@ import { options } from '../../../configuration/options.mjs'
 import { note } from '../../note.mjs'
 import { getZ, layer } from '../../skin.mjs'
 import { FlatNote } from '../notes/flatNotes/FlatNote.mjs'
+import { timeToScaledTime } from '../timeScale.mjs'
 
 export abstract class SlideConnector extends Archetype {
     abstract sprites: {
@@ -54,10 +55,10 @@ export abstract class SlideConnector extends Archetype {
 
     preprocess() {
         this.head.time = bpmChanges.at(this.headData.beat).time
-        this.head.scaledTime = timeScaleChanges.at(this.head.time).scaledTime
+        this.head.scaledTime = timeToScaledTime(this.head.time, this.headData.timeScaleGroup)
 
         this.tail.time = bpmChanges.at(this.tailData.beat).time
-        this.tail.scaledTime = timeScaleChanges.at(this.tail.time).scaledTime
+        this.tail.scaledTime = timeToScaledTime(this.tail.time, this.tailData.timeScaleGroup)
 
         this.visualTime.min = this.head.scaledTime - note.duration
     }
@@ -115,15 +116,24 @@ export abstract class SlideConnector extends Archetype {
     }
 
     renderConnector() {
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        if (
+            options.hidden > 0 &&
+            timeToScaledTime(time.now, this.headData.timeScaleGroup) > this.visualTime.hidden
+        )
+            return
 
         const isActivated = time.now >= this.start.time
 
         const hiddenDuration = options.hidden > 0 ? note.duration * options.hidden : 0
 
+        const now = timeToScaledTime(time.now, this.headData.timeScaleGroup)
+
         const visibleTime = {
-            min: Math.max(this.head.scaledTime, time.scaled + hiddenDuration),
-            max: Math.min(this.tail.scaledTime, time.scaled + note.duration),
+            min: Math.max(
+                this.head.scaledTime,
+                time.now > this.head.time ? now + hiddenDuration : now - note.duration * 1.5
+            ),
+            max: Math.min(this.tail.scaledTime, now + note.duration),
         }
 
         for (let i = 0; i < options.slideQuality; i++) {
@@ -138,8 +148,8 @@ export abstract class SlideConnector extends Archetype {
             }
 
             const y = {
-                min: approach(scaledTime.min - note.duration, scaledTime.min, time.scaled),
-                max: approach(scaledTime.max - note.duration, scaledTime.max, time.scaled),
+                min: approach(scaledTime.min - note.duration, scaledTime.min, now),
+                max: approach(scaledTime.max - note.duration, scaledTime.max, now),
             }
 
             const layout = {
@@ -158,10 +168,18 @@ export abstract class SlideConnector extends Archetype {
             if (this.useFallbackSprite) {
                 this.sprites.fallback.draw(layout, this.z, a)
             } else if (options.connectorAnimation && isActivated) {
-                const normalA = (Math.cos((time.now - this.start.time) * 2 * Math.PI) + 1) / 2
+                const activeA = (Math.sin(time.now * 2 * Math.PI) + 1) / 2
 
-                this.sprites.normal.draw(layout, this.z, a * normalA)
-                this.sprites.active.draw(layout, this.z, a * (1 - normalA))
+                this.sprites.active.draw(
+                    layout,
+                    this.z,
+                    Math.ease('Out', 'Cubic', activeA) * options.connectorAlpha
+                )
+                this.sprites.normal.draw(
+                    layout,
+                    this.z + 1,
+                    Math.ease('Out', 'Cubic', 1 - activeA) * options.connectorAlpha
+                )
             } else {
                 this.sprites.normal.draw(layout, this.z, a)
             }

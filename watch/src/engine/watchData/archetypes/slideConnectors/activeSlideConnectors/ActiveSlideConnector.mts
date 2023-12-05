@@ -6,6 +6,7 @@ import { note } from '../../../note.mjs'
 import { circularEffectLayout, linearEffectLayout, particle } from '../../../particle.mjs'
 import { scaledScreen } from '../../../scaledScreen.mjs'
 import { getZ, layer } from '../../../skin.mjs'
+import { timeToScaledTime } from '../../timeScale.mjs'
 import { SlideConnector } from '../SlideConnector.mjs'
 
 export abstract class ActiveSlideConnector extends SlideConnector {
@@ -70,7 +71,8 @@ export abstract class ActiveSlideConnector extends SlideConnector {
             if (this.shouldScheduleLinearEffect) this.effectInstanceIds.linear = 0
         }
 
-        if (time.now < this.head.time) return
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
+        if (time.now <= this.head.time || Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
 
         if (this.shouldScheduleCircularEffect && !this.effectInstanceIds.circular)
             this.spawnCircularEffect()
@@ -138,13 +140,15 @@ export abstract class ActiveSlideConnector extends SlideConnector {
     renderSlide() {
         if (!options.showNotes) return
         if (this.data.startType === SlideStartType.None) return
-        const s = this.getScale(time.scaled)
+        const s = this.getScale(time.now)
 
         const l = this.getL(s)
         const r = this.getR(s)
         const lane = this.getLane(s)
         const b = 1 + note.h
         const t = 1 - note.h
+
+        debug.log(this.data.startType)
 
         if (this.data.startType !== SlideStartType.Trace) {
             const fb = 1 + note.h / 2
