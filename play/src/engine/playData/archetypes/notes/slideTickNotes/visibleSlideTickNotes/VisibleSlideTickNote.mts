@@ -105,10 +105,6 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
         this.render()
     }
 
-    terminate() {
-        if (options.noteEffectEnabled) this.playNoteEffect()
-    }
-
     get shouldScheduleSFX() {
         return options.sfxEnabled && options.autoSFX
     }

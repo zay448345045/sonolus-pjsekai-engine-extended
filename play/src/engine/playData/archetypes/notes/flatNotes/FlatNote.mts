@@ -155,12 +155,6 @@ export abstract class FlatNote extends Note {
         this.render()
     }
 
-    terminate() {
-        if (options.noteEffectEnabled) this.playNoteEffects()
-        if (options.slotEffectEnabled) this.playSlotEffects(this.targetTime)
-        if (options.laneEffectEnabled) this.playLaneEffects()
-    }
-
     get shouldScheduleSFX() {
         return options.sfxEnabled && options.autoSFX
     }

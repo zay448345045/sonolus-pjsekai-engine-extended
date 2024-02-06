@@ -80,6 +80,7 @@ export abstract class SlideConnector extends Archetype {
 
     start = this.entityMemory({
         time: Number,
+        judgeTime: Number,
         scaledTime: Number,
     })
     end = this.entityMemory({
@@ -147,6 +148,7 @@ export abstract class SlideConnector extends Archetype {
         )
 
         this.start.time = bpmChanges.at(this.startData.beat).time
+        this.start.judgeTime = bpmChanges.at(this.startData.beat + 0.5).time
         this.start.scaledTime = timeToScaledTime(this.start.time, this.startData.timeScaleGroup)
         this.end.time = bpmChanges.at(this.endData.beat).time
         this.end.scaledTime = timeToScaledTime(this.end.time, this.endData.timeScaleGroup)
@@ -240,9 +242,6 @@ export abstract class SlideConnector extends Archetype {
             timeToScaledTime(time.now - input.offset, this.headData.timeScaleGroup)
         )
         if (time.now <= this.head.time || Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
-
-        if (this.shouldScheduleCircularEffect && !this.effectInstanceIds.circular)
-            this.spawnCircularEffect()
 
         if (this.effectInstanceIds.circular) this.updateCircularEffect()
 
@@ -384,7 +383,7 @@ export abstract class SlideConnector extends Archetype {
         const visual =
             this.startSharedMemory.lastActiveTime === time.now
                 ? VisualType.Activated
-                : time.now >= this.start.time + this.slideStartNote.windows.good.max + input.offset
+                : time.now >= this.start.judgeTime + input.offset
                 ? VisualType.NotActivated
                 : VisualType.Waiting
 
