@@ -1,4 +1,3 @@
-import { options } from '../../../../../configuration/options.mjs'
 import { claimStart, disallowEmpty, getClaimedStart } from '../../../InputManager.mjs'
 import { FlatNote } from '../FlatNote.mjs'
 
@@ -16,16 +15,12 @@ export abstract class SlideStartNote extends FlatNote {
     }
 
     updateSequential() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         claimStart(this.info.index, this.targetTime, this.hitbox, this.fullHitbox)
     }
 
     touch() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         const index = getClaimedStart(this.info.index)

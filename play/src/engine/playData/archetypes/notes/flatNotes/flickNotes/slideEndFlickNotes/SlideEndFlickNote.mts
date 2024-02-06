@@ -1,4 +1,3 @@
-import { options } from '../../../../../../configuration/options.mjs'
 import { minFlickVR } from '../../../../constants.mjs'
 import { archetypes } from '../../../../index.mjs'
 import { ease } from '../../../../slideConnectors/EaseType.mjs'
@@ -44,8 +43,6 @@ export abstract class SlideEndFlickNote extends FlickNote {
     }
 
     touch() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         // if (this.startInfo.state !== EntityState.Despawned) return

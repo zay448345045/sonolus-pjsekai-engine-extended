@@ -25,8 +25,6 @@ export abstract class TraceNote extends SlimNote {
     }
 
     updateSequential() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         claimStart(this.info.index, this.targetTime, this.hitbox, this.fullHitbox)
@@ -66,8 +64,6 @@ export abstract class TraceNote extends SlimNote {
     }
 
     touch() {
-        if (options.autoplay) return
-
         for (const touch of touches) {
             if (touch.started && time.now < this.inputTime.min) continue
             if (!touch.started && time.now < this.targetTime) continue

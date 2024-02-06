@@ -106,17 +106,15 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     }
 
     terminate() {
-        if (!options.autoplay) return
-
         if (options.noteEffectEnabled) this.playNoteEffect()
     }
 
     get shouldScheduleSFX() {
-        return options.sfxEnabled && (options.autoplay || options.autoSFX)
+        return options.sfxEnabled && options.autoSFX
     }
 
     get shouldPlaySFX() {
-        return options.sfxEnabled && !options.autoplay && !options.autoSFX
+        return options.sfxEnabled && !options.autoSFX
     }
 
     get useFallbackSprite() {

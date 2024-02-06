@@ -41,8 +41,6 @@ export abstract class TraceSlideEndNote extends SlimNote {
     }
 
     updateSequential() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         // if (this.startInfo.state !== EntityState.Despawned) return
@@ -102,8 +100,6 @@ export abstract class TraceSlideEndNote extends SlimNote {
     }
 
     touch() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         // if (this.startInfo.state !== EntityState.Despawned) return

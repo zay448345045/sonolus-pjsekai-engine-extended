@@ -1,4 +1,4 @@
-import { SlideStartType } from '~shared/src/engine/data/SlideStartType.mjs'
+import { SlideStartType } from '~shared/engine/data/SlideStartType.mjs'
 import { options } from '../../../configuration/options.mjs'
 import { effect } from '../../effect.mjs'
 import { particle } from '../../particle.mjs'

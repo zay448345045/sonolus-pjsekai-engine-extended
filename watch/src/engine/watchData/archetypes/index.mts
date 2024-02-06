@@ -28,8 +28,6 @@ import { CriticalAttachedSlideTickNote } from './notes/slideTickNotes/visibleSli
 import { NormalAttachedSlideTickNote } from './notes/slideTickNotes/visibleSlideTickNotes/attachedSlideTickNotes/NormalAttachedSlideTickNote.mjs'
 import { CriticalSlideConnector } from './slideConnectors/CriticalSlideConnector.mjs'
 import { NormalSlideConnector } from './slideConnectors/NormalSlideConnector.mjs'
-import { CriticalActiveSlideConnector } from './slideConnectors/activeSlideConnectors/CriticalActiveSlideConnector.mjs'
-import { NormalActiveSlideConnector } from './slideConnectors/activeSlideConnectors/NormalActiveSlideConnector.mjs'
 import { CriticalSlotEffect } from './slotEffects/CriticalSlotEffect.mjs'
 import { FlickSlotEffect } from './slotEffects/FlickSlotEffect.mjs'
 import { NormalSlotEffect } from './slotEffects/NormalSlotEffect.mjs'
@@ -83,9 +81,6 @@ export const archetypes = defineArchetypes({
 
     NormalSlideConnector,
     CriticalSlideConnector,
-
-    NormalActiveSlideConnector,
-    CriticalActiveSlideConnector,
 
     SimLine,
 

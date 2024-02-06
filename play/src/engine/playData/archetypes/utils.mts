@@ -1,6 +1,6 @@
 import {
-    createScaledTimeToEarliestTime,
-    createTimeToScaledTime,
+    baseScaledTimeToEarliestTime,
+    baseTimeToScaledTime,
 } from '~shared/engine/data/timeScale.mjs'
 import { options } from '../../configuration/options.mjs'
 import { skin } from '../skin.mjs'
@@ -78,39 +78,7 @@ export const getZwithLayer = (layer: number, time: number, lane: number, priorit
 export const getScheduleSFXTime = (targetTime: number) =>
     targetTime - 0.5 - Math.max(audio.offset, 0)
 
-export const timeToScaledTime = (baseTime: number, tsGroup: number, noCache?: boolean): number => {
-    const tsGroupSharedMemory = archetypes.TimeScaleGroup.sharedMemory.get(tsGroup)
-    if (!noCache && baseTime === tsGroupSharedMemory.currentTime) {
-        return tsGroupSharedMemory.currentScaledTime
-    }
-
-    const tsGroupEntity = archetypes.TimeScaleGroup.data.get(tsGroup)
-    let ret = 0
-    let nextRef = tsGroupEntity.firstRef
-    for (let i = 0; i < tsGroupEntity.length; i++) {
-        const tsChangeStart = archetypes.TimeScaleChange.data.get(nextRef)
-        const tsChangeStartTime = bpmChanges.at(tsChangeStart.beat).time
-        if (i === 0) {
-            if (baseTime < tsChangeStartTime) {
-                return baseTime
-            }
-            ret = tsChangeStartTime
-        }
-        if (i === tsGroupEntity.length - 1) {
-            return ret + (baseTime - tsChangeStartTime) * tsChangeStart.timeScale
-        }
-        nextRef = tsChangeStart.nextRef
-        const tsChangeEnd = archetypes.TimeScaleChange.data.get(nextRef)
-        const tsChangeEndTime = bpmChanges.at(tsChangeEnd.beat).time
-
-        if (baseTime < tsChangeEndTime) {
-            return ret + (baseTime - tsChangeStartTime) * tsChangeStart.timeScale
-        }
-        const timeDiff = tsChangeEndTime - tsChangeStartTime
-        ret += timeDiff * tsChangeStart.timeScale
-    }
-    return baseTime
-}
-
-export const scaledTimeToEarliestTime = createScaledTimeToEarliestTime(archetypes, bpmChanges)
-export const timeToScaledTime = createTimeToScaledTime(archetypes, bpmChanges)
+export const scaledTimeToEarliestTime = (baseTime: number, tsGroup: number): number =>
+    baseScaledTimeToEarliestTime(archetypes, bpmChanges, baseTime, tsGroup)
+export const timeToScaledTime = (baseTime: number, tsGroup: number, noCache?: boolean): number =>
+    baseTimeToScaledTime(archetypes, bpmChanges, baseTime, tsGroup, noCache)
