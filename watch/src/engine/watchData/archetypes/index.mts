@@ -2,6 +2,7 @@ import { Guide } from './Guide.mjs'
 import { Initialization } from './Initialization.mjs'
 import { SimLine } from './SimLine.mjs'
 import { Stage } from './Stage.mjs'
+import { DamageNote } from './notes/flatNotes/DamageNote.mjs'
 import { CriticalSlideEndNote } from './notes/flatNotes/CriticalSlideEndNote.mjs'
 import { CriticalSlideStartNote } from './notes/flatNotes/CriticalSlideStartNote.mjs'
 import { CriticalTapNote } from './notes/flatNotes/CriticalTapNote.mjs'
@@ -98,4 +99,6 @@ export const archetypes = defineArchetypes({
     TimeScaleGroup,
 
     Guide,
+
+    DamageNote,
 })

@@ -276,8 +276,6 @@ export abstract class SlideConnector extends Archetype {
         const b = 1 + note.h
         const t = 1 - note.h
 
-        debug.log(this.data.startType)
-
         if (this.data.startType !== SlideStartType.Trace) {
             const fb = 1 + note.h / 2
             const ft = 1 - note.h

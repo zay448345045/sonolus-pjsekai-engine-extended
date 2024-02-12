@@ -38,6 +38,7 @@ export class Guide extends Archetype {
 
     start = this.entityMemory({
         time: Number,
+        scaledTime: Number,
     })
     head = this.entityMemory({
         time: Number,
@@ -55,6 +56,10 @@ export class Guide extends Archetype {
         l: Number,
         r: Number,
     })
+    end = this.entityMemory({
+        time: Number,
+        scaledTime: Number,
+    })
 
     visualTime = this.entityMemory({
         min: Number,
@@ -63,20 +68,12 @@ export class Guide extends Archetype {
 
     z = this.entityMemory(Number)
 
-    preprocess() {
-        this.head.scaledTime = timeToScaledTime(this.head.time, this.data.headTimeScaleGroup)
-
-        this.tail.scaledTime = timeToScaledTime(this.tail.time, this.data.tailTimeScaleGroup)
-
-        this.visualTime.min = this.head.scaledTime - note.duration
-    }
-
     spawnTime() {
         return this.visualTime.min
     }
 
     despawnTime() {
-        return this.tail.scaledTime
+        return this.tail.time
     }
 
     initialize() {
@@ -94,9 +91,23 @@ export class Guide extends Archetype {
         return !skin.sprites.exists(this.normalSprite)
     }
 
-    globalInitialize() {
+    preprocess() {
         this.start.time = bpmChanges.at(this.data.startBeat).time
+        this.start.scaledTime = timeToScaledTime(this.start.time, this.data.startTimeScaleGroup)
 
+        this.head.time = bpmChanges.at(this.data.headBeat).time
+        this.head.scaledTime = timeToScaledTime(this.head.time, this.data.headTimeScaleGroup)
+
+        this.tail.time = bpmChanges.at(this.data.tailBeat).time
+        this.tail.scaledTime = timeToScaledTime(this.tail.time, this.data.tailTimeScaleGroup)
+
+        this.end.time = bpmChanges.at(this.data.endBeat).time
+        this.end.scaledTime = timeToScaledTime(this.end.time, this.data.endTimeScaleGroup)
+
+        this.visualTime.min = this.head.scaledTime - note.duration
+    }
+
+    globalInitialize() {
         this.head.lane = this.data.headLane
         this.head.l = this.head.lane - this.data.headSize
         this.head.r = this.head.lane + this.data.headSize
@@ -118,12 +129,18 @@ export class Guide extends Archetype {
 
     renderConnector() {
         if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        const currentTime = timeToScaledTime(time.now, this.data.headTimeScaleGroup)
 
         const hiddenDuration = options.hidden > 0 ? note.duration * options.hidden : 0
 
         const visibleTime = {
-            min: Math.max(this.head.scaledTime, time.scaled + hiddenDuration),
-            max: Math.min(this.tail.scaledTime, time.scaled + note.duration),
+            min: Math.max(
+                this.head.scaledTime,
+                time.now > this.head.time
+                    ? currentTime + hiddenDuration
+                    : currentTime - note.duration * 1.5
+            ),
+            max: Math.min(this.tail.scaledTime, currentTime + note.duration),
         }
 
         for (let i = 0; i < options.guideQuality; i++) {
@@ -138,8 +155,8 @@ export class Guide extends Archetype {
             }
 
             const y = {
-                min: approach(scaledTime.min - note.duration, scaledTime.min, time.scaled),
-                max: approach(scaledTime.max - note.duration, scaledTime.max, time.scaled),
+                min: approach(scaledTime.min - note.duration, scaledTime.min, currentTime),
+                max: approach(scaledTime.max - note.duration, scaledTime.max, currentTime),
             }
 
             const layout = {
@@ -154,8 +171,20 @@ export class Guide extends Archetype {
             }
 
             const a =
-                this.getAlpha(this.head.scaledTime, this.tail.scaledTime, scaledTime.min) *
-                options.connectorAlpha
+                this.data.fade === FadeType.None
+                    ? 0.5
+                    : Math.remapClamped(
+                          this.start.scaledTime,
+                          this.end.scaledTime,
+                          this.data.fade === FadeType.In ? 0 : 0.5,
+                          this.data.fade === FadeType.In ? 0.5 : 0,
+                          scaledTime.min
+                      )
+
+            debug.log(this.start.scaledTime)
+            debug.log(this.end.scaledTime)
+
+            debug.log(a)
 
             if (this.useFallbackSprite) {
                 skin.sprites.draw(this.fallbackSprite, layout, this.z, a)
