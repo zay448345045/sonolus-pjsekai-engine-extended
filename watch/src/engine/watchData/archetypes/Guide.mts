@@ -125,7 +125,7 @@ export class Guide extends Archetype {
             this.visualTime.hidden = this.tail.scaledTime - note.duration * options.hidden
 
         this.z = getZwithLayer(
-            layer.note.connector,
+            layer.note.guide,
             this.start.time,
             this.data.startLane,
             this.data.color
