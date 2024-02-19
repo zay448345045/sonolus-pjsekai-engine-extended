@@ -5,7 +5,7 @@ import { LevelData } from 'sonolus-core'
 // import { mmwsToUSC } from '~lib/src/mmws/convert.cjs'
 // import { uscToLevelData } from '~lib/src/usc/convert.cjs'
 // import { migrateUSC } from '~lib/src/usc/migrate.cjs'
-import expert from './akasha.usc'
+import expert from './test.json'
 
 // export const data: LevelData = await fs
 //    .readFile('./shared/src/level/data/akasha.usc', 'utf8')
