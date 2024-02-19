@@ -58,7 +58,7 @@ export class Initialization extends Archetype {
             pivot: { x: 1, y: 1 },
             size: new Vec(0.15, 0.15).mul(ui.configuration.menu.scale),
             rotation: 0,
-            alpha: ui.configuration.menu.alpha * globalAlpha,
+            alpha: ui.configuration.menu.alpha * globalAlpha || 0.0001,
             horizontalAlign: HorizontalAlign.Center,
             background: true,
         })
