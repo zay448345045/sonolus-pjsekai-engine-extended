@@ -1,3 +1,4 @@
+import { SlideStartType } from '~shared/engine/data/SlideStartType.mjs'
 import { options } from '../../../configuration/options.mjs'
 import { effect } from '../../effect.mjs'
 import { particle } from '../../particle.mjs'
@@ -12,12 +13,12 @@ import {
     getHitbox,
     getScheduleSFXTime,
     getZwithLayer,
+    linearEffectLayout,
     perspectiveLayout,
     scaledTimeToEarliestTime,
     timeToScaledTime,
 } from '../utils.mjs'
 import { EaseType, ease } from './EaseType.mjs'
-import { SlideStartType } from './SlideType.mjs'
 
 const VisualType = {
     Waiting: 0,
@@ -80,6 +81,7 @@ export abstract class SlideConnector extends Archetype {
 
     start = this.entityMemory({
         time: Number,
+        judgeTime: Number,
         scaledTime: Number,
     })
     end = this.entityMemory({
@@ -147,6 +149,7 @@ export abstract class SlideConnector extends Archetype {
         )
 
         this.start.time = bpmChanges.at(this.startData.beat).time
+        this.start.judgeTime = bpmChanges.at(this.startData.beat + 0.5).time
         this.start.scaledTime = timeToScaledTime(this.start.time, this.startData.timeScaleGroup)
         this.end.time = bpmChanges.at(this.endData.beat).time
         this.end.scaledTime = timeToScaledTime(this.end.time, this.endData.timeScaleGroup)
@@ -189,8 +192,6 @@ export abstract class SlideConnector extends Archetype {
 
     updateSequentialOrder = 1
     updateSequential() {
-        if (options.autoplay) return
-
         if (time.now < this.head.time) return
 
         const s = this.getScale(
@@ -215,6 +216,9 @@ export abstract class SlideConnector extends Archetype {
 
             if (this.shouldPlayCircularEffect && !this.effectInstanceIds.circular)
                 this.spawnCircularEffect()
+
+            if (this.shouldPlayLinearEffect && !this.effectInstanceIds.linear)
+                this.spawnLinearEffect()
         }
 
         if (this.startSharedMemory.lastActiveTime === time.now) return
@@ -223,6 +227,8 @@ export abstract class SlideConnector extends Archetype {
 
         if (this.shouldPlayCircularEffect && this.effectInstanceIds.circular)
             this.destroyCircularEffect()
+
+        if (this.shouldPlayLinearEffect && this.effectInstanceIds.linear) this.destroyLinearEffect()
     }
 
     updateParallel() {
@@ -243,10 +249,8 @@ export abstract class SlideConnector extends Archetype {
         )
         if (time.now <= this.head.time || Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
 
-        if (this.shouldScheduleCircularEffect && !this.effectInstanceIds.circular)
-            this.spawnCircularEffect()
-
         if (this.effectInstanceIds.circular) this.updateCircularEffect()
+        if (this.effectInstanceIds.linear) this.updateLinearEffect()
 
         this.renderSlide()
     }
@@ -259,6 +263,11 @@ export abstract class SlideConnector extends Archetype {
             this.effectInstanceIds.circular
         )
             this.destroyCircularEffect()
+        if (
+            (this.shouldScheduleLinearEffect || this.shouldPlayLinearEffect) &&
+            this.effectInstanceIds.linear
+        )
+            this.destroyLinearEffect()
     }
 
     get startData() {
@@ -285,7 +294,7 @@ export abstract class SlideConnector extends Archetype {
         return (
             options.sfxEnabled &&
             (this.useFallbackClip ? this.clips.fallback.exists : this.clips.hold.exists) &&
-            (options.autoplay || options.autoSFX)
+            options.autoSFX
         )
     }
 
@@ -293,17 +302,24 @@ export abstract class SlideConnector extends Archetype {
         return (
             options.sfxEnabled &&
             (this.useFallbackClip ? this.clips.fallback.exists : this.clips.hold.exists) &&
-            !options.autoplay &&
             !options.autoSFX
         )
     }
 
     get shouldScheduleCircularEffect() {
-        return options.noteEffectEnabled && this.effects.circular.exists && options.autoplay
+        return options.noteEffectEnabled && this.effects.circular.exists
+    }
+
+    get shouldPlayLinearEffect() {
+        return options.noteEffectEnabled && this.effects.linear.exists
     }
 
     get shouldPlayCircularEffect() {
-        return options.noteEffectEnabled && this.effects.circular.exists && !options.autoplay
+        return options.noteEffectEnabled && this.effects.circular.exists
+    }
+
+    get shouldScheduleLinearEffect() {
+        return options.noteEffectEnabled && this.effects.linear.exists
     }
 
     get useFallbackConnectorSprites() {
@@ -357,6 +373,10 @@ export abstract class SlideConnector extends Archetype {
         this.effectInstanceIds.circular = this.effects.circular.spawn(new Quad(), 1, true)
     }
 
+    spawnLinearEffect() {
+        this.effectInstanceIds.linear = this.effects.linear.spawn(new Quad(), 1, true)
+    }
+
     updateCircularEffect() {
         const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
@@ -371,9 +391,27 @@ export abstract class SlideConnector extends Archetype {
         )
     }
 
+    updateLinearEffect() {
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
+        const lane = this.getLane(s)
+
+        particle.effects.move(
+            this.effectInstanceIds.linear,
+            linearEffectLayout({
+                lane,
+                shear: 0,
+            })
+        )
+    }
+
     destroyCircularEffect() {
         particle.effects.destroy(this.effectInstanceIds.circular)
         this.effectInstanceIds.circular = 0
+    }
+
+    destroyLinearEffect() {
+        particle.effects.destroy(this.effectInstanceIds.linear)
+        this.effectInstanceIds.linear = 0
     }
 
     renderConnector() {
@@ -384,15 +422,12 @@ export abstract class SlideConnector extends Archetype {
         )
             return
 
-        const visual = options.autoplay
-            ? time.now >= this.start.time
+        const visual =
+            this.startSharedMemory.lastActiveTime === time.now
                 ? VisualType.Activated
+                : time.now >= this.start.judgeTime + input.offset
+                ? VisualType.NotActivated
                 : VisualType.Waiting
-            : this.startSharedMemory.lastActiveTime === time.now
-            ? VisualType.Activated
-            : time.now >= this.start.time + this.slideStartNote.windows.good.max + input.offset
-            ? VisualType.NotActivated
-            : VisualType.Waiting
 
         const hiddenDuration = options.hidden > 0 ? Note.duration * options.hidden : 0
 

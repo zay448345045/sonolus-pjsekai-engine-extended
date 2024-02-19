@@ -15,3 +15,6 @@
 
 !tutorial/sonolus-cli.config.mjs
 !tutorial/src/**/*.*
+
+!watch/sonolus-cli.config.mjs
+!watch/src/**/*.*

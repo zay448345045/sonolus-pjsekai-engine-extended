@@ -1,5 +1,4 @@
 import { buckets } from '~/engine/playData/buckets.mjs'
-import { options } from '../../../../../configuration/options.mjs'
 import { canTraceStart, disallowEmpty, disallowTraceStart } from '../../../InputManager.mjs'
 import { note } from '../../../constants.mjs'
 import { scaledScreen } from '../../../shared.mjs'
@@ -75,8 +74,6 @@ export abstract class TraceSlideStartNote extends SlimNote {
     }
 
     touch() {
-        if (options.autoplay) return
-
         for (const touch of touches) {
             if (touch.started && time.now < this.inputTime.min) continue
             if (!touch.started && time.now < this.targetTime) continue

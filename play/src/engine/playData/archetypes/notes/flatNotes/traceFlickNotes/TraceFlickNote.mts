@@ -1,4 +1,3 @@
-import { options } from '../../../../../configuration/options.mjs'
 import { minFlickVR } from '../../../constants.mjs'
 import { SlimNote } from '../SlimNote.mjs'
 
@@ -34,8 +33,6 @@ export abstract class TraceFlickNote extends SlimNote {
     }
 
     touch() {
-        if (options.autoplay) return
-
         if (time.now < this.inputTime.min) return
 
         if (time.now < this.earlyInputTime) {

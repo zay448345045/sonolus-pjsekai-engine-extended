@@ -55,8 +55,6 @@ export class DamageNote extends SlimNote {
     }
 
     touch() {
-        if (options.autoplay) return
-
         for (const touch of touches) {
             if (time.now < this.targetTime) continue
             if (!this.hitbox.contains(touch.position)) continue
@@ -91,7 +89,7 @@ export class DamageNote extends SlimNote {
         effect.clips.normalGood.play(minSFXDistance)
     }
     playHitEffects(hitTime: number) {
-        if (options.sfxEnabled && !options.autoplay && !options.autoSFX) this.playSFX()
+        if (options.sfxEnabled && !options.autoSFX) this.playSFX()
         super.playHitEffects(hitTime)
     }
 
