@@ -13,6 +13,7 @@ import {
     getHitbox,
     getScheduleSFXTime,
     getZwithLayer,
+    linearEffectLayout,
     perspectiveLayout,
     scaledTimeToEarliestTime,
     timeToScaledTime,
@@ -215,6 +216,9 @@ export abstract class SlideConnector extends Archetype {
 
             if (this.shouldPlayCircularEffect && !this.effectInstanceIds.circular)
                 this.spawnCircularEffect()
+
+            if (this.shouldPlayLinearEffect && !this.effectInstanceIds.linear)
+                this.spawnLinearEffect()
         }
 
         if (this.startSharedMemory.lastActiveTime === time.now) return
@@ -223,6 +227,8 @@ export abstract class SlideConnector extends Archetype {
 
         if (this.shouldPlayCircularEffect && this.effectInstanceIds.circular)
             this.destroyCircularEffect()
+
+        if (this.shouldPlayLinearEffect && this.effectInstanceIds.linear) this.destroyLinearEffect()
     }
 
     updateParallel() {
@@ -244,6 +250,7 @@ export abstract class SlideConnector extends Archetype {
         if (time.now <= this.head.time || Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
 
         if (this.effectInstanceIds.circular) this.updateCircularEffect()
+        if (this.effectInstanceIds.linear) this.updateLinearEffect()
 
         this.renderSlide()
     }
@@ -256,6 +263,11 @@ export abstract class SlideConnector extends Archetype {
             this.effectInstanceIds.circular
         )
             this.destroyCircularEffect()
+        if (
+            (this.shouldScheduleLinearEffect || this.shouldPlayLinearEffect) &&
+            this.effectInstanceIds.linear
+        )
+            this.destroyLinearEffect()
     }
 
     get startData() {
@@ -298,8 +310,16 @@ export abstract class SlideConnector extends Archetype {
         return options.noteEffectEnabled && this.effects.circular.exists
     }
 
+    get shouldPlayLinearEffect() {
+        return options.noteEffectEnabled && this.effects.linear.exists
+    }
+
     get shouldPlayCircularEffect() {
         return options.noteEffectEnabled && this.effects.circular.exists
+    }
+
+    get shouldScheduleLinearEffect() {
+        return options.noteEffectEnabled && this.effects.linear.exists
     }
 
     get useFallbackConnectorSprites() {
@@ -353,6 +373,10 @@ export abstract class SlideConnector extends Archetype {
         this.effectInstanceIds.circular = this.effects.circular.spawn(new Quad(), 1, true)
     }
 
+    spawnLinearEffect() {
+        this.effectInstanceIds.linear = this.effects.linear.spawn(new Quad(), 1, true)
+    }
+
     updateCircularEffect() {
         const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
@@ -367,9 +391,27 @@ export abstract class SlideConnector extends Archetype {
         )
     }
 
+    updateLinearEffect() {
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
+        const lane = this.getLane(s)
+
+        particle.effects.move(
+            this.effectInstanceIds.linear,
+            linearEffectLayout({
+                lane,
+                shear: 0,
+            })
+        )
+    }
+
     destroyCircularEffect() {
         particle.effects.destroy(this.effectInstanceIds.circular)
         this.effectInstanceIds.circular = 0
+    }
+
+    destroyLinearEffect() {
+        particle.effects.destroy(this.effectInstanceIds.linear)
+        this.effectInstanceIds.linear = 0
     }
 
     renderConnector() {

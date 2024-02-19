@@ -8,6 +8,7 @@ import { circularEffectLayout, linearEffectLayout, particle } from '../../../par
 import { getZ, layer } from '../../../skin.mjs'
 import { SlotEffect } from '../../slotEffects/SlotEffect.mjs'
 import { SlotGlowEffect } from '../../slotGlowEffects/SlotGlowEffect.mjs'
+import { scaledTimeToEarliestTime, timeToScaledTime } from '../../timeScale.mjs'
 import { Note } from '../Note.mjs'
 
 export abstract class FlatNote extends Note {
@@ -55,7 +56,7 @@ export abstract class FlatNote extends Note {
     preprocess() {
         super.preprocess()
 
-        this.visualTime.max = timeScaleChanges.at(this.targetTime).scaledTime
+        this.visualTime.max = timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
         this.visualTime.min = this.visualTime.max - note.duration
 
         if (options.sfxEnabled) {
@@ -72,11 +73,18 @@ export abstract class FlatNote extends Note {
     }
 
     spawnTime() {
-        return this.visualTime.min
+        return scaledTimeToEarliestTime(
+            Math.min(
+                this.visualTime.min,
+                this.visualTime.max,
+                timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
+            ),
+            this.data.timeScaleGroup
+        )
     }
 
     despawnTime() {
-        return this.visualTime.max
+        return this.targetTime
     }
 
     initialize() {
@@ -87,7 +95,8 @@ export abstract class FlatNote extends Note {
     }
 
     updateParallel() {
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
+        if (options.hidden > 0 && scaledTime > this.visualTime.hidden) return
 
         this.render()
     }
@@ -133,7 +142,11 @@ export abstract class FlatNote extends Note {
     }
 
     render() {
-        this.y = approach(this.visualTime.min, this.visualTime.max, time.scaled)
+        this.y = approach(
+            this.visualTime.min,
+            this.visualTime.max,
+            timeToScaledTime(time.now, this.data.timeScaleGroup)
+        )
 
         if (this.useFallbackSprites) {
             this.sprites.fallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)
@@ -161,7 +174,7 @@ export abstract class FlatNote extends Note {
                 shear: 0,
             }),
             0.5,
-            false,
+            false
         )
     }
 
@@ -173,7 +186,7 @@ export abstract class FlatNote extends Note {
                 h: 1.05,
             }),
             0.6,
-            false,
+            false
         )
     }
 
@@ -186,7 +199,7 @@ export abstract class FlatNote extends Note {
                 t: lane.t,
             }),
             0.3,
-            false,
+            false
         )
     }
 

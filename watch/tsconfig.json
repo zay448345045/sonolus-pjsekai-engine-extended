@@ -12,7 +12,7 @@
         "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
         "paths": {
-            "~/*": ["./watch/src/*"],
+            "~/*": ["./src/*"],
             "~lib/*": ["../lib/*"],
             "~shared/*": ["../shared/src/*"]
         }

@@ -38,6 +38,8 @@ export class CriticalSlideConnector extends SlideConnector {
         linear: particle.effects.criticalSlideConnectorLinear,
     }
 
+    zOrder = 2
+
     get slideStartNote() {
         return archetypes.CriticalSlideStartNote
     }

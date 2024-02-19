@@ -2,10 +2,11 @@ import { Guide } from './Guide.mjs'
 import { Initialization } from './Initialization.mjs'
 import { SimLine } from './SimLine.mjs'
 import { Stage } from './Stage.mjs'
-import { DamageNote } from './notes/flatNotes/DamageNote.mjs'
 import { CriticalSlideEndNote } from './notes/flatNotes/CriticalSlideEndNote.mjs'
 import { CriticalSlideStartNote } from './notes/flatNotes/CriticalSlideStartNote.mjs'
 import { CriticalTapNote } from './notes/flatNotes/CriticalTapNote.mjs'
+import { DamageNote } from './notes/flatNotes/DamageNote.mjs'
+import { HiddenSlideStartNote } from './notes/flatNotes/HiddenSlideStartNote.mjs'
 import { NormalSlideEndNote } from './notes/flatNotes/NormalSlideEndNote.mjs'
 import { NormalSlideStartNote } from './notes/flatNotes/NormalSlideStartNote.mjs'
 import { NormalTapNote } from './notes/flatNotes/NormalTapNote.mjs'
@@ -14,13 +15,14 @@ import { CriticalSlideEndFlickNote } from './notes/flatNotes/flickNotes/Critical
 import { NormalFlickNote } from './notes/flatNotes/flickNotes/NormalFlickNote.mjs'
 import { NormalSlideEndFlickNote } from './notes/flatNotes/flickNotes/NormalSlideEndFlickNote.mjs'
 import { CriticalTraceFlickNote } from './notes/flatNotes/flickNotes/traceFlickNotes/CriticalTraceFlickNote.mjs'
+import { NonDirectionalTraceFlickNote } from './notes/flatNotes/flickNotes/traceFlickNotes/NonDirectionalTraceFlickNote.mjs'
 import { NormalTraceFlickNote } from './notes/flatNotes/flickNotes/traceFlickNotes/NormalTraceFlickNote.mjs'
-import { CriticalSlideEndTraceNote } from './notes/flatNotes/traceNotes/CriticalSlideEndTraceNote.mjs'
 import { CriticalSlideTraceNote } from './notes/flatNotes/traceNotes/CriticalSlideTraceNote.mjs'
 import { CriticalTraceNote } from './notes/flatNotes/traceNotes/CriticalTraceNote.mjs'
-import { NormalSlideEndTraceNote } from './notes/flatNotes/traceNotes/NormalSlideEndTraceNote.mjs'
+import { CriticalTraceSlideEndNote } from './notes/flatNotes/traceNotes/CriticalTraceSlideEndNote.mjs'
 import { NormalSlideTraceNote } from './notes/flatNotes/traceNotes/NormalSlideTraceNote.mjs'
 import { NormalTraceNote } from './notes/flatNotes/traceNotes/NormalTraceNote.mjs'
+import { NormalTraceSlideEndNote } from './notes/flatNotes/traceNotes/NormalTraceSlideEndNote.mjs'
 import { HiddenSlideTickNote } from './notes/slideTickNotes/HiddenSlideTickNote.mjs'
 import { IgnoredSlideTickNote } from './notes/slideTickNotes/IgnoredSlideTickNote.mjs'
 import { CriticalSlideTickNote } from './notes/slideTickNotes/visibleSlideTickNotes/CriticalSlideTickNote.mjs'
@@ -56,18 +58,23 @@ export const archetypes = defineArchetypes({
 
     NormalTraceFlickNote,
     CriticalTraceFlickNote,
+    NonDirectonalTraceFlickNote: NonDirectionalTraceFlickNote,
 
     NormalSlideTraceNote,
     CriticalSlideTraceNote,
 
     NormalSlideStartNote,
     CriticalSlideStartNote,
+    HiddenSlideStartNote,
+
+    NormalTraceSlideStartNote: NormalTraceNote,
+    CriticalTraceSlideStartNote: CriticalTraceNote,
 
     NormalSlideEndNote,
     CriticalSlideEndNote,
 
-    NormalSlideEndTraceNote,
-    CriticalSlideEndTraceNote,
+    NormalTraceSlideEndNote,
+    CriticalTraceSlideEndNote,
 
     NormalSlideEndFlickNote,
     CriticalSlideEndFlickNote,

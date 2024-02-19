@@ -10,5 +10,6 @@ shared/src/level/data/*.mmws
 shared/src/level/data/*.chs
 shared/src/level/data/*.json
 shared/src/level/data/*.ccmmws
+shared/src/level/data/*.usc
 !src/level/data/expert.json
 

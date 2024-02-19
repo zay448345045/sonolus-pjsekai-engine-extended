@@ -10,7 +10,7 @@ export const effect = defineEffect({
 
         normalTick: 'Sekai Tick',
 
-        normalTrace: 'Sekai Trace',
+        normalTrace: 'Sekai Normal Trace',
 
         criticalTap: 'Sekai Critical Tap',
 

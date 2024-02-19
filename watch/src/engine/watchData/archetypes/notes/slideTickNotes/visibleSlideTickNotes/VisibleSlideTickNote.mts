@@ -5,6 +5,7 @@ import { sfxDistance } from '../../../../effect.mjs'
 import { note } from '../../../../note.mjs'
 import { scaledScreen } from '../../../../scaledScreen.mjs'
 import { getZ, layer } from '../../../../skin.mjs'
+import { scaledTimeToEarliestTime, timeToScaledTime } from '../../../timeScale.mjs'
 import { SlideTickNote } from '../SlideTickNote.mjs'
 
 export abstract class VisibleSlideTickNote extends SlideTickNote {
@@ -34,7 +35,7 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     preprocess() {
         super.preprocess()
 
-        this.visualTime.max = timeScaleChanges.at(this.targetTime).scaledTime
+        this.visualTime.max = timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
         this.visualTime.min = this.visualTime.max - note.duration
 
         if (options.sfxEnabled) {
@@ -47,11 +48,18 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     }
 
     spawnTime() {
-        return this.visualTime.min
+        return scaledTimeToEarliestTime(
+            Math.min(
+                this.visualTime.min,
+                this.visualTime.max,
+                timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
+            ),
+            this.data.timeScaleGroup
+        )
     }
 
     despawnTime() {
-        return this.visualTime.max
+        return this.targetTime
     }
 
     initialize() {
@@ -62,7 +70,8 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     }
 
     updateParallel() {
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
+        if (options.hidden > 0 && scaledTime > this.visualTime.hidden) return
 
         this.render()
     }
@@ -110,7 +119,8 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
     }
 
     render() {
-        const y = approach(this.visualTime.min, this.visualTime.max, time.scaled)
+        const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
+        const y = approach(this.visualTime.min, this.visualTime.max, scaledTime)
 
         if (this.useFallbackSprite) {
             this.sprites.fallback.draw(this.spriteLayout.mul(y), this.z, 1)
@@ -135,7 +145,7 @@ export abstract class VisibleSlideTickNote extends SlideTickNote {
                 t: 1 - h,
             }),
             0.6,
-            false,
+            false
         )
     }
 }

@@ -38,6 +38,8 @@ export class NormalSlideConnector extends SlideConnector {
         linear: particle.effects.normalSlideConnectorLinear,
     }
 
+    zOrder = 1
+
     get slideStartNote() {
         return archetypes.NormalSlideStartNote
     }

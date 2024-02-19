@@ -3,12 +3,13 @@ import { perspectiveLayout } from '~shared/engine/data/utils.mjs'
 import { EaseType, ease } from '../../../../../../shared/src/engine/data/EaseType.mjs'
 import { approach } from '../../../../../../shared/src/engine/data/note.mjs'
 import { options } from '../../../configuration/options.mjs'
+import { effect } from '../../effect.mjs'
 import { note } from '../../note.mjs'
 import { circularEffectLayout, linearEffectLayout, particle } from '../../particle.mjs'
 import { scaledScreen } from '../../scaledScreen.mjs'
-import { getZ, layer } from '../../skin.mjs'
+import { getZwithLayer, layer } from '../../skin.mjs'
 import { FlatNote } from '../notes/flatNotes/FlatNote.mjs'
-import { timeToScaledTime } from '../timeScale.mjs'
+import { scaledTimeToEarliestTime, timeToScaledTime } from '../timeScale.mjs'
 
 export abstract class SlideConnector extends Archetype {
     abstract sprites: {
@@ -45,6 +46,8 @@ export abstract class SlideConnector extends Archetype {
     }
 
     abstract slideStartNote: FlatNote
+
+    abstract zOrder: number
 
     data = this.defineData({
         startRef: { name: 'start', type: Number },
@@ -90,6 +93,8 @@ export abstract class SlideConnector extends Archetype {
 
     z = this.entityMemory(Number)
 
+    spawnTimeCache = this.entityMemory(Number)
+
     preprocess() {
         this.head.time = bpmChanges.at(this.headData.beat).time
         this.head.scaledTime = timeToScaledTime(this.head.time, this.headData.timeScaleGroup)
@@ -98,14 +103,26 @@ export abstract class SlideConnector extends Archetype {
         this.tail.scaledTime = timeToScaledTime(this.tail.time, this.tailData.timeScaleGroup)
 
         this.visualTime.min = this.head.scaledTime - note.duration
+        if (options.sfxEnabled) {
+            const id =
+                'fallback' in this.clips && this.useFallbackClip
+                    ? this.clips.fallback.scheduleLoop(this.head.time)
+                    : this.clips.hold.scheduleLoop(this.head.time)
+            effect.clips.scheduleStopLoop(id, this.tail.time)
+        }
     }
 
     spawnTime() {
-        return this.visualTime.min
+        const spawnTime = Math.min(this.visualTime.min, this.head.scaledTime)
+
+        return Math.min(
+            scaledTimeToEarliestTime(spawnTime, this.headData.timeScaleGroup),
+            scaledTimeToEarliestTime(spawnTime, this.tailData.timeScaleGroup)
+        )
     }
 
     despawnTime() {
-        return this.tail.scaledTime
+        return this.tail.time
     }
 
     initialize() {
@@ -116,6 +133,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     updateParallel() {
+        if (timeToScaledTime(time.now, this.headData.timeScaleGroup) < this.visualTime.min) return
         this.renderConnector()
 
         if (time.skip) {
@@ -170,12 +188,23 @@ export abstract class SlideConnector extends Archetype {
         if (options.hidden > 0)
             this.visualTime.hidden = this.tail.scaledTime - note.duration * options.hidden
 
-        this.z = getZ(layer.note.connector, this.start.time, this.startData.lane)
+        this.z = getZwithLayer(
+            layer.note.connector,
+            this.start.time,
+            this.startData.lane,
+            this.zOrder
+        )
 
-        this.slideZ = getZ(layer.note.slide, this.head.time, this.headData.lane)
+        this.slideZ = getZwithLayer(
+            layer.note.slide,
+            this.head.time,
+            this.headData.lane,
+            this.zOrder
+        )
     }
 
     renderConnector() {
+        if (!options.showNotes) return
         if (
             options.hidden > 0 &&
             timeToScaledTime(time.now, this.headData.timeScaleGroup) > this.visualTime.hidden
@@ -268,7 +297,7 @@ export abstract class SlideConnector extends Archetype {
 
     renderSlide() {
         if (this.data.startType === SlideStartType.None) return
-        const s = this.getScale(time.now)
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
 
         const l = this.getL(s)
         const r = this.getR(s)
@@ -276,7 +305,7 @@ export abstract class SlideConnector extends Archetype {
         const b = 1 + note.h
         const t = 1 - note.h
 
-        if (this.data.startType !== SlideStartType.Trace) {
+        if (this.data.startType === SlideStartType.Trace) {
             const fb = 1 + note.h / 2
             const ft = 1 - note.h
 
@@ -383,16 +412,12 @@ export abstract class SlideConnector extends Archetype {
         return options.noteEffectEnabled && this.effects.linear.exists
     }
 
-    getAlpha() {
-        return 1
-    }
-
     spawnCircularEffect() {
         this.effectInstanceIds.circular = this.effects.circular.spawn(new Quad(), 1, true)
     }
 
     updateCircularEffect() {
-        const s = this.getScale(time.scaled)
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
 
         particle.effects.move(
@@ -415,7 +440,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     updateLinearEffect() {
-        const s = this.getScale(time.scaled)
+      const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
 
         particle.effects.move(

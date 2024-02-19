@@ -3,6 +3,7 @@ import { perspectiveLayout } from '../../../../../../../shared/src/engine/data/u
 import { options } from '../../../../configuration/options.mjs'
 import { note } from '../../../note.mjs'
 import { getZ, layer, skin } from '../../../skin.mjs'
+import { scaledTimeToEarliestTime, timeToScaledTime } from '../../timeScale.mjs'
 import { Note } from '../Note.mjs'
 
 export class DamageNote extends Note {
@@ -37,16 +38,23 @@ export class DamageNote extends Note {
     preprocess() {
         super.preprocess()
 
-        this.visualTime.max = timeScaleChanges.at(this.targetTime).scaledTime
+        this.visualTime.max = timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
         this.visualTime.min = this.visualTime.max - note.duration
     }
 
     spawnTime() {
-        return this.visualTime.min
+        return scaledTimeToEarliestTime(
+            Math.min(
+                this.visualTime.min,
+                this.visualTime.max,
+                timeToScaledTime(this.targetTime, this.data.timeScaleGroup)
+            ),
+            this.data.timeScaleGroup
+        )
     }
 
     despawnTime() {
-        return this.visualTime.max
+        return this.targetTime
     }
 
     initialize() {
@@ -57,13 +65,10 @@ export class DamageNote extends Note {
     }
 
     updateParallel() {
-        if (options.hidden > 0 && time.scaled > this.visualTime.hidden) return
+        const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
+        if (options.hidden > 0 && scaledTime > this.visualTime.hidden) return
 
         this.render()
-    }
-
-    terminate() {
-        if (time.skip) return
     }
 
     get useFallbackSprites() {
@@ -97,7 +102,11 @@ export class DamageNote extends Note {
     }
 
     render() {
-        this.y = approach(this.visualTime.min, this.visualTime.max, time.scaled)
+        this.y = approach(
+            this.visualTime.min,
+            this.visualTime.max,
+            timeToScaledTime(time.now, this.data.timeScaleGroup)
+        )
 
         if (this.useFallbackSprites) {
             this.sprites.fallback.draw(this.spriteLayouts.middle.mul(this.y), this.z, 1)

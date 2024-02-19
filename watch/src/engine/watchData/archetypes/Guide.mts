@@ -5,7 +5,7 @@ import { approach } from '../../../../../shared/src/engine/data/note.mjs'
 import { options } from '../../configuration/options.mjs'
 import { note } from '../note.mjs'
 import { getZwithLayer, layer, skin } from '../skin.mjs'
-import { timeToScaledTime } from './timeScale.mjs'
+import { scaledTimeToEarliestTime, timeToScaledTime } from './timeScale.mjs'
 
 export class Guide extends Archetype {
     data = this.defineData({
@@ -69,7 +69,12 @@ export class Guide extends Archetype {
     z = this.entityMemory(Number)
 
     spawnTime() {
-        return this.visualTime.min
+        const spawnTime = Math.min(this.visualTime.min, this.head.scaledTime)
+
+        return Math.min(
+            scaledTimeToEarliestTime(spawnTime, this.data.headTimeScaleGroup),
+            scaledTimeToEarliestTime(spawnTime, this.data.tailTimeScaleGroup)
+        )
     }
 
     despawnTime() {
@@ -142,6 +147,7 @@ export class Guide extends Archetype {
             ),
             max: Math.min(this.tail.scaledTime, currentTime + note.duration),
         }
+        if (visibleTime.min > visibleTime.max) return
 
         for (let i = 0; i < options.guideQuality; i++) {
             const scaledTime = {
@@ -181,21 +187,12 @@ export class Guide extends Archetype {
                           scaledTime.min
                       )
 
-            debug.log(this.start.scaledTime)
-            debug.log(this.end.scaledTime)
-
-            debug.log(a)
-
             if (this.useFallbackSprite) {
                 skin.sprites.draw(this.fallbackSprite, layout, this.z, a)
             } else {
                 skin.sprites.draw(this.normalSprite, layout, this.z, a)
             }
         }
-    }
-
-    getAlpha(a: number, b: number, x: number) {
-        return Math.remap(a, b, 0.5, 0, x)
     }
 
     getScale(scaledTime: number) {
