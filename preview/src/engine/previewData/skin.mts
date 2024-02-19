@@ -108,6 +108,8 @@ export const skin = defineSkin({
         guideBlueFallback: SkinSpriteName.NoteConnectionBlueSeamless,
         guideNeutral: 'Sekai+ Guide Neutral',
         guideNeutralFallback: SkinSpriteName.NoteConnectionNeutralSeamless,
+        guideBlack: 'Sekai+ Guide Black',
+        guideBlackFallback: SkinSpriteName.NoteConnectionNeutralSeamless,
 
         damageNoteLeft: 'Sekai Trace Note Purple Left',
         damageNoteMiddle: 'Sekai Trace Note Purple Middle',

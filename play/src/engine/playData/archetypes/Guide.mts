@@ -265,6 +265,9 @@ export class Guide extends Archetype {
             case Color.Cyan:
                 return skin.sprites.guideCyan.id
 
+            case Color.Black:
+                return skin.sprites.guideBlack.id
+
             default:
                 // Should never happen
                 return skin.sprites.guideNeutral.id
@@ -293,6 +296,9 @@ export class Guide extends Archetype {
 
             case Color.Cyan:
                 return skin.sprites.guideCyanFallback.id
+
+            case Color.Black:
+                return skin.sprites.guideBlackFallback.id
 
             default:
                 // Should never happen

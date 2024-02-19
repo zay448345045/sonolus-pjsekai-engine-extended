@@ -33,7 +33,7 @@ export class Initialization extends Archetype {
 
         scaledScreen.wToH = w / (t - b)
 
-        const globalAlpha = options.hideUi ? 0 : 1
+        const globalAlpha = options.hideUi ? 0.00001 : 1
 
         const transform = Mat.identity.scale(w, b - t).translate(0, t)
         skin.transform.set(transform)
@@ -58,7 +58,7 @@ export class Initialization extends Archetype {
             pivot: { x: 1, y: 1 },
             size: new Vec(0.15, 0.15).mul(ui.configuration.menu.scale),
             rotation: 0,
-            alpha: ui.configuration.menu.alpha * globalAlpha || 0.0001,
+            alpha: ui.configuration.menu.alpha * globalAlpha,
             horizontalAlign: HorizontalAlign.Center,
             background: true,
         })

@@ -6,4 +6,5 @@ export enum Color {
     Yellow = 4,
     Purple = 5,
     Cyan = 6,
+    Black = 7,
 }
