@@ -2,9 +2,8 @@ import { buckets } from '~/engine/playData/buckets.mjs'
 import { effect } from '~/engine/playData/effect.mjs'
 import { particle } from '~/engine/playData/particle.mjs'
 import { skin } from '../../../../skin.mjs'
-import { archetypes } from '../../../index.mjs'
 import { windows } from '../../../windows.mjs'
-import { DirectionalTraceFlickNote } from './DirectonalTraceFlickNote.mjs'
+import { DirectionalTraceFlickNote } from './DirectionalTraceFlickNote.mjs'
 
 export class CriticalTraceFlickNote extends DirectionalTraceFlickNote {
     sprites = {

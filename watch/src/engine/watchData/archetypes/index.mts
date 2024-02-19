@@ -58,7 +58,7 @@ export const archetypes = defineArchetypes({
 
     NormalTraceFlickNote,
     CriticalTraceFlickNote,
-    NonDirectonalTraceFlickNote: NonDirectionalTraceFlickNote,
+    NonDirectionalTraceFlickNote,
 
     NormalSlideTraceNote,
     CriticalSlideTraceNote,
