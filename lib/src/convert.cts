@@ -15,7 +15,7 @@ import {
     USCSingleNote,
     USCSlideNote,
     USCTimeScaleChange,
-} from './index.cjs'
+} from 'usctool'
 
 type Intermediate = {
     archetype: string

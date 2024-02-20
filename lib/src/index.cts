@@ -1,12 +1,9 @@
 import { EngineInfo } from 'sonolus-core'
 import { Resource } from './Resource.cjs'
 
-export { chsToUSC } from './chs/convert.cjs'
-export { mmwsToUSC } from './mmws/convert.cjs'
-export { susToUSC } from './sus/convert.cjs'
-export { uscToLevelData } from './usc/convert.cjs'
-export * from './usc/index.cjs'
-export { migrateUSC } from './usc/migrate.cjs'
+export * from 'usctool'
+export { migrateVUSC as migrateUSC } from 'usctool'
+export { uscToLevelData } from './convert.cjs'
 
 export const version = '1.3.1'
 
