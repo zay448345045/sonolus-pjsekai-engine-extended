@@ -15,10 +15,12 @@ export class Stage extends Archetype {
     }
 
     updateParallel() {
-        if (this.useFallbackStage) {
-            this.drawFallbackStage()
-        } else {
-            this.drawSekaiStage()
+        if (options.showLane) {
+            if (this.useFallbackStage) {
+                this.drawFallbackStage()
+            } else {
+                this.drawSekaiStage()
+            }
         }
 
         this.drawStageCover()
