@@ -67,6 +67,7 @@ export class DamageNote extends Note {
     updateParallel() {
         const scaledTime = timeToScaledTime(time.now, this.data.timeScaleGroup)
         if (options.hidden > 0 && scaledTime > this.visualTime.hidden) return
+        if (scaledTime < this.visualTime.min) return
 
         this.render()
     }
