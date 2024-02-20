@@ -151,6 +151,8 @@ export abstract class SlideConnector extends Archetype {
         if (this.shouldScheduleLinearEffect && !this.effectInstanceIds.linear)
             this.spawnLinearEffect()
 
+        if (Math.abs(this.getL(s) - this.getR(s)) < 0.25) return
+
         if (this.effectInstanceIds.circular) this.updateCircularEffect()
 
         if (this.effectInstanceIds.linear) this.updateLinearEffect()
@@ -440,7 +442,7 @@ export abstract class SlideConnector extends Archetype {
     }
 
     updateLinearEffect() {
-      const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
+        const s = this.getScale(timeToScaledTime(time.now, this.headData.timeScaleGroup))
         const lane = this.getLane(s)
 
         particle.effects.move(
