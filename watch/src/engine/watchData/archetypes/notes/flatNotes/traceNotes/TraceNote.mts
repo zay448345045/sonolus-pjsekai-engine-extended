@@ -49,4 +49,8 @@ export abstract class TraceNote extends FlatNote {
             this.sprites.diamond.draw(this.diamondLayout.mul(this.y), this.diamondZ, 1)
         }
     }
+
+    spawnSlotEffects() {
+        /* noop */
+    }
 }
