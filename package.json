@@ -46,8 +46,7 @@
     },
     "dependencies": {
         "sonolus-core": "~7.4.0",
-        "streambuf": "github:sevenc-nanashi/node-streambuf",
-        "usctool": "^0.1.1"
+        "usctool": "^0.2.0"
     },
     "devDependencies": {
         "@types/node": "^16.18.36",
