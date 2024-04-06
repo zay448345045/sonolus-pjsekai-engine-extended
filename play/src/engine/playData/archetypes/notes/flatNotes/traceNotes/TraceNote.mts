@@ -101,7 +101,8 @@ export abstract class TraceNote extends FlatNote {
     }
 
     complete(hitTime: number) {
-        this.result.judgment = input.judge(hitTime, this.targetTime, this.windows)
+        // this.result.judgment = input.judge(hitTime, this.targetTime, this.windows)
+        this.result.judgment = Judgment.Perfect
         this.result.accuracy = hitTime - this.targetTime
 
         this.result.bucket.index = this.bucket.index
