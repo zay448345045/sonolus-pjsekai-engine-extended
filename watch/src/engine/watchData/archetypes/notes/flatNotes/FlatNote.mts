@@ -69,7 +69,7 @@ export abstract class FlatNote extends Note {
             }
         }
 
-        if (options.slotEffectEnabled && (replay.isReplay || this.data.judgment)) {
+        if (options.slotEffectEnabled && (!replay.isReplay || this.data.judgment)) {
             this.spawnSlotEffects(replay.isReplay ? this.hitTime : this.targetTime)
         }
     }
