@@ -245,10 +245,13 @@ const directions = {
 } as const
 
 const eases = {
+    outin: -2,
     out: -1,
     linear: 0,
     in: 1,
+    inout: 2
 } as const
+
 const slideStarts = {
     tap: 0,
     trace: 1,
@@ -322,7 +325,7 @@ const damage: Handler<USCDamageNote> = (object, append) => {
 
 const slide: Handler<USCSlideNote> = (object, append) => {
     type ConnectionIntermediate = Intermediate & {
-        ease?: 'out' | 'linear' | 'in'
+        ease?: 'outin' | 'out' | 'linear' | 'in' | 'inout'
     }
 
     const cis: ConnectionIntermediate[] = []
