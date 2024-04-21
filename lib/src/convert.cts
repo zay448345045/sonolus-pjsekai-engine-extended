@@ -424,7 +424,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                     timeScaleGroup: connection.timeScaleGroup,
                 }
 
-                if ('direction' in connection) {
+                if (connection.direction != undefined) {
                     ci.archetype = connection.critical
                         ? 'CriticalSlideEndFlickNote'
                         : 'NormalSlideEndFlickNote'
@@ -453,7 +453,7 @@ const slide: Handler<USCSlideNote> = (object, append) => {
                     timeScaleGroup: connection.timeScaleGroup,
                 }
 
-                if ('critical' in connection)
+                if (connection.critical != undefined)
                     ci.archetype = connection.critical
                         ? 'CriticalSlideTickNote'
                         : 'NormalSlideTickNote'
