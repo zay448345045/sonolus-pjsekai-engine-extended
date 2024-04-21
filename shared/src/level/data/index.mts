@@ -16,7 +16,7 @@
 // export const data: LevelData = expert
 //
 import { LevelData } from '@sonolus/core'
-import level from './test.levelData.json'
+import level from './test.json'
 
 export const data: LevelData = level
 
