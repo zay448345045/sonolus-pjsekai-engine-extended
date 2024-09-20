@@ -47,10 +47,11 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git commit -m "Deploy (all): $GITHUB_SHA"
+          git push origin build -f
       - uses: actions/upload-artifact@v4
         with:
-        name: my-artifact
-        path: '**/*.*'
+           name: my-artifact
+           path: '**/*.*'
 
-          git push origin build -f
+       #   git push origin build -f
 
